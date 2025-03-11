@@ -1,0 +1,25 @@
+{
+    "imports": {
+        "@hono/hono": "jsr:@hono/hono@^4.7.4",
+        "@hono/swagger-ui": "npm:@hono/swagger-ui@^0.5.1",
+        "@hono/zod-openapi": "npm:@hono/zod-openapi@^0.19.2",
+        "hono": "npm:hono@^4.7.4",
+        "zod": "npm:zod@^3.24.2",
+        "zod-openapi": "npm:zod-openapi@^4.2.3"
+    },
+    "tasks": {
+        "start": "deno run --allow-net main.ts"
+    },
+    "compilerOptions": {
+        "jsx": "precompile",
+        "jsxImportSource": "hono/jsx"
+    },
+    "deploy": {
+        "project": "exam-nexus",
+        "exclude": [
+            "**/node_modules"
+        ],
+        "include": [],
+        "entrypoint": "main.ts"
+    }
+}
