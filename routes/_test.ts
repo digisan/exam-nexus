@@ -1,4 +1,5 @@
 import { createRoute, OpenAPIHono, z } from "@hono/zod-openapi";
+import { getConnInfo } from 'hono/deno'
 import { SupabaseAgent } from "../db/test.ts";
 import { getPublicIP } from "../util/util.ts";
 
@@ -79,6 +80,34 @@ app.openapi(
     }),
     async (c) => {
         return c.json({ ip: await getPublicIP() });
+    },
+);
+
+app.openapi(
+    createRoute({
+        method: "get",
+        path: "/client_ip",
+        operationId: "getClientAccessIP",
+        tags: ["_Test"],
+        security: [], // without swagger UI jwt security
+        summary: "访问者IP",
+        description: "返回访问者的公网 IP 地址",
+        responses: {
+            200: {
+                description: "成功获取访问者 IP",
+                content: {
+                    "application/json": {
+                        schema: z.object({
+                            ip: z.string().ip(),
+                        }),
+                    },
+                },
+            },
+        },
+    }),
+    (c) => {
+        const info = getConnInfo(c)
+        return c.json({ ip: info.remote.address ?? "" });
     },
 );
 

@@ -1,8 +1,11 @@
 import { createRoute, OpenAPIHono, z } from "@hono/zod-openapi";
 import { swaggerUI } from "@hono/swagger-ui";
 import { jwt } from "hono/jwt";
+// import { rateLimitMiddleware } from "./middleware/rateLimit.ts";
 
 const app = new OpenAPIHono();
+
+// app.use('*', rateLimitMiddleware(5, 1000, 10000))
 
 app.openapi(
     createRoute({
@@ -65,9 +68,12 @@ const server = Deno.serve({ port: port }, app.fetch);
 // 监听终止信号
 const shutdown = async () => {
     console.log("Received shutdown signal. Shutting down...");
+    setTimeout(() => {
+        console.log("Server has been closed by exit()");
+        Deno.exit();
+    }, 5000);
     await server.shutdown();
-    console.log("Server has been closed.");
-    Deno.exit();
+    console.log("Server has been closed by shutdown()");
 };
 
 Deno.addSignalListener("SIGINT", shutdown);
