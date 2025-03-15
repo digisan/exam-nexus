@@ -14,25 +14,25 @@ const app = new OpenAPIHono();
 app.use('*', rateLimitMiddleware(5, 1000, 10000))
 
 app.openapi(
-  createRoute({
-    method: "get",
-    path: "/",
-    summary: "Root API",
-    description: "hello exam-nexus",
-    tags: ["Root"],
-    security: [], // without swagger UI jwt security
-    responses: {
-      200: {
-        description: "return 'hello exam-nexus'",
-        content: {
-          "text/plain": {
-            schema: z.string(),
-          },
+    createRoute({
+        method: "get",
+        path: "/",
+        summary: "Root API",
+        description: "hello exam-nexus",
+        tags: ["Root"],
+        security: [], // without swagger UI jwt security
+        responses: {
+            200: {
+                description: "return 'hello exam-nexus'",
+                content: {
+                    "text/plain": {
+                        schema: z.string(),
+                    },
+                },
+            },
         },
-      },
-    },
-  }),
-  (c) => c.text("hello exam-nexus"),
+    }),
+    (c) => c.text("hello exam-nexus"),
 );
 
 const SignatureKey = "mySecretKey";
@@ -41,22 +41,22 @@ app.use("/user/*", jwt({ secret: SignatureKey })); // need JWT security token
 
 // Swagger UI [Authorize] Button
 app.openAPIRegistry.registerComponent("securitySchemes", "BearerAuth", {
-  type: "http",
-  name: "Authorization",
-  scheme: "bearer",
-  in: "header",
-  description: "Bearer token",
-  bearerFormat: "JWT",
+    type: "http",
+    name: "Authorization",
+    scheme: "bearer",
+    in: "header",
+    description: "Bearer token",
+    bearerFormat: "JWT",
 });
 
 // Create OPENAPI Spec File
 app.doc31("/openapi.json", {
-  openapi: "3.1.0",
-  info: {
-    title: "Hono API 文档",
-    version: "1.0.0",
-  },
-  security: [{ BearerAuth: [] }], // lock each API by default in swagger UI
+    openapi: "3.1.0",
+    info: {
+        title: "Hono API 文档",
+        version: "1.0.0",
+    },
+    security: [{ BearerAuth: [] }], // lock each API by default in swagger UI
 });
 
 // Host OPENAPI Spec File on /docs
@@ -76,13 +76,13 @@ const server = Deno.serve({ port: port }, app.fetch);
 
 // 监听终止信号
 const shutdown = async () => {
-  console.log("Received shutdown signal. Shutting down...");
-  setTimeout(() => {
-    console.log("Server has been closed by exit()");
-    Deno.exit();
-  }, 5000);
-  await server.shutdown();
-  console.log("Server has been closed by shutdown()");
+    console.log("Received shutdown signal. Shutting down...");
+    setTimeout(() => {
+        console.log("Server has been closed by exit()");
+        Deno.exit();
+    }, 5000);
+    await server.shutdown();
+    console.log("Server has been closed by shutdown()");
 };
 
 Deno.addSignalListener("SIGINT", shutdown);

@@ -31,7 +31,7 @@ app.openapi(
             401: { description: "未授权(JWT 令牌无效或缺失)" },
         },
     }),
-    (c) => {
+    (c: any) => {
         return c.json(userCtrl.getUserList());
     },
 );
@@ -63,7 +63,7 @@ app.openapi(
             404: { description: "用户 ID 未找到" },
         },
     }),
-    (c) => {
+    (c: any) => {
         const id = c.req.param("id");
         const user = userCtrl.getUserDetails(id);
         return user ? c.json(user) : c.text("User not found", 404);

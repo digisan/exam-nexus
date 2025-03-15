@@ -18,6 +18,7 @@
     "npm:@supabase/storage-js@2.7.1": "2.7.1",
     "npm:@types/node@*": "22.12.0",
     "npm:hono@^4.7.4": "4.7.4",
+    "npm:neverthrow@^8.2.0": "8.2.0",
     "npm:zod-openapi@^4.2.3": "4.2.3_zod@3.24.2",
     "npm:zod@^3.24.2": "3.24.2"
   },
@@ -79,6 +80,9 @@
         "zod"
       ]
     },
+    "@rollup/rollup-linux-x64-gnu@4.35.0": {
+      "integrity": "sha512-Pim1T8rXOri+0HmV4CdKSGrqcBWX0d1HoPnQ0uw0bdp1aP5SdQVNBy8LjYncvnLgu3fnnCt17xjWGd4cqh8/hA=="
+    },
     "@supabase/auth-js@2.68.0": {
       "integrity": "sha512-odG7nb7aOmZPUXk6SwL2JchSsn36Ppx11i2yWMIc/meUO2B2HK9YwZHPK06utD9Ql9ke7JKDbwGin/8prHKxxQ==",
       "dependencies": [
@@ -136,6 +140,12 @@
     "hono@4.7.4": {
       "integrity": "sha512-Pst8FuGqz3L7tFF+u9Pu70eI0xa5S3LPUmrNd5Jm8nTHze9FxLTK9Kaj5g/k4UcwuJSXTP65SyHOPLrffpcAJg=="
     },
+    "neverthrow@8.2.0": {
+      "integrity": "sha512-kOCT/1MCPAxY5iUV3wytNFUMUolzuwd/VF/1KCx7kf6CutrOsTie+84zTGTpgQycjvfLdBBdvBvFLqFD2c0wkQ==",
+      "dependencies": [
+        "@rollup/rollup-linux-x64-gnu"
+      ]
+    },
     "openapi3-ts@4.4.0": {
       "integrity": "sha512-9asTNB9IkKEzWMcHmVZE7Ts3kC9G7AFHfs8i7caD8HbI76gEjdkId4z/AkP83xdZsH7PLAnnbl47qZkXuxpArw==",
       "dependencies": [
@@ -182,6 +192,7 @@
       "npm:@hono/swagger-ui@~0.5.1",
       "npm:@hono/zod-openapi@~0.19.2",
       "npm:hono@^4.7.4",
+      "npm:neverthrow@^8.2.0",
       "npm:zod-openapi@^4.2.3",
       "npm:zod@^3.24.2"
     ]
