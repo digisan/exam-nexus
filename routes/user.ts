@@ -37,8 +37,8 @@ app.openapi(
 );
 
 const UserSchema = z.object({
-    id: z.string().openapi({ example: "123" }),
-    name: z.string().openapi({ example: "张三" }),
+    username: z.string().openapi({ example: "张三" }),
+    email: z.string().email().openapi({ example: "张三@EMAIL.COM" }),
 });
 
 app.openapi(
@@ -48,7 +48,7 @@ app.openapi(
         tags: ["User"],
         // security: [{ BearerAuth: [] }],
         request: {
-            params: z.object({ id: z.string() }),
+            params: z.object({ username: z.string() }),
         },
         responses: {
             200: {

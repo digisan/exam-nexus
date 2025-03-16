@@ -67,7 +67,7 @@ async function genServerInstanceFile() {
     const routerUseStatements = routeFiles.map((file) => {
         const routeName = file.replace(".ts", "");
         // return `router.use(${routeName}Router.routes(), ${routeName}Router.allowedMethods());`; // oak
-        return `app.route("/${routeName}",  ${routeName}Router)`; // hono
+        return `app.route("/api/${routeName}",  ${routeName}Router)`; // hono
     }).join("\n");
 
     // 1. 将 import 语句插入到 server.ts 文件的合适位置

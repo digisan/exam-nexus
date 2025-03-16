@@ -7,11 +7,11 @@ import _testRouter from "./routes/_test.ts";
 import { createRoute, OpenAPIHono, z } from "@hono/zod-openapi";
 import { swaggerUI } from "@hono/swagger-ui";
 import { jwt } from "hono/jwt";
-import { rateLimitMiddleware } from "./middleware/rateLimit.ts";
+// import { rateLimitMiddleware } from "./middleware/rateLimit.ts";
 
 const app = new OpenAPIHono();
 
-app.use('*', rateLimitMiddleware(5, 1000, 10000))
+// app.use('*', rateLimitMiddleware(5, 1000, 10000))
 
 app.openapi(
     createRoute({
@@ -32,12 +32,12 @@ app.openapi(
             },
         },
     }),
-    (c) => c.text("hello exam-nexus"),
+    (c: any) => c.text("hello exam-nexus"),
 );
 
 const SignatureKey = "mySecretKey";
 
-app.use("/user/*", jwt({ secret: SignatureKey })); // need JWT security token
+app.use("/api/user/*", jwt({ secret: SignatureKey })); // need JWT security token
 
 // Swagger UI [Authorize] Button
 app.openAPIRegistry.registerComponent("securitySchemes", "BearerAuth", {
@@ -63,10 +63,10 @@ app.doc31("/openapi.json", {
 app.get("/docs", swaggerUI({ url: "/openapi.json" }));
 
 // ************************ AUTO GENERATED ************************ //
-app.route("/auth", authRouter);
-app.route("/post", postRouter);
-app.route("/user", userRouter);
-app.route("/_test", _testRouter);
+app.route("/api/auth", authRouter);
+app.route("/api/post", postRouter);
+app.route("/api/user", userRouter);
+app.route("/api/_test", _testRouter);
 // **************************************************************** //
 
 const port = 8001;

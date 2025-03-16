@@ -20,6 +20,8 @@ app.openapi(
     createRoute({
         method: "post",
         path: "/register",
+        tags: ["Auth"],
+        security: [], // without swagger UI jwt security
         request: {
             body: {
                 description: "Register request body",
@@ -86,7 +88,7 @@ app.openapi(
     createRoute({
         method: "post",
         path: "/login",
-        tags: ["Authenticate"],
+        tags: ["Auth"],
         security: [], // without swagger UI jwt security
         request: {
             body: {
