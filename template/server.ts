@@ -26,12 +26,12 @@ app.openapi(
             },
         },
     }),
-    (c) => c.text("hello exam-nexus"),
+    (c: any) => c.text("hello exam-nexus"),
 );
 
 const SignatureKey = "mySecretKey";
 
-app.use("/user/*", jwt({ secret: SignatureKey })); // need JWT security token
+app.use("/api/user/*", jwt({ secret: SignatureKey })); // need JWT security token
 
 // Swagger UI [Authorize] Button
 app.openAPIRegistry.registerComponent("securitySchemes", "BearerAuth", {

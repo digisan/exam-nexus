@@ -1,6 +1,6 @@
 import { createRoute, OpenAPIHono, z } from "@hono/zod-openapi";
 import { getConnInfo } from 'hono/deno'
-import { SupabaseAgent } from "../db/test.ts";
+import { SupabaseAgent } from "../db/supabase.ts";
 import { getPublicIP } from "../util/util.ts";
 
 const app = new OpenAPIHono();

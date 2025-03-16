@@ -44,7 +44,7 @@ const UserSchema = z.object({
 app.openapi(
     createRoute({
         method: "get",
-        path: "/{id}",
+        path: "/{username}",
         tags: ["User"],
         // security: [{ BearerAuth: [] }],
         request: {
@@ -64,8 +64,8 @@ app.openapi(
         },
     }),
     (c: any) => {
-        const id = c.req.param("id");
-        const user = userCtrl.getUserDetails(id);
+        const username = c.req.param("username");
+        const user = userCtrl.getUserInfo(username);
         return user ? c.json(user) : c.text("User not found", 404);
     },
 );

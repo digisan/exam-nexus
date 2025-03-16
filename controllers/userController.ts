@@ -1,17 +1,29 @@
-// 模拟用户数据
-const users = [
-    { id: "123", name: "张三" },
-    { id: "456", name: "李四" },
-];
+import { fileExists } from "../util/util.ts";
 
-class UserController {
-    getUserList() {
-        return users.map((user) => user.id);
+export class UserController {
+    async getUserList() {
+        const filePath = "./data/users.json";
+        if (await fileExists(filePath)) {
+            const content = await Deno.readTextFile(filePath);
+            const data = JSON.parse(content);
+            if (!Array.isArray(data)) {
+                return null;
+            }
+            return data.map((u) => u.username);
+        }
+        return null
     }
 
-    getUserDetails(id: number | string) {
-        return users.find((u) => u.id == id);
+    async getUserInfo(username: string) {
+        const filePath = "./data/users.json";
+        if (await fileExists(filePath)) {
+            const content = await Deno.readTextFile(filePath);
+            const data = JSON.parse(content);
+            if (!Array.isArray(data)) {
+                return null;
+            }
+            return data.find((u) => u.username == username);
+        }
+        return null
     }
 }
-
-export { UserController };

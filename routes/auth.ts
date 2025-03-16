@@ -1,10 +1,81 @@
 import { createRoute, OpenAPIHono, z } from "@hono/zod-openapi";
-import { sign } from "hono/jwt";
 import { verifyHCaptcha } from "../util/util.ts";
+import { AuthController } from "../controllers/authController.ts";
 
 const app = new OpenAPIHono();
 
-// 定义请求体 Schema
+const authCtrl = new AuthController();
+
+// /////////////////////////////////////////////////////////////////////////////////////
+
+const RegisterRequestBody = z.object({
+    username: z.string().min(3, "Username must be at least 3 characters"),
+    password: z.string().min(6, "Password must be at least 6 characters"),
+    email: z.string().email("Invalid email address"),
+    captchaToken: z.string().min(1, "Captcha token is required"),
+});
+
+// 创建 OpenAPI 路由
+app.openapi(
+    createRoute({
+        method: "post",
+        path: "/register",
+        request: {
+            body: {
+                description: "Register request body",
+                content: {
+                    "application/json": {
+                        schema: RegisterRequestBody,
+                        example: { // 添加测试参数输入
+                            username: "john_doe",
+                            password: "secure-password-123",
+                            email: "john.doe@example.com",
+                            captchaToken: "valid_captcha_token",
+                        },
+                    },
+                },
+            },
+        },
+        responses: {
+            200: {
+                description: "Registration successful",
+                content: {
+                    "application/json": {
+                        schema: z.object({
+                            success: z.boolean(),
+                            message: z.string(),
+                        }),
+                    },
+                },
+            },
+            400: {
+                description: "Bad request",
+                content: {
+                    "application/json": {
+                        schema: z.object({
+                            success: z.boolean(),
+                            message: z.string(),
+                        }),
+                    },
+                },
+            },
+        },
+    }),
+    async (c: any) => {
+        const { username, password, email, captchaToken } = c.req.valid("json");
+        const result = await verifyHCaptcha(captchaToken);
+        if (result.isOk()) {
+            if (result.value) { // captcha verification result OK
+                return c.json(await authCtrl.register(username, password, email));
+            }
+            return c.json({ success: false, message: `captcha verification failed` }, 400); // captcha verification result FAILED
+        }
+        return c.json({ success: false, message: `captcha CANNOT be verified ${result.error}` }, 500); // captcha verification ERROR
+    }
+);
+
+// /////////////////////////////////////////////////////////////////////////////////////
+
 const LoginRequestBody = z.object({
     username: z.string().min(1, "Username is required"),
     password: z.string().min(3, "Password must be at least 3 characters"),
@@ -47,28 +118,11 @@ app.openapi(
         },
     }),
     async (c: any) => {
-
-        const { username, password, captchaToken } = await c.req.json();
-
+        const { username, password, captchaToken } = c.req.valid("json");
         const result = await verifyHCaptcha(captchaToken);
         if (result.isOk()) {
             if (result.value) { // captcha verification result OK
-
-                // check (username, password)
-                if (username !== "admin" || password !== "123") {
-                    return c.json({ message: `user or password is invalid`, token: "" }, 400);
-                }
-
-                // create user session token
-                const payload = {
-                    sub: username,
-                    role: "admin",
-                    exp: Math.floor(Date.now() / 1000) + 60 * 10, // Token expires in 10 minutes
-                };
-
-                const SignatureKey = "mySecretKey";
-                const token = await sign(payload, SignatureKey);
-                return c.json({ message: "token string", token: token });
+                return c.json(await authCtrl.login(username, password));
             }
             return c.json({ message: `captcha verification failed`, token: "" }, 400); // captcha verification result FAILED
         }
@@ -76,8 +130,6 @@ app.openapi(
     },
 );
 
-// app.post('/register', (ctx) => {
-//     return ctx.json({ message: 'Register' });
-// });
+// /////////////////////////////////////////////////////////////////////////////////////
 
 export default app;

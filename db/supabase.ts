@@ -12,7 +12,7 @@ if (!SUPABASE_URL || !SUPABASE_KEY) {
 
 const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
 
-class SupabaseAgent {
+export class SupabaseAgent {
     async insertMessage(content: string) {
         const { data, error } = await supabase
             .from("messages")
@@ -39,5 +39,3 @@ class SupabaseAgent {
         }
     }
 }
-
-export { SupabaseAgent };

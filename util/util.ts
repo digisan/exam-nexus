@@ -1,5 +1,17 @@
 import { ok, err } from "neverthrow";
 
+export const fileExists = async (path: string): Promise<boolean> => {
+    try {
+        await Deno.stat(path);
+        return true;
+    } catch (err) {
+        if (err instanceof Deno.errors.NotFound) {
+            return false;
+        }
+        throw err;
+    }
+}
+
 export const getPublicIP = async () => {
     const response = await fetch("https://api.ipify.org");
     if (!response.ok) {

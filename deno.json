@@ -1,5 +1,6 @@
 {
     "imports": {
+        "@felix/bcrypt": "jsr:@felix/bcrypt@^1.0.5",
         "@hono/hono": "jsr:@hono/hono@^4.7.4",
         "@hono/swagger-ui": "npm:@hono/swagger-ui@^0.5.1",
         "@hono/zod-openapi": "npm:@hono/zod-openapi@^0.19.2",
