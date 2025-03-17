@@ -107,9 +107,8 @@ export class AuthController {
         const payload = {
             sub: username,
             role: "user",
-            exp: Math.floor(Date.now() / 1000) + 60 * 1, // Token expires in 1 minutes
+            exp: Math.floor(Date.now() / 1000) + 60 * 100, // Token expires in 100 minutes
         };
-
 
         const token = await sign(payload, SIGNATUREKEY);
         return { success: true, message: `login ok`, token: token };

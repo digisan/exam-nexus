@@ -17,8 +17,20 @@ const mwRATE = rateLimitMiddleware(5, 1000, 10000);
 app.use("*", mwRATE);
 
 const mwJWT = jwt({ secret: authCtrl.SignatureKey });
-app.use("/api/user/*", mwJWT); // need JWT security token
-app.use("/api/auth/logout", mwJWT); // need JWT security token
+const authPathList = [
+  "/api/user/*",
+  "/api/auth/logout",
+];
+authPathList.forEach((item) => {
+  app.use(item, mwJWT);
+  app.use(item, async (c: any, next) => {
+    const token = c.req.header("Authorization").split(" ")[1];
+    if (authCtrl.alreadyLogout(token)) {
+      return c.json({ message: "Token is invalid" }, 401);
+    }
+    await next();
+  });
+});
 
 // **************************************************************** //
 
