@@ -1,5 +1,5 @@
 import { assertEquals } from "jsr:@std/assert";
-import { getPublicIP, verifyHCaptcha } from "./util.ts"
+import { getPublicIP, verifyHCaptcha } from "@util/util.ts"
 
 Deno.test(async function getPubIP() {
     const ip = await getPublicIP();

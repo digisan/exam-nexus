@@ -9,7 +9,12 @@
         "hono": "npm:hono@^4.7.4",
         "neverthrow": "npm:neverthrow@^8.2.0",
         "zod": "npm:zod@^3.24.2",
-        "zod-openapi": "npm:zod-openapi@^4.2.3"
+        "zod-openapi": "npm:zod-openapi@^4.2.3",
+        "@util/": "./util/",
+        "@routes/": "./routes/",
+        "@controllers/": "./controllers/",
+        "@middleware/": "./middleware/",
+        "@db/": "./db/"
     },
     "tasks": {
         "start": "deno run --allow-net main.ts"

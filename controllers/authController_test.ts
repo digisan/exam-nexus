@@ -1,5 +1,4 @@
-import { assertEquals } from "jsr:@std/assert";
-import { AuthController } from "./authController.ts";
+import { AuthController } from "@controllers/authController.ts";
 
 Deno.test(async function AuthCtrlReg() {
     const ac = new AuthController();

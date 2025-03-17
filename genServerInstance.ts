@@ -60,7 +60,7 @@ async function genServerInstanceFile() {
     // 在文件顶部添加所有路由的 import 语句
     const importStatements = routeFiles.map((file) => {
         const routeName = file.replace(".ts", ""); // 去掉 .ts 后缀
-        return `import ${routeName}Router from "./routes/${file}";`;
+        return `import ${routeName}Router from "@routes/${file}";`;
     }).join("\n");
 
     // 在文件中间添加所有路由的注册语句

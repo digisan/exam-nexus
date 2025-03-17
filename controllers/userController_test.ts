@@ -1,5 +1,4 @@
-import { assertEquals } from "jsr:@std/assert";
-import { UserController } from "./userController.ts";
+import { UserController } from "@controllers/userController.ts";
 
 Deno.test(async function UserCtrlList() {
     const userCtrl = new UserController()

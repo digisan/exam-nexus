@@ -1,6 +1,6 @@
 import { createRoute, OpenAPIHono, z } from "@hono/zod-openapi";
-import { verifyHCaptcha } from "../util/util.ts";
-import { AuthController } from "../controllers/authController.ts";
+import { verifyHCaptcha } from "@util/util.ts";
+import { AuthController } from "@controllers/authController.ts";
 
 const app = new OpenAPIHono();
 

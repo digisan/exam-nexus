@@ -1,8 +1,15 @@
 import { sign } from "hono/jwt";
-import { fileExists } from "../util/util.ts";
+import { fileExists } from "@util/util.ts";
 import { hash, verify } from "jsr:@felix/bcrypt";
 
+const SIGNATUREKEY = "mySecretKey";
+
 export class AuthController {
+
+    get SignatureKey() {
+        return SIGNATUREKEY
+    }
+
     async register(username: string, password: string, email: string) {
         const filePath = "./data/users.json";
         if (await fileExists(filePath)) {
@@ -32,6 +39,7 @@ export class AuthController {
             // insert with hashed password
             data.push({ username, password: await hash(password), email });
             await Deno.writeTextFile(filePath, JSON.stringify(data, null, 4));
+
         } else {
             await Deno.writeTextFile(
                 filePath,
@@ -98,14 +106,15 @@ export class AuthController {
         const payload = {
             sub: username,
             role: "user",
-            exp: Math.floor(Date.now() / 1000) + 60 * 100, // Token expires in 100 minutes
+            exp: Math.floor(Date.now() / 1000) + 60 * 1, // Token expires in 1 minutes
         };
 
-        const SignatureKey = "mySecretKey";
-        const token = await sign(payload, SignatureKey);
+
+        const token = await sign(payload, SIGNATUREKEY);
         return { success: true, message: `login ok`, token: token };
     }
 
     async logout(username: string) {
+
     }
 }

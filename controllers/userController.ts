@@ -1,4 +1,4 @@
-import { fileExists } from "../util/util.ts";
+import { fileExists } from "@util/util.ts";
 
 export class UserController {
     async getUserList() {

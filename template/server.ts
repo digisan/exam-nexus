@@ -1,11 +1,13 @@
 import { createRoute, OpenAPIHono, z } from "@hono/zod-openapi";
 import { swaggerUI } from "@hono/swagger-ui";
 import { jwt } from "hono/jwt";
-// import { rateLimitMiddleware } from "./middleware/rateLimit.ts";
+import { AuthController } from "@controllers/authController.ts";
+import { rateLimitMiddleware } from "@middleware/rateLimit.ts";
 
 const app = new OpenAPIHono();
+const authCtrl = new AuthController();
 
-// app.use('*', rateLimitMiddleware(5, 1000, 10000))
+app.use('*', rateLimitMiddleware(5, 1000, 10000))
 
 app.openapi(
     createRoute({
@@ -29,9 +31,7 @@ app.openapi(
     (c: any) => c.text("hello exam-nexus"),
 );
 
-const SignatureKey = "mySecretKey";
-
-app.use("/api/user/*", jwt({ secret: SignatureKey })); // need JWT security token
+app.use("/api/user/*", jwt({ secret: authCtrl.SignatureKey })); // need JWT security token
 
 // Swagger UI [Authorize] Button
 app.openAPIRegistry.registerComponent("securitySchemes", "BearerAuth", {
