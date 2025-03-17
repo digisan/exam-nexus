@@ -11,3 +11,10 @@ Deno.test(async function AuthCtrlLogin() {
     const result = await ac.login("user43", "pwd2")
     console.log(result)
 });
+
+Deno.test(function AuthCtrlLogout() {
+    const ac = new AuthController();
+    ac.logout("abc")
+    ac.logout("def")
+    ac.logout("def")
+});

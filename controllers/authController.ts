@@ -3,6 +3,7 @@ import { fileExists } from "@util/util.ts";
 import { hash, verify } from "jsr:@felix/bcrypt";
 
 const SIGNATUREKEY = "mySecretKey";
+const tokenBlacklist = new Set();
 
 export class AuthController {
 
@@ -114,7 +115,11 @@ export class AuthController {
         return { success: true, message: `login ok`, token: token };
     }
 
-    async logout(username: string) {
+    logout(token: string) {
+        tokenBlacklist.add(token);
+    }
 
+    alreadyLogout(token: string) {
+        return tokenBlacklist.has(token)
     }
 }

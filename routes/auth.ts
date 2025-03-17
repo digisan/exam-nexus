@@ -134,4 +134,29 @@ app.openapi(
 
 // /////////////////////////////////////////////////////////////////////////////////////
 
+app.openapi(
+    createRoute({
+        method: "post",
+        path: "/logout",
+        tags: ["Auth"],
+        responses: {
+            200: {
+                description: "Disable TOKEN",
+                content: {
+                    "application/json": {
+                        schema: z.object({
+                            message: z.string(),
+                        }),
+                    },
+                },
+            },
+        },
+    }),
+    (c: any) => {
+        const token = c.req.header('Authorization').split(' ')[1];
+        authCtrl.logout(token)
+        return c.json({ message: `logout` });
+    },
+);
+
 export default app;

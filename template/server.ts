@@ -7,7 +7,14 @@ import { rateLimitMiddleware } from "@middleware/rateLimit.ts";
 const app = new OpenAPIHono();
 const authCtrl = new AuthController();
 
-app.use('*', rateLimitMiddleware(5, 1000, 10000))
+const mwRATE = rateLimitMiddleware(5, 1000, 10000)
+app.use('*', mwRATE)
+
+const mwJWT = jwt({ secret: authCtrl.SignatureKey })
+app.use("/api/user/*", mwJWT); // need JWT security token
+app.use("/api/auth/logout", mwJWT); // need JWT security token
+
+// **************************************************************** //
 
 app.openapi(
     createRoute({
@@ -56,10 +63,6 @@ app.get("/docs", swaggerUI({ url: "/openapi.json" }));
 
 // ************************ AUTO GENERATED ************************ //
 // ROUTER.USE... //
-// **************************************************************** //
-
-app.use("/api/user/*", jwt({ secret: authCtrl.SignatureKey })); // need JWT security token
-
 // **************************************************************** //
 
 const port = 8001;
