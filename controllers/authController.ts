@@ -11,7 +11,7 @@ export class AuthController {
         return SIGNATUREKEY
     }
 
-    async register(username: string, password: string, email: string) {
+    async register(email: string, password: string) {
         const filePath = "./data/users.json";
         if (await fileExists(filePath)) {
             const content = await Deno.readTextFile(filePath);
@@ -21,46 +21,43 @@ export class AuthController {
             if (!Array.isArray(data)) {
                 return {
                     success: false,
-                    message: `${username} register failed as json file format error`,
+                    message: `${email} register failed as json file format error`,
                 };
             }
 
             // check user existing status
-            const exists = data.some((u) =>
-                u.username === username ||
-                u.email === email
-            );
+            const exists = data.some((u) => u.email === email);
             if (exists) {
                 return {
                     success: false,
-                    message: `${username} already registered`,
+                    message: `${email} already registered`,
                 };
             }
 
             // insert with hashed password
-            data.push({ username, password: await hash(password), email });
+            data.push({ email, password: await hash(password) });
             await Deno.writeTextFile(filePath, JSON.stringify(data, null, 4));
 
         } else {
             await Deno.writeTextFile(
                 filePath,
                 JSON.stringify(
-                    [{ username, password: await hash(password), email }],
+                    [{ email, password: await hash(password) }],
                     null,
                     4,
                 ),
             );
         }
 
-        return { success: true, message: `'${username}' registered successfully` };
+        return { success: true, message: `'${email}' registered successfully` };
     }
 
-    async login(username: string, password: string) {
+    async login(email: string, password: string) {
         const filePath = "./data/users.json";
         if (!await fileExists(filePath)) {
             return {
                 success: false,
-                message: `${username} hasn't been registered`,
+                message: `${email} hasn't been registered`,
                 token: "",
             };
         }
@@ -72,40 +69,40 @@ export class AuthController {
         if (!Array.isArray(data)) {
             return {
                 success: false,
-                message: `${username} login failed as backend storage error`,
+                message: `${email} login failed as backend storage error`,
                 token: "",
             };
         }
 
         // check user existing status
-        // const exists = data.some((u) => u.username === username);
+        // const exists = data.some((u) => u.email === email);
         // if (!exists) {
         //     return {
         //         success: false,
-        //         message: `${username} hasn't been registered`,
+        //         message: `${email} hasn't been registered`,
         //         token: "",
         //     };
         // }
 
-        const userData = data.find((u) => u.username == username);
+        const userData = data.find((u) => u.email == email);
         if (!userData) {
             return {
                 success: false,
-                message: `${username} hasn't been registered`,
+                message: `${email} hasn't been registered`,
                 token: "",
             };
         }
         if (!await verify(password, userData.password)) {
             return {
                 success: false,
-                message: `invalid authorization info for '${username}'`,
+                message: `invalid authorization info for '${email}'`,
                 token: "",
             };
         }
 
         // create user session token
         const payload = {
-            sub: username,
+            sub: email,
             role: "user",
             exp: Math.floor(Date.now() / 1000) + 60 * 100, // Token expires in 100 minutes
         };

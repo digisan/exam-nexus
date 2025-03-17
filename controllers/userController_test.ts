@@ -7,5 +7,5 @@ Deno.test(async function UserCtrlList() {
 
 Deno.test(async function UserCtrlInfo() {
     const userCtrl = new UserController()
-    console.log(await userCtrl.getUserInfo('user4'))
+    console.log(await userCtrl.getUserInfo('user32@email.com'))
 });

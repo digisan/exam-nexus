@@ -9,12 +9,12 @@ export class UserController {
             if (!Array.isArray(data)) {
                 return null;
             }
-            return data.map((u) => u.username);
+            return data.map((u) => u.email);
         }
         return null
     }
 
-    async getUserInfo(username: string) {
+    async getUserInfo(email: string) {
         const filePath = "./data/users.json";
         if (await fileExists(filePath)) {
             const content = await Deno.readTextFile(filePath);
@@ -22,7 +22,7 @@ export class UserController {
             if (!Array.isArray(data)) {
                 return null;
             }
-            return data.find((u) => u.username == username);
+            return data.find((u) => u.email == email);
         }
         return null
     }

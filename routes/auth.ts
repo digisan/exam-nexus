@@ -9,9 +9,8 @@ const authCtrl = new AuthController();
 // /////////////////////////////////////////////////////////////////////////////////////
 
 const RegisterRequestBody = z.object({
-    username: z.string().min(3, "Username must be at least 3 characters"),
-    password: z.string().min(6, "Password must be at least 6 characters"),
     email: z.string().email("Invalid email address"),
+    password: z.string().min(6, "Password must be at least 6 characters"),
     captchaToken: z.string().min(1, "Captcha token is required"),
 });
 
@@ -29,9 +28,8 @@ app.openapi(
                     "application/json": {
                         schema: RegisterRequestBody,
                         example: { // 添加测试参数输入
-                            username: "john_doe",
-                            password: "secure-password-123",
                             email: "john.doe@example.com",
+                            password: "secure-password-123",
                             captchaToken: "valid_captcha_token",
                         },
                     },
@@ -64,11 +62,11 @@ app.openapi(
         },
     }),
     async (c: any) => {
-        const { username, password, email, captchaToken } = c.req.valid("json");
+        const { email, password, captchaToken } = c.req.valid("json");
         const result = await verifyHCaptcha(captchaToken);
         if (result.isOk()) {
             if (result.value) { // captcha verification result OK
-                return c.json(await authCtrl.register(username, password, email));
+                return c.json(await authCtrl.register(email, password));
             }
             return c.json({ success: false, message: `captcha verification failed` }, 400); // captcha verification result FAILED
         }
@@ -79,7 +77,7 @@ app.openapi(
 // /////////////////////////////////////////////////////////////////////////////////////
 
 const LoginRequestBody = z.object({
-    username: z.string().min(1, "Username is required"),
+    email: z.string().email("Invalid email address"),
     password: z.string().min(3, "Password must be at least 3 characters"),
     captchaToken: z.string().min(1, "Captcha token is required"),
 });
@@ -97,7 +95,7 @@ app.openapi(
                     "application/json": {
                         schema: LoginRequestBody,
                         example: { // 添加测试参数输入
-                            username: "admin",
+                            email: "john.doe@example.com",
                             password: "password123",
                             captchaToken: "valid_captcha_token",
                         },
@@ -120,11 +118,11 @@ app.openapi(
         },
     }),
     async (c: any) => {
-        const { username, password, captchaToken } = c.req.valid("json");
+        const { email, password, captchaToken } = c.req.valid("json");
         const result = await verifyHCaptcha(captchaToken);
         if (result.isOk()) {
             if (result.value) { // captcha verification result OK
-                return c.json(await authCtrl.login(username, password));
+                return c.json(await authCtrl.login(email, password));
             }
             return c.json({ message: `captcha verification failed`, token: "" }, 400); // captcha verification result FAILED
         }

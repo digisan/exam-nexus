@@ -9,7 +9,7 @@ const userCtrl = new UserController();
 // })
 
 const UserIdListSchema = z.array(z.string()).openapi({
-    example: ["123", "456"],
+    example: ["email_1", "email_2"],
 });
 
 // 定义 API 路由，并关联 OpenAPI 规范
@@ -37,18 +37,18 @@ app.openapi(
 );
 
 const UserSchema = z.object({
-    username: z.string().openapi({ example: "张三" }),
     email: z.string().email().openapi({ example: "张三@EMAIL.COM" }),
+    password: z.string().openapi({ example: "bcrypted...password..." }),
 });
 
 app.openapi(
     createRoute({
         method: "get",
-        path: "/{username}",
+        path: "/{email}",
         tags: ["User"],
         // security: [{ BearerAuth: [] }],
         request: {
-            params: z.object({ username: z.string() }),
+            params: z.object({ email: z.string().email() }),
         },
         responses: {
             200: {
@@ -64,8 +64,8 @@ app.openapi(
         },
     }),
     (c: any) => {
-        const username = c.req.param("username");
-        const user = userCtrl.getUserInfo(username);
+        const email = c.req.param("email");
+        const user = userCtrl.getUserInfo(email);
         return user ? c.json(user) : c.text("User not found", 404);
     },
 );
