@@ -37,8 +37,6 @@ app.openapi(
     (c: any) => c.text("hello exam-nexus"),
 );
 
-app.use("/api/user/*", jwt({ secret: authCtrl.SignatureKey })); // need JWT security token
-
 // Swagger UI [Authorize] Button
 app.openAPIRegistry.registerComponent("securitySchemes", "BearerAuth", {
     type: "http",
@@ -67,6 +65,10 @@ app.route("/api/auth", authRouter);
 app.route("/api/post", postRouter);
 app.route("/api/user", userRouter);
 app.route("/api/_test", _testRouter);
+// **************************************************************** //
+
+app.use("/api/user/*", jwt({ secret: authCtrl.SignatureKey })); // need JWT security token
+
 // **************************************************************** //
 
 const port = 8001;
