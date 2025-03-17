@@ -1,11 +1,18 @@
 import { createRoute, OpenAPIHono, z } from "@hono/zod-openapi";
 import { swaggerUI } from "@hono/swagger-ui";
 import { jwt } from "hono/jwt";
+import { cors } from 'hono/cors';
 import { AuthController } from "@controllers/authController.ts";
 import { rateLimitMiddleware } from "@middleware/rateLimit.ts";
 
 const app = new OpenAPIHono();
 const authCtrl = new AuthController();
+
+app.use(cors({
+    origin: '*', // 允许所有来源
+    allowMethods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowHeaders: ['Content-Type', 'Authorization']
+}));
 
 const mwRATE = rateLimitMiddleware(5, 1000, 10000)
 app.use('*', mwRATE)

@@ -42,8 +42,8 @@ app.openapi(
                 content: {
                     "application/json": {
                         schema: z.object({
-                            success: z.boolean(),
-                            message: z.string(),
+                            success: z.boolean().openapi({ example: true }),
+                            message: z.string().openapi({ example: "registered" }),
                         }),
                     },
                 },
@@ -53,8 +53,8 @@ app.openapi(
                 content: {
                     "application/json": {
                         schema: z.object({
-                            success: z.boolean(),
-                            message: z.string(),
+                            success: z.boolean().openapi({ example: false }),
+                            message: z.string().openapi({ example: "failed" }),
                         }),
                     },
                 },
@@ -109,8 +109,8 @@ app.openapi(
                 content: {
                     "application/json": {
                         schema: z.object({
-                            message: z.string(),
-                            token: z.string(),
+                            message: z.string().openapi({ example: "ok" }),
+                            token: z.string().openapi({ example: "token string" }),
                         }),
                     },
                 },
@@ -143,11 +143,12 @@ app.openapi(
                 content: {
                     "application/json": {
                         schema: z.object({
-                            message: z.string(),
+                            message: z.string().openapi({ example: "logout" }),
                         }),
                     },
                 },
             },
+            401: { description: "未授权(JWT 令牌无效,缺失或失效)" },
         },
     }),
     (c: any) => {

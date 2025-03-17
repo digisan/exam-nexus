@@ -28,7 +28,7 @@ app.openapi(
                     },
                 },
             },
-            401: { description: "未授权(JWT 令牌无效或缺失)" },
+            401: { description: "未授权(JWT 令牌无效,缺失或失效)" },
         },
     }),
     (c: any) => {
@@ -59,7 +59,7 @@ app.openapi(
                     },
                 },
             },
-            401: { description: "未授权(JWT 令牌无效或缺失)" },
+            401: { description: "未授权(JWT 令牌无效,缺失或失效)" },
             404: { description: "用户 ID 未找到" },
         },
     }),
