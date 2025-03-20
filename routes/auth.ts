@@ -39,7 +39,7 @@ app.openapi(
             },
         },
         responses: {
-            200: {
+            201: {
                 description: "Registration successful",
                 content: {
                     "application/json": {
@@ -77,7 +77,7 @@ app.openapi(
         const result = cVerifyOk ? await authCtrl.register(email, password) : err(`NOT trigger - 'register'`);
 
         const M = new Map<S, [string, number]>([
-            [S.Ok, [`welcome! now '${email}' joined EXAM-NEXUS`, 200]],
+            [S.Ok, [`welcome! now '${email}' joined EXAM-NEXUS`, 201]],
             [S.RegErr, [`registration failed. already registered?`, 500]],
             [S.CapVerFail, [`captcha verification failed`, 400]],
             [S.CapVerErr, [`captcha CANNOT be verified`, 500]]
@@ -182,23 +182,14 @@ app.openapi(
         path: "/logout",
         tags: ["Auth"],
         responses: {
-            200: {
-                description: "Disable TOKEN",
-                content: {
-                    "application/json": {
-                        schema: z.object({
-                            message: z.string().openapi({ example: "logout" }),
-                        }),
-                    },
-                },
-            },
+            204: { description: "Disable TOKEN" },
             401: { description: "未授权(JWT 令牌无效,缺失或失效)" },
         },
     }),
     (c: any) => {
         const token = c.req.header('Authorization').split(' ')[1];
         authCtrl.logout(token)
-        return c.json({ message: `logout` });
+        return new Response(null, { status: 204 })
     },
 );
 

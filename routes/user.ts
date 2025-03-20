@@ -16,7 +16,7 @@ const UserIdListSchema = z.array(z.string()).openapi({
 app.openapi(
     createRoute({
         method: "get",
-        path: "/",
+        path: "/list",
         tags: ["User"],
         // security: [{ BearerAuth: [] }],
         responses: {
@@ -28,11 +28,12 @@ app.openapi(
                     },
                 },
             },
+            204: { description: "列表为空" },
             401: { description: "未授权(JWT 令牌无效,缺失或失效)" },
         },
     }),
-    (c: any) => {
-        return c.json(userCtrl.getUserList());
+    async (c: any) => {
+        return c.json(await userCtrl.getUserList());
     },
 );
 
@@ -59,13 +60,14 @@ app.openapi(
                     },
                 },
             },
+            400: { description: "非法输入, email格式有误?" },
             401: { description: "未授权(JWT 令牌无效,缺失或失效)" },
             404: { description: "用户 ID 未找到" },
         },
     }),
-    (c: any) => {
+    async (c: any) => {
         const email = c.req.param("email");
-        const user = userCtrl.getUserInfo(email);
+        const user = await userCtrl.getUserInfo(email);
         return user ? c.json(user) : c.text("User not found", 404);
     },
 );
