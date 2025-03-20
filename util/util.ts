@@ -1,5 +1,9 @@
 import { ok, err } from "neverthrow";
 
+export const bools2idx = (...flags: boolean[]): number => {
+    return flags.reduce((acc, flag, i) => acc | (+flag << (flags.length - 1 - i)), 0);
+}
+
 export const fileExists = async (path: string): Promise<boolean> => {
     try {
         await Deno.stat(path);

@@ -1,5 +1,5 @@
 import { assertEquals } from "jsr:@std/assert";
-import { getPublicIP, verifyHCaptcha } from "@util/util.ts"
+import { getPublicIP, verifyHCaptcha, bools2idx } from "@util/util.ts"
 
 Deno.test(async function getPubIP() {
     const ip = await getPublicIP();
@@ -14,4 +14,9 @@ Deno.test(async function verifyCaptcha() {
     } else {
         console.error("Error:", result.error);
     }
+});
+
+Deno.test(function Bools2Idx() {
+    const r = bools2idx(true, true, false)
+    console.log(r, r.toString(2).padStart(4, "0"))
 });

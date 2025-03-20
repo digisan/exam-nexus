@@ -2,7 +2,7 @@
 import authRouter from "@routes/auth.ts";
 import postRouter from "@routes/post.ts";
 import userRouter from "@routes/user.ts";
-import _testRouter from "@routes/_test.ts";
+import _testRouter from "@routes/test.ts";
 // **************************************************************** //
 import { createRoute, OpenAPIHono, z } from "@hono/zod-openapi";
 import { swaggerUI } from "@hono/swagger-ui";

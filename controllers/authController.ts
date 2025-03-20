@@ -1,3 +1,4 @@
+import { ok, err } from "neverthrow";
 import { sign } from "hono/jwt";
 import { fileExists } from "@util/util.ts";
 import { hash, verify } from "jsr:@felix/bcrypt";
@@ -19,19 +20,13 @@ export class AuthController {
 
             // check file format
             if (!Array.isArray(data)) {
-                return {
-                    success: false,
-                    message: `${email} register failed as json file format error`,
-                };
+                return err(`${email} register failed: json file format error`)
             }
 
             // check user existing status
             const exists = data.some((u) => u.email === email);
             if (exists) {
-                return {
-                    success: false,
-                    message: `${email} already registered`,
-                };
+                return err(`${email} already registered`)
             }
 
             // insert with hashed password
@@ -49,17 +44,13 @@ export class AuthController {
             );
         }
 
-        return { success: true, message: `'${email}' registered successfully` };
+        return ok(`'${email}' registered successfully`)
     }
 
     async login(email: string, password: string) {
         const filePath = "./data/users.json";
         if (!await fileExists(filePath)) {
-            return {
-                success: false,
-                message: `${email} hasn't been registered`,
-                token: "",
-            };
+            return err(`${email} hasn't been registered`)
         }
 
         const content = await Deno.readTextFile(filePath);
@@ -67,37 +58,21 @@ export class AuthController {
 
         // check file format
         if (!Array.isArray(data)) {
-            return {
-                success: false,
-                message: `${email} login failed as backend storage error`,
-                token: "",
-            };
+            return err(`${email} login failed as backend storage error`)
         }
 
         // check user existing status
         // const exists = data.some((u) => u.email === email);
         // if (!exists) {
-        //     return {
-        //         success: false,
-        //         message: `${email} hasn't been registered`,
-        //         token: "",
-        //     };
+        //     return err(`${email} hasn't been registered`)
         // }
 
         const userData = data.find((u) => u.email == email);
         if (!userData) {
-            return {
-                success: false,
-                message: `${email} hasn't been registered`,
-                token: "",
-            };
+            return err(`${email} hasn't been registered`)
         }
         if (!await verify(password, userData.password)) {
-            return {
-                success: false,
-                message: `invalid authorization info for '${email}'`,
-                token: "",
-            };
+            return err(`invalid authorization info for '${email}'`)
         }
 
         // create user session token
@@ -108,7 +83,7 @@ export class AuthController {
         };
 
         const token = await sign(payload, SIGNATUREKEY);
-        return { success: true, message: `login ok`, token: token };
+        return ok(token)
     }
 
     logout(token: string) {

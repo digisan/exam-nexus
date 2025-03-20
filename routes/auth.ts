@@ -1,6 +1,8 @@
+import { ok, err } from "neverthrow";
 import { createRoute, OpenAPIHono, z } from "@hono/zod-openapi";
-import { verifyHCaptcha } from "@util/util.ts";
+import { verifyHCaptcha, bools2idx } from "@util/util.ts";
 import { AuthController } from "@controllers/authController.ts";
+import { Status as S } from "@routes/_ENUM.ts";
 
 const app = new OpenAPIHono();
 
@@ -62,15 +64,36 @@ app.openapi(
         },
     }),
     async (c: any) => {
+
         const { email, password, captchaToken } = c.req.valid("json");
-        const result = await verifyHCaptcha(captchaToken);
-        if (result.isOk()) {
-            if (result.value) { // captcha verification result OK
-                return c.json(await authCtrl.register(email, password));
-            }
-            return c.json({ success: false, message: `captcha verification failed` }, 400); // captcha verification result FAILED
-        }
-        return c.json({ success: false, message: `captcha CANNOT be verified ${result.error}` }, 500); // captcha verification ERROR
+
+        const cResult = await verifyHCaptcha(captchaToken);
+        // const cVerifyOk = cResult.isOk() ? cResult.value : false; // prod env
+
+        // only for debug
+        let cVerifyOk = cResult.isOk() ? cResult.value : false;
+        cVerifyOk = email === 'cdutwhu@yeah.net' ? true : cVerifyOk
+
+        const result = cVerifyOk ? await authCtrl.register(email, password) : err(`NOT trigger - 'register'`);
+
+        const M = new Map<S, [string, number]>([
+            [S.Ok, [`welcome! now '${email}' joined EXAM-NEXUS`, 200]],
+            [S.RegErr, [`registration failed. already registered?`, 500]],
+            [S.CapVerFail, [`captcha verification failed`, 400]],
+            [S.CapVerErr, [`captcha CANNOT be verified`, 500]]
+        ]);
+
+        const getMsgCode = (...flags: boolean[]): [string, number] =>
+            [
+                ...new Array(4).fill(M.get(S.CapVerErr)), // 0**
+                ...new Array(2).fill(M.get(S.CapVerFail)), // 10*
+                ...new Array(1).fill(M.get(S.RegErr)), // 110
+                ...new Array(1).fill(M.get(S.Ok)), // 111
+            ][bools2idx(...flags)] || ['undefined status', 500];
+
+        const success = result.isOk()
+        const mc = getMsgCode(cResult.isOk(), cVerifyOk, result.isOk())
+        return c.json({ success, message: mc[0] }, mc[1])
     }
 );
 
@@ -118,16 +141,37 @@ app.openapi(
         },
     }),
     async (c: any) => {
+
         const { email, password, captchaToken } = c.req.valid("json");
-        const result = await verifyHCaptcha(captchaToken);
-        if (result.isOk()) {
-            if (result.value) { // captcha verification result OK
-                return c.json(await authCtrl.login(email, password));
-            }
-            return c.json({ message: `captcha verification failed`, token: "" }, 400); // captcha verification result FAILED
-        }
-        return c.json({ message: `captcha CANNOT be verified ${result.error}`, token: "" }, 500); // captcha verification ERROR
-    },
+
+        const cResult = await verifyHCaptcha(captchaToken);
+        // const cVerifyOk = cResult.isOk() ? cResult.value : false; // prod env
+
+        // only for debug
+        let cVerifyOk = cResult.isOk() ? cResult.value : false;
+        cVerifyOk = email === 'cdutwhu@yeah.net' ? true : cVerifyOk
+
+        const result = cVerifyOk ? await authCtrl.login(email, password) : err(`NOT trigger - 'login'`);
+
+        const M = new Map<S, [string, number]>([
+            [S.Ok, [`'${email}' signed in`, 200]],
+            [S.LoginErr, [`login failed. check login email or password`, 401]],
+            [S.CapVerFail, [`captcha verification failed`, 400]],
+            [S.CapVerErr, [`captcha CANNOT be verified`, 500]]
+        ]);
+
+        const getMsgCode = (...flags: boolean[]): [string, number] =>
+            [
+                ...new Array(4).fill(M.get(S.CapVerErr)), // 0**
+                ...new Array(2).fill(M.get(S.CapVerFail)), // 10*
+                ...new Array(1).fill(M.get(S.LoginErr)), // 110
+                ...new Array(1).fill(M.get(S.Ok)), // 111
+            ][bools2idx(...flags)] || ['undefined status', 500];
+
+        const token = result.isOk() ? result.value : "";
+        const mc = getMsgCode(cResult.isOk(), cVerifyOk, result.isOk());
+        return c.json({ token, message: mc[0] }, mc[1])
+    }
 );
 
 // /////////////////////////////////////////////////////////////////////////////////////
