@@ -1,8 +1,8 @@
 // ************************ AUTO GENERATED ************************ //
 import authRouter from "@routes/auth.ts";
 import postRouter from "@routes/post.ts";
+import testRouter from "@routes/test.ts";
 import userRouter from "@routes/user.ts";
-import _testRouter from "@routes/test.ts";
 // **************************************************************** //
 import { createRoute, OpenAPIHono, z } from "@hono/zod-openapi";
 import { swaggerUI } from "@hono/swagger-ui";
@@ -89,8 +89,8 @@ app.get("/docs", swaggerUI({ url: "/openapi.json" }));
 // ************************ AUTO GENERATED ************************ //
 app.route("/api/auth", authRouter);
 app.route("/api/post", postRouter);
+app.route("/api/test", testRouter);
 app.route("/api/user", userRouter);
-app.route("/api/_test", _testRouter);
 // **************************************************************** //
 
 const port = 8001;

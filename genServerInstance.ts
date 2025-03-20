@@ -47,7 +47,7 @@ async function genServerInstanceFile() {
         const routeDir = args.routes ?? "./routes"; // routes folder
         const routeFiles = [];
         for await (const dirEntry of Deno.readDir(routeDir)) {
-            if (dirEntry.isFile && dirEntry.name.endsWith(".ts")) {
+            if (dirEntry.isFile && dirEntry.name.endsWith(".ts") && !dirEntry.name.startsWith("_")) {
                 routeFiles.push(dirEntry.name);
             }
         }
