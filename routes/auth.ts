@@ -1,10 +1,19 @@
-import { ok, err } from "neverthrow";
+import { err } from "neverthrow";
 import { createRoute, OpenAPIHono, z } from "@hono/zod-openapi";
 import { verifyHCaptcha, bools2idx } from "@util/util.ts";
 import { AuthController } from "@controllers/authController.ts";
-import { Status as S } from "@routes/_ENUM.ts";
+import { createI18n } from "hono-i18n";
+import { getCookie } from "hono/cookie";
+import { msg_auth } from "@i18n/msg_auth.ts";
+
+const { i18nMiddleware, getI18n } = createI18n({
+    messages: msg_auth,
+    defaultLocale: "en-AU",
+    getLocale: (c) => getCookie(c, "locale-cookie"),
+})
 
 const app = new OpenAPIHono();
+app.use(i18nMiddleware)
 
 const authCtrl = new AuthController();
 
@@ -66,6 +75,7 @@ app.openapi(
     async (c: any) => {
 
         const { email, password, captchaToken } = c.req.valid("json");
+        const t = getI18n(c) // 获取翻译函数
 
         const cResult = await verifyHCaptcha(captchaToken);
         // const cVerifyOk = cResult.isOk() ? cResult.value : false; // prod env
@@ -74,21 +84,13 @@ app.openapi(
         let cVerifyOk = cResult.isOk() ? cResult.value : false;
         cVerifyOk = email === 'cdutwhu@yeah.net' ? true : cVerifyOk
 
-        const result = cVerifyOk ? await authCtrl.register(email, password) : err(`NOT trigger - 'register'`);
-
-        const M = new Map<S, [string, number]>([
-            [S.Ok, [`welcome! now '${email}' joined EXAM-NEXUS`, 201]],
-            [S.RegErr, [`registration failed. already registered?`, 500]],
-            [S.CapVerFail, [`captcha verification failed`, 400]],
-            [S.CapVerErr, [`captcha CANNOT be verified`, 500]]
-        ]);
-
+        const result = cVerifyOk ? await authCtrl.register(email, password, t) : err(`NOT trigger - 'register'`);
         const getMsgCode = (...flags: boolean[]): [string, number] =>
             [
-                ...new Array(4).fill(M.get(S.CapVerErr)), // 0**
-                ...new Array(2).fill(M.get(S.CapVerFail)), // 10*
-                ...new Array(1).fill(M.get(S.RegErr)), // 110
-                ...new Array(1).fill(M.get(S.Ok)), // 111
+                ...new Array(4).fill([t('register.err._'), 500]), // 0**
+                ...new Array(2).fill([t('captcha.fail'), 400]), // 10*
+                ...new Array(1).fill([t('register.fail._'), 500]), // 110
+                ...new Array(1).fill([t('register.ok._'), 201]), // 111
             ][bools2idx(...flags)] || ['undefined status', 500];
 
         const success = result.isOk()
@@ -143,6 +145,7 @@ app.openapi(
     async (c: any) => {
 
         const { email, password, captchaToken } = c.req.valid("json");
+        const t = getI18n(c) // 获取翻译函数
 
         const cResult = await verifyHCaptcha(captchaToken);
         // const cVerifyOk = cResult.isOk() ? cResult.value : false; // prod env
@@ -151,21 +154,13 @@ app.openapi(
         let cVerifyOk = cResult.isOk() ? cResult.value : false;
         cVerifyOk = email === 'cdutwhu@yeah.net' ? true : cVerifyOk
 
-        const result = cVerifyOk ? await authCtrl.login(email, password) : err(`NOT trigger - 'login'`);
-
-        const M = new Map<S, [string, number]>([
-            [S.Ok, [`'${email}' signed in`, 200]],
-            [S.LoginErr, [`login failed. check login email or password`, 401]],
-            [S.CapVerFail, [`captcha verification failed`, 400]],
-            [S.CapVerErr, [`captcha CANNOT be verified`, 500]]
-        ]);
-
+        const result = cVerifyOk ? await authCtrl.login(email, password, t) : err(`NOT trigger - 'login'`);
         const getMsgCode = (...flags: boolean[]): [string, number] =>
             [
-                ...new Array(4).fill(M.get(S.CapVerErr)), // 0**
-                ...new Array(2).fill(M.get(S.CapVerFail)), // 10*
-                ...new Array(1).fill(M.get(S.LoginErr)), // 110
-                ...new Array(1).fill(M.get(S.Ok)), // 111
+                ...new Array(4).fill([t('login.err._'), 500]), // 0**
+                ...new Array(2).fill([t('captcha.fail'), 400]), // 10*
+                ...new Array(1).fill([t('login.fail._'), 401]), // 110
+                ...new Array(1).fill([t('login.ok._'), 200]), // 111
             ][bools2idx(...flags)] || ['undefined status', 500];
 
         const token = result.isOk() ? result.value : "";

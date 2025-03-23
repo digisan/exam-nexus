@@ -12,7 +12,7 @@ export class AuthController {
         return SIGNATUREKEY
     }
 
-    async register(email: string, password: string) {
+    async register(email: string, password: string, t: Function) {
         const filePath = "./data/users.json";
         if (await fileExists(filePath)) {
             const content = await Deno.readTextFile(filePath);
@@ -20,13 +20,13 @@ export class AuthController {
 
             // check file format
             if (!Array.isArray(data)) {
-                return err(`${email} register failed: json file format error`)
+                return err(t('register.err.fmt_json'))
             }
 
             // check user existing status
             const exists = data.some((u) => u.email === email);
             if (exists) {
-                return err(`${email} already registered`)
+                return err(t('register.fail.existing'))
             }
 
             // insert with hashed password
@@ -44,13 +44,13 @@ export class AuthController {
             );
         }
 
-        return ok(`'${email}' registered successfully`)
+        return ok(t('register.ok.to_route'))
     }
 
-    async login(email: string, password: string) {
+    async login(email: string, password: string, t: Function) {
         const filePath = "./data/users.json";
         if (!await fileExists(filePath)) {
-            return err(`${email} hasn't been registered`)
+            return err(t('login.fail.not_existing'))
         }
 
         const content = await Deno.readTextFile(filePath);
@@ -58,21 +58,21 @@ export class AuthController {
 
         // check file format
         if (!Array.isArray(data)) {
-            return err(`${email} login failed as backend storage error`)
+            return err(t('login.err.fmt_json'))
         }
 
         // check user existing status
         // const exists = data.some((u) => u.email === email);
         // if (!exists) {
-        //     return err(`${email} hasn't been registered`)
+        //     return err(t('login.fail.not_existing'))
         // }
 
         const userData = data.find((u) => u.email == email);
         if (!userData) {
-            return err(`${email} hasn't been registered`)
+            return err(t('login.fail.not_existing'))
         }
         if (!await verify(password, userData.password)) {
-            return err(`invalid authorization info for '${email}'`)
+            return err(t('login.fail.verification'))
         }
 
         // create user session token

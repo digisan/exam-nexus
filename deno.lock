@@ -16,8 +16,8 @@
     "jsr:@std/internal@^1.0.5": "1.0.5",
     "jsr:@std/path@0.221": "0.221.0",
     "jsr:@supabase/supabase-js@^2.49.1": "2.49.1",
-    "npm:@hono/swagger-ui@~0.5.1": "0.5.1_hono@4.7.4",
-    "npm:@hono/zod-openapi@~0.19.2": "0.19.2_hono@4.7.4_zod@3.24.2",
+    "npm:@hono/swagger-ui@~0.5.1": "0.5.1_hono@4.7.5",
+    "npm:@hono/zod-openapi@~0.19.2": "0.19.2_hono@4.7.5_zod@3.24.2",
     "npm:@supabase/auth-js@2.68.0": "2.68.0",
     "npm:@supabase/functions-js@2.4.4": "2.4.4",
     "npm:@supabase/node-fetch@2.6.15": "2.6.15",
@@ -25,7 +25,8 @@
     "npm:@supabase/realtime-js@2.11.2": "2.11.2",
     "npm:@supabase/storage-js@2.7.1": "2.7.1",
     "npm:@types/node@*": "22.12.0",
-    "npm:hono@^4.7.4": "4.7.4",
+    "npm:hono-i18n@^1.1.1": "1.1.1",
+    "npm:hono@^4.7.5": "4.7.5",
     "npm:neverthrow@^8.2.0": "8.2.0",
     "npm:zod-openapi@^4.2.3": "4.2.3_zod@3.24.2",
     "npm:zod@^3.24.2": "3.24.2"
@@ -103,13 +104,13 @@
         "zod"
       ]
     },
-    "@hono/swagger-ui@0.5.1_hono@4.7.4": {
+    "@hono/swagger-ui@0.5.1_hono@4.7.5": {
       "integrity": "sha512-XpUCfszLJ9b1rtFdzqOSHfdg9pfBiC2J5piEjuSanYpDDTIwpMz0ciiv5N3WWUaQpz9fEgH8lttQqL41vIFuDA==",
       "dependencies": [
         "hono"
       ]
     },
-    "@hono/zod-openapi@0.19.2_hono@4.7.4_zod@3.24.2": {
+    "@hono/zod-openapi@0.19.2_hono@4.7.5_zod@3.24.2": {
       "integrity": "sha512-lkFa6wdQVgY7d7/m++Ixr3hvKCF5Y+zjTIPM37fex5ylCfX53A/W28gZRDuFZx3aR+noKob7lHfwdk9dURLzxw==",
       "dependencies": [
         "@asteasolutions/zod-to-openapi",
@@ -118,7 +119,7 @@
         "zod"
       ]
     },
-    "@hono/zod-validator@0.4.3_hono@4.7.4_zod@3.24.2": {
+    "@hono/zod-validator@0.4.3_hono@4.7.5_zod@3.24.2": {
       "integrity": "sha512-xIgMYXDyJ4Hj6ekm9T9Y27s080Nl9NXHcJkOvkXPhubOLj8hZkOL8pDnnXfvCf5xEE8Q4oMFenQUZZREUY2gqQ==",
       "dependencies": [
         "hono",
@@ -182,8 +183,17 @@
         "@types/node"
       ]
     },
-    "hono@4.7.4": {
-      "integrity": "sha512-Pst8FuGqz3L7tFF+u9Pu70eI0xa5S3LPUmrNd5Jm8nTHze9FxLTK9Kaj5g/k4UcwuJSXTP65SyHOPLrffpcAJg=="
+    "core-i18n@1.1.8": {
+      "integrity": "sha512-G99PyXvGCBKAsoR06tlJvk7aPAJpyHh8sVyOabpsLyEj0TqkwQ6Pxgn8LjcGiQUknSFU4wtVAngbPW4UjvgdCw=="
+    },
+    "hono-i18n@1.1.1": {
+      "integrity": "sha512-WzyueyQ0SpZrP1z0g3ZjUGPNEkgOra8hE27TRhcBphZbSH9sm3R6VAC3v6LoNEcnT8y5BXjetGQx+GYCKl/Xsg==",
+      "dependencies": [
+        "core-i18n"
+      ]
+    },
+    "hono@4.7.5": {
+      "integrity": "sha512-fDOK5W2C1vZACsgLONigdZTRZxuBqFtcKh7bUQ5cVSbwI2RWjloJDcgFOVzbQrlI6pCmhlTsVYZ7zpLj4m4qMQ=="
     },
     "neverthrow@8.2.0": {
       "integrity": "sha512-kOCT/1MCPAxY5iUV3wytNFUMUolzuwd/VF/1KCx7kf6CutrOsTie+84zTGTpgQycjvfLdBBdvBvFLqFD2c0wkQ==",
@@ -237,7 +247,8 @@
       "jsr:@supabase/supabase-js@^2.49.1",
       "npm:@hono/swagger-ui@~0.5.1",
       "npm:@hono/zod-openapi@~0.19.2",
-      "npm:hono@^4.7.4",
+      "npm:hono-i18n@^1.1.1",
+      "npm:hono@^4.7.5",
       "npm:neverthrow@^8.2.0",
       "npm:zod-openapi@^4.2.3",
       "npm:zod@^3.24.2"
