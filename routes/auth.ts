@@ -140,6 +140,8 @@ app.openapi(
                     },
                 },
             },
+            400: { description: "Bad Request" },
+            401: { description: "Unauthorized" }
         },
     }),
     async (c: any) => {

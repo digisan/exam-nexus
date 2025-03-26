@@ -6,40 +6,11 @@ import userRouter from "@routes/user.ts";
 // **************************************************************** //
 import { createRoute, OpenAPIHono, z } from "@hono/zod-openapi";
 import { swaggerUI } from "@hono/swagger-ui";
-import { jwt } from "hono/jwt";
-import { cors } from "hono/cors";
-import { AuthController } from "@controllers/authController.ts";
-import { rateLimitMiddleware } from "@middleware/rateLimit.ts";
+import { applyMiddleWare } from "@middleware/appUse.ts";
 
 const app = new OpenAPIHono();
-const authCtrl = new AuthController();
 
-app.use(cors({
-    origin: "*", // 允许所有来源
-    allowMethods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-    allowHeaders: ["Content-Type", "Authorization"],
-}));
-
-const mwRATE = rateLimitMiddleware(5, 1000, 10000);
-app.use("*", mwRATE);
-
-const mwJWT = jwt({ secret: authCtrl.SignatureKey });
-const authPathList = [
-    "/api/user/*",
-    "/api/auth/logout",
-];
-authPathList.forEach((item) => {
-    app.use(item, mwJWT);
-    app.use(item, async (c: any, next) => {
-        const token = c.req.header("Authorization").split(" ")[1];
-        if (authCtrl.alreadyLogout(token)) {
-            return c.json({ message: "Token is invalid" }, 401);
-        }
-        await next();
-    });
-});
-
-// **************************************************************** //
+applyMiddleWare(app);
 
 app.openapi(
     createRoute({

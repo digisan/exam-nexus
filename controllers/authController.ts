@@ -3,13 +3,13 @@ import { sign } from "hono/jwt";
 import { fileExists } from "@util/util.ts";
 import { hash, verify } from "jsr:@felix/bcrypt";
 
-const SIGNATUREKEY = "mySecretKey";
+const SIGNATURE_KEY = "mySecretKey";
 const tokenBlacklist = new Set();
 
 export class AuthController {
 
     get SignatureKey() {
-        return SIGNATUREKEY
+        return SIGNATURE_KEY
     }
 
     async register(email: string, password: string, t: Function) {
@@ -76,13 +76,17 @@ export class AuthController {
         }
 
         // create user session token
+
+        const expIn = 60 * 100 // Token expires in 100 minutes
+
         const payload = {
             sub: email,
             role: "user",
-            exp: Math.floor(Date.now() / 1000) + 60 * 100, // Token expires in 100 minutes
+            exp: Math.floor(Date.now() / 1000) + expIn,
         };
 
-        const token = await sign(payload, SIGNATUREKEY);
+        const token = await sign(payload, SIGNATURE_KEY);
+        setTimeout(() => { tokenBlacklist.delete(token); }, expIn * 1100);
         return ok(token)
     }
 

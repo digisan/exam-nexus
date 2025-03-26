@@ -32,6 +32,11 @@ export const msg_auth = {
                 __: "login successfully, token sent",
                 _: "Login successfully, token sent"
             }
+        },
+        token: {
+            fail: {
+                _: "Token is invalid"
+            }
         }
     },
     "zh-CN": {
@@ -66,6 +71,11 @@ export const msg_auth = {
             ok: {
                 __: "登录成功，令牌已发送",
                 _: "登录成功，令牌已发送"
+            }
+        },
+        token: {
+            fail: {
+                _: "令牌无效或失效"
             }
         }
     }
