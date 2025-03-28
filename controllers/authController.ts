@@ -86,7 +86,7 @@ export class AuthController {
         };
 
         const token = await sign(payload, SIGNATURE_KEY);
-        setTimeout(() => { tokenBlacklist.delete(token); }, expIn * 1100);
+        setTimeout(() => { tokenBlacklist.delete(token); }, expIn * 1100); // remove unnecessary blacklisted token
         return ok(token)
     }
 

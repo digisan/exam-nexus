@@ -130,7 +130,7 @@ app.openapi(
         },
         responses: {
             200: {
-                description: "Return TOKEN",
+                description: "Return Token",
                 content: {
                     "application/json": {
                         schema: z.object({
@@ -179,8 +179,8 @@ app.openapi(
         path: "/logout",
         tags: ["Auth"],
         responses: {
-            204: { description: "Disable TOKEN" },
-            401: { description: "未授权(JWT 令牌无效,缺失或失效)" },
+            204: { description: "Disable Token" },
+            401: { description: "Invalid Token" },
         },
     }),
     (c: any) => {
@@ -188,6 +188,21 @@ app.openapi(
         authCtrl.logout(token)
         return new Response(null, { status: 204 })
     },
+);
+
+// /////////////////////////////////////////////////////////////////////////////////////
+
+app.openapi(
+    createRoute({
+        method: "get",
+        path: "/validate-token",
+        tags: ["Auth"],
+        responses: {
+            200: { description: "Valid Token" },
+            401: { description: "Invalid Token" },
+        },
+    }),
+    (c: any) => new Response(null, { status: 200 }),
 );
 
 export default app;

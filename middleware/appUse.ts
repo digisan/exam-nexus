@@ -30,6 +30,7 @@ export const applyMiddleWare = (app: OpenAPIHono) => {
     const authPathList = [
         "/api/user/*",
         "/api/auth/logout",
+        "/api/auth/validate-token",
     ];
     authPathList.forEach((item) => {
         app.use(item, mwJWT);
