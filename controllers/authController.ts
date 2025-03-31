@@ -1,7 +1,7 @@
 import { ok, err } from "neverthrow";
 import { sign } from "hono/jwt";
 import { fileExists } from "@util/util.ts";
-import { hash, verify } from "jsr:@felix/bcrypt";
+import * as bcrypt from "jsr:@da/bcrypt";
 
 const SIGNATURE_KEY = "mySecretKey";
 const tokenBlacklist = new Set();
@@ -30,14 +30,14 @@ export class AuthController {
             }
 
             // insert with hashed password
-            data.push({ email, password: await hash(password) });
+            data.push({ email, password: await bcrypt.hash(password) });
             await Deno.writeTextFile(filePath, JSON.stringify(data, null, 4));
 
         } else {
             await Deno.writeTextFile(
                 filePath,
                 JSON.stringify(
-                    [{ email, password: await hash(password) }],
+                    [{ email, password: await bcrypt.hash(password) }],
                     null,
                     4,
                 ),
@@ -71,7 +71,7 @@ export class AuthController {
         if (!userData) {
             return err(t('login.fail.not_existing'))
         }
-        if (!await verify(password, userData.password)) {
+        if (!await bcrypt.compare(password, userData.password)) {
             return err(t('login.fail.verification'))
         }
 

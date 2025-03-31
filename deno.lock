@@ -1,20 +1,14 @@
 {
   "version": "4",
   "specifiers": {
-    "jsr:@denosaurs/plug@^1.0.6": "1.0.6",
-    "jsr:@felix/bcrypt@*": "1.0.5",
-    "jsr:@felix/bcrypt@^1.0.5": "1.0.5",
+    "jsr:@da/bcrypt@*": "1.0.1",
+    "jsr:@da/bcrypt@^1.0.1": "1.0.1",
     "jsr:@hono/hono@*": "4.7.4",
     "jsr:@hono/hono@^4.7.4": "4.7.4",
     "jsr:@std/assert@*": "1.0.11",
-    "jsr:@std/assert@0.221": "0.221.0",
     "jsr:@std/assert@^1.0.11": "1.0.11",
     "jsr:@std/cli@*": "1.0.13",
-    "jsr:@std/encoding@0.221": "0.221.0",
-    "jsr:@std/fmt@0.221": "0.221.0",
-    "jsr:@std/fs@0.221": "0.221.0",
     "jsr:@std/internal@^1.0.5": "1.0.5",
-    "jsr:@std/path@0.221": "0.221.0",
     "jsr:@supabase/supabase-js@^2.49.1": "2.49.1",
     "npm:@hono/swagger-ui@~0.5.1": "0.5.1_hono@4.7.5",
     "npm:@hono/zod-openapi@~0.19.2": "0.19.2_hono@4.7.5_zod@3.24.2",
@@ -32,26 +26,11 @@
     "npm:zod@^3.24.2": "3.24.2"
   },
   "jsr": {
-    "@denosaurs/plug@1.0.6": {
-      "integrity": "6cf5b9daba7799837b9ffbe89f3450510f588fafef8115ddab1ff0be9cb7c1a7",
-      "dependencies": [
-        "jsr:@std/encoding",
-        "jsr:@std/fmt",
-        "jsr:@std/fs",
-        "jsr:@std/path"
-      ]
-    },
-    "@felix/bcrypt@1.0.5": {
-      "integrity": "c8312e10cfda0e34c06c0d906667a0c602b472b7c64c75cfdcb44b934b885836",
-      "dependencies": [
-        "jsr:@denosaurs/plug"
-      ]
+    "@da/bcrypt@1.0.1": {
+      "integrity": "d2172d3acbcff52e0465557a1a48b1ff1c92df08c90712dae5372255a8c45eb3"
     },
     "@hono/hono@4.7.4": {
       "integrity": "c03c9cbe0fbfc4e51f3fee6502a7903aa4f9ef7c2c98635607b15eee14258825"
-    },
-    "@std/assert@0.221.0": {
-      "integrity": "a5f1aa6e7909dbea271754fd4ab3f4e687aeff4873b4cef9a320af813adb489a"
     },
     "@std/assert@1.0.11": {
       "integrity": "2461ef3c368fe88bc60e186e7744a93112f16fd110022e113a0849e94d1c83c1",
@@ -62,27 +41,8 @@
     "@std/cli@1.0.13": {
       "integrity": "5db2d95ab2dca3bca9fb6ad3c19908c314e93d6391c8b026725e4892d4615a69"
     },
-    "@std/encoding@0.221.0": {
-      "integrity": "d1dd76ef0dc5d14088411e6dc1dede53bf8308c95d1537df1214c97137208e45"
-    },
-    "@std/fmt@0.221.0": {
-      "integrity": "379fed69bdd9731110f26b9085aeb740606b20428ce6af31ef6bd45ef8efa62a"
-    },
-    "@std/fs@0.221.0": {
-      "integrity": "028044450299de8ed5a716ade4e6d524399f035513b85913794f4e81f07da286",
-      "dependencies": [
-        "jsr:@std/assert@0.221",
-        "jsr:@std/path"
-      ]
-    },
     "@std/internal@1.0.5": {
       "integrity": "54a546004f769c1ac9e025abd15a76b6671ddc9687e2313b67376125650dc7ba"
-    },
-    "@std/path@0.221.0": {
-      "integrity": "0a36f6b17314ef653a3a1649740cc8db51b25a133ecfe838f20b79a56ebe0095",
-      "dependencies": [
-        "jsr:@std/assert@0.221"
-      ]
     },
     "@supabase/supabase-js@2.49.1": {
       "integrity": "45dff81927b876287024ff8b43de8741bfe5ddf1fbaf152dd863a367bfcbd380",
@@ -241,7 +201,7 @@
   },
   "workspace": {
     "dependencies": [
-      "jsr:@felix/bcrypt@^1.0.5",
+      "jsr:@da/bcrypt@^1.0.1",
       "jsr:@hono/hono@^4.7.4",
       "jsr:@std/assert@^1.0.11",
       "jsr:@supabase/supabase-js@^2.49.1",

@@ -9,6 +9,12 @@ import { rateLimitMiddleware } from "@middleware/rateLimit.ts";
 
 export const applyMiddleWare = (app: OpenAPIHono) => {
 
+    app.use(cors({
+        origin: "*", // 允许所有来源
+        allowMethods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+        allowHeaders: ["Content-Type", "Authorization"],
+    }));
+
     const { i18nMiddleware, getI18n } = createI18n({
         messages: msg_auth,
         defaultLocale: "en-AU",
@@ -16,13 +22,7 @@ export const applyMiddleWare = (app: OpenAPIHono) => {
     })
     app.use(i18nMiddleware)
 
-    app.use(cors({
-        origin: "*", // 允许所有来源
-        allowMethods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-        allowHeaders: ["Content-Type", "Authorization"],
-    }));
-
-    const mwRATE = rateLimitMiddleware(5, 1000, 10000);
+    const mwRATE = rateLimitMiddleware(10, 1000, 10000);
     app.use("*", mwRATE);
 
     const authCtrl = new AuthController();
@@ -33,7 +33,9 @@ export const applyMiddleWare = (app: OpenAPIHono) => {
         "/api/auth/validate-token",
     ];
     authPathList.forEach((item) => {
+        // standard JWT
         app.use(item, mwJWT);
+        // manual logout blacklist check
         app.use(item, async (c: any, next) => {
             const t = getI18n(c) // 获取翻译函数
             const token = c.req.header("Authorization").split(" ")[1];
