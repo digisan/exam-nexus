@@ -93,9 +93,8 @@ app.openapi(
                 ...new Array(1).fill([t('register.ok._'), 201]), // 111
             ][bools2idx(...flags)] || ['undefined status', 500];
 
-        const success = result.isOk()
         const mc = getMsgCode(cResult.isOk(), cVerifyOk, result.isOk())
-        return c.json({ success, message: mc[0] }, mc[1])
+        return c.json({ success: result.isOk(), message: mc[0] }, mc[1])
     }
 );
 

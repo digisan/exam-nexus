@@ -1,5 +1,9 @@
 import { ok, err } from "neverthrow";
 
+export const createSafeI18nT = (f?: Function) => {
+    return (args: any) => (f ? f(args) : args);
+};
+
 export const bools2idx = (...flags: boolean[]): number => {
     return flags.reduce((acc, flag, i) => acc | (+flag << (flags.length - 1 - i)), 0);
 }
