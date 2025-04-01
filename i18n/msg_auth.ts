@@ -11,7 +11,7 @@ export const msg_auth = {
             },
             fail: {
                 existing: "already registered",
-                _: "Invalid email or password."
+                _: "Invalid register information."
             },
             ok: {
                 __: "registered successfully",
@@ -26,7 +26,7 @@ export const msg_auth = {
             fail: {
                 not_existing: "not registered yet",
                 verification: "incorrect email or password",
-                _: "Incorrect email or password"
+                _: "Incorrect login information"
             },
             ok: {
                 __: "login successfully, token sent",
@@ -51,7 +51,7 @@ export const msg_auth = {
             },
             fail: {
                 existing: "已注册",
-                _: "无效的邮箱或密码"
+                _: "无效的注册信息"
             },
             ok: {
                 __: "注册成功",
@@ -66,7 +66,7 @@ export const msg_auth = {
             fail: {
                 not_existing: "尚未注册",
                 verification: "邮箱或密码错误",
-                _: "邮箱或密码错误"
+                _: "登录信息无效"
             },
             ok: {
                 __: "登录成功，令牌已发送",

@@ -1,6 +1,6 @@
 import { err } from "neverthrow";
 import { createRoute, OpenAPIHono, z } from "@hono/zod-openapi";
-import { verifyHCaptcha, bools2idx } from "@util/util.ts";
+import { verifyHCaptcha, bools2idx, isFatalErr } from "@util/util.ts";
 import { AuthController } from "@controllers/authController.ts";
 import { createI18n } from "hono-i18n";
 import { getCookie } from "hono/cookie";
@@ -85,15 +85,22 @@ app.openapi(
         cVerifyOk = email === 'cdutwhu@yeah.net' ? true : cVerifyOk
 
         const result = cVerifyOk ? await authCtrl.register(email, password, t) : err(`NOT trigger - 'register'`);
+
         const getMsgCode = (...flags: boolean[]): [string, number] =>
             [
-                ...new Array(4).fill([t('register.err._'), 500]), // 0**
-                ...new Array(2).fill([t('captcha.fail'), 400]), // 10*
-                ...new Array(1).fill([t('register.fail._'), 500]), // 110
-                ...new Array(1).fill([t('register.ok._'), 201]), // 111
+                ...new Array(8).fill([t('register.err._'), 500]), //  0***
+                ...new Array(4).fill([t('captcha.fail'), 400]), //    10**
+                ...new Array(2).fill([t('register.err._'), 500]), //  110*
+                ...new Array(1).fill([t('register.fail._'), 500]), // 1110
+                ...new Array(1).fill([t('register.ok._'), 201]), //   1111
             ][bools2idx(...flags)] || ['undefined status', 500];
 
-        const mc = getMsgCode(cResult.isOk(), cVerifyOk, result.isOk())
+        const mc = getMsgCode(
+            cResult.isOk(),
+            cVerifyOk,
+            isFatalErr(result),
+            result.isOk()
+        );
         return c.json({ success: result.isOk(), message: mc[0] }, mc[1])
     }
 );
@@ -156,17 +163,24 @@ app.openapi(
         cVerifyOk = email === 'cdutwhu@yeah.net' ? true : cVerifyOk
 
         const result = cVerifyOk ? await authCtrl.login(email, password, t) : err(`NOT trigger - 'login'`);
+
         const getMsgCode = (...flags: boolean[]): [string, number] =>
             [
-                ...new Array(4).fill([t('login.err._'), 500]), // 0**
-                ...new Array(2).fill([t('captcha.fail'), 400]), // 10*
-                ...new Array(1).fill([t('login.fail._'), 401]), // 110
-                ...new Array(1).fill([t('login.ok._'), 200]), // 111
+                ...new Array(8).fill([t('login.err._'), 500]), //  0***
+                ...new Array(4).fill([t('captcha.fail'), 400]), // 10**
+                ...new Array(2).fill([t('login.err._'), 500]), //  110*
+                ...new Array(1).fill([t('login.fail._'), 401]), // 1110
+                ...new Array(1).fill([t('login.ok._'), 200]), //   1111
             ][bools2idx(...flags)] || ['undefined status', 500];
 
-        const token = result.isOk() ? result.value : "";
-        const mc = getMsgCode(cResult.isOk(), cVerifyOk, result.isOk());
-        return c.json({ token, message: mc[0] }, mc[1])
+        const mc = getMsgCode(
+            cResult.isOk(),
+            cVerifyOk,
+            isFatalErr(result),
+            result.isOk()
+        );
+
+        return c.json({ token: result.isOk() ? result.value : "", message: mc[0] }, mc[1])
     }
 );
 

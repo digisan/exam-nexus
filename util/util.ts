@@ -1,8 +1,8 @@
-import { ok, err } from "neverthrow";
+import { ok, err, Result } from "neverthrow";
 
-export const createSafeI18nT = (f?: Function) => {
-    return (args: any) => (f ? f(args) : args);
-};
+export const isFatalErr = (r: Result<string, Error>) => r.isErr() && r.error.message.toLowerCase().includes('fatal');
+
+export const createSafeI18nT = (f?: Function) => (args: any) => (f ? f(args) : args);
 
 export const bools2idx = (...flags: boolean[]): number => {
     return flags.reduce((acc, flag, i) => acc | (+flag << (flags.length - 1 - i)), 0);
@@ -44,7 +44,7 @@ export const verifyHCaptcha = async (token: string) => {
         });
         const captchaVerifyData = await captchaVerifyRes.json();
         return ok(captchaVerifyData.success)
-    } catch (error) {
-        return err(`HCaptcha服务器错误: ${error}`)
+    } catch (e) {
+        return err(`HCaptcha服务器错误: ${e}`)
     }
 }

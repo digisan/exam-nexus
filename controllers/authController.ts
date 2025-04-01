@@ -51,7 +51,8 @@ export class AuthController {
             return ok(t('register.ok.to_route'))
 
         } catch (e) {
-            return err(e)
+            // log here ...
+            return err(`fatal: ${e}`)
         }
     }
 
@@ -103,7 +104,8 @@ export class AuthController {
             return ok(token)
 
         } catch (e) {
-            return err(e)
+            // log here ...
+            return err(`fatal: ${e}`)
         }
     }
 
