@@ -70,6 +70,7 @@ app.openapi(
                     },
                 },
             },
+            500: { description: "Internal Deno Server Error" }
         },
     }),
     async (c: any) => {
@@ -147,7 +148,8 @@ app.openapi(
                 },
             },
             400: { description: "Bad Request" },
-            401: { description: "Unauthorized" }
+            401: { description: "Unauthorized" },
+            500: { description: "Internal Deno Server Error" }
         },
     }),
     async (c: any) => {
@@ -194,6 +196,7 @@ app.openapi(
         responses: {
             204: { description: "Disable Token" },
             401: { description: "Invalid Token" },
+            500: { description: "Internal Deno Server Error" }
         },
     }),
     (c: any) => {
@@ -213,6 +216,7 @@ app.openapi(
         responses: {
             200: { description: "Valid Token" },
             401: { description: "Invalid Token" },
+            500: { description: "Internal Deno Server Error" }
         },
     }),
     (c: any) => new Response(null, { status: 200 }),

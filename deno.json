@@ -16,7 +16,8 @@
         "@controllers/": "./controllers/",
         "@middleware/": "./middleware/",
         "@db/": "./db/",
-        "@i18n/": "./i18n/"
+        "@i18n/": "./i18n/",
+        "@secret/": "./secret/"
     },
     "tasks": {
         "start": "deno run --allow-net main.ts"

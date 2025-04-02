@@ -1,5 +1,8 @@
 import { ok, err, Result } from "neverthrow";
 
+const HCAPTCHA_SECRET = Deno.env.get("HCAPTCHA_SECRET");
+const HCAPTCHA_VERIFY_URL = Deno.env.get("HCAPTCHA_VERIFY_URL");
+
 export const isFatalErr = (r: Result<string, Error>) => r.isErr() && r.error.message.toLowerCase().includes('fatal');
 
 export const createSafeI18nT = (f?: Function) => (args: any) => (f ? f(args) : args);
@@ -29,10 +32,12 @@ export const getPublicIP = async () => {
     return await response.text();
 }
 
-const HCAPTCHA_VERIFY_URL = "https://api.hcaptcha.com/siteverify"
-const HCAPTCHA_SECRET = "ES_d9b1e2678035429d92d31e64f99227b6"; // hCaptcha 私钥
-
 export const verifyHCaptcha = async (token: string) => {
+
+    if (!HCAPTCHA_SECRET || !HCAPTCHA_VERIFY_URL) {
+        return err(`fatal: HCAPTCHA_SECRET and HCAPTCHA_VERIFY_URL must be provided!`)
+    }
+
     try {
         const captchaVerifyRes = await fetch(HCAPTCHA_VERIFY_URL, {
             method: "POST",

@@ -1,13 +1,10 @@
 import { createClient } from "@supabase/supabase-js";
 
-Deno.env.set('SUPABASE_URL', 'https://njtznkkjfdamxepxjzmj.supabase.co')
-Deno.env.set('SUPABASE_KEY', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5qdHpua2tqZmRhbXhlcHhqem1qIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDA2MzczMTgsImV4cCI6MjA1NjIxMzMxOH0.IDu55DGOQGR2vdgUFoEJabuyytIUYFTc1OEIQwPMdlk')
-
 const SUPABASE_URL = Deno.env.get("SUPABASE_URL");
 const SUPABASE_KEY = Deno.env.get("SUPABASE_KEY");
 
 if (!SUPABASE_URL || !SUPABASE_KEY) {
-    throw new Error("请设置 SUPABASE_URL 和 SUPABASE_KEY");
+    throw new Error("SUPABASE_URL and SUPABASE_KEY must be provided");
 }
 
 const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);

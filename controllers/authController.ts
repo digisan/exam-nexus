@@ -3,7 +3,7 @@ import { sign } from "hono/jwt";
 import { fileExists, createSafeI18nT } from "@util/util.ts";
 import * as bcrypt from "jsr:@da/bcrypt";
 
-const SIGNATURE_KEY = "mySecretKey";
+const SIGNATURE_KEY = Deno.env.get("SIGNATURE_KEY");
 const tokenBlacklist = new Set();
 
 export class AuthController {
@@ -99,6 +99,9 @@ export class AuthController {
                 exp: Math.floor(Date.now() / 1000) + expIn,
             };
 
+            if (!SIGNATURE_KEY) {
+                return err(`fatal: SIGNATURE_KEY must be provided!`)
+            }
             const token = await sign(payload, SIGNATURE_KEY);
             ct && setTimeout(() => { tokenBlacklist.delete(token); }, expIn * 1100); // remove unnecessary blacklisted token if real
             return ok(token)
