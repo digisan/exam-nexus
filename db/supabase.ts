@@ -1,4 +1,5 @@
-import { createClient } from "@supabase/supabase-js";
+import { createClient } from "@supabase/supabase-js"
+await import('@secret/const.ts')
 
 const SUPABASE_URL = Deno.env.get("SUPABASE_URL");
 const SUPABASE_KEY = Deno.env.get("SUPABASE_KEY");
@@ -34,5 +35,14 @@ export class SupabaseAgent {
         } else {
             console.log("查询结果:", data);
         }
+    }
+
+    async getTableCount() {
+        const { data, error } = await supabase.rpc('count_tables');
+        if (error) {
+            console.error('查询失败:', error);
+            return;
+        }
+        console.log('表格数量:', data);
     }
 }

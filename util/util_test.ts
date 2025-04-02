@@ -1,4 +1,4 @@
-import { assertEquals } from "jsr:@std/assert";
+import { assertEquals } from "jsr:@std/assert"
 import { getPublicIP, verifyHCaptcha, bools2idx } from "@util/util.ts"
 
 Deno.test(async function getPubIP() {

@@ -1,6 +1,7 @@
-import { createRoute, OpenAPIHono, z } from "@hono/zod-openapi";
-import { swaggerUI } from "@hono/swagger-ui";
-import { applyMiddleWare } from "@middleware/appUse.ts";
+import { createRoute, OpenAPIHono, z } from "@hono/zod-openapi"
+import { swaggerUI } from "@hono/swagger-ui"
+import { applyMiddleWare } from "@middleware/appUse.ts"
+await import('@secret/const.ts')
 
 const app = new OpenAPIHono();
 
@@ -55,11 +56,6 @@ app.get("/docs", swaggerUI({ url: "/openapi.json" }));
 // ROUTER.USE... //
 // **************************************************************** //
 
-const port = 8001;
-const server = Deno.serve({ port: port }, app.fetch);
-
-// **************************************************************** //
-
 // 监听终止信号
 const shutdown = async () => {
     console.log("Received shutdown signal. Shutting down...");
@@ -74,3 +70,8 @@ const shutdown = async () => {
 Deno.addSignalListener("SIGINT", shutdown);
 Deno.addSignalListener("SIGBREAK", shutdown);
 // Deno.addSignalListener("SIGTERM", shutdown); // only for linux
+
+// **************************************************************** //
+
+const port = 8001;
+const server = Deno.serve({ port: port }, app.fetch);

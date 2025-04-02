@@ -9,3 +9,7 @@ Deno.env.set('HCAPTCHA_VERIFY_URL', HCAPTCHA_VERIFY_URL)
 Deno.env.set('HCAPTCHA_SECRET', HCAPTCHA_SECRET)
 Deno.env.set('SUPABASE_URL', SUPABASE_URL)
 Deno.env.set('SUPABASE_KEY', SUPABASE_KEY)
+
+// console.log('init env variables')
+
+export { };

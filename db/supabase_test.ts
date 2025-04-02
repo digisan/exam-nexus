@@ -1,4 +1,4 @@
-import { SupabaseAgent } from "@db/supabase.ts";
+import { SupabaseAgent } from "@db/supabase.ts"
 
 Deno.test(async function InsertMessage() {
     const sa = new SupabaseAgent();
@@ -8,5 +8,11 @@ Deno.test(async function InsertMessage() {
 Deno.test(async function GetMessage() {
     const sa = new SupabaseAgent();
     const r = await sa.getMessages()
+    console.log(r)
+});
+
+Deno.test(async function GetTableCount() {
+    const sa = new SupabaseAgent();
+    const r = await sa.getTableCount()
     console.log(r)
 });
