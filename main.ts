@@ -4,10 +4,10 @@ import postRouter from "@routes/post.ts";
 import testRouter from "@routes/test.ts";
 import userRouter from "@routes/user.ts";
 // **************************************************************** //
-import { createRoute, OpenAPIHono, z } from "@hono/zod-openapi"
-import { swaggerUI } from "@hono/swagger-ui"
-import { applyMiddleWare } from "@middleware/appUse.ts"
-await import('@secret/const.ts')
+import { createRoute, OpenAPIHono, z } from "@hono/zod-openapi";
+import { swaggerUI } from "@hono/swagger-ui";
+import { applyMiddleWare } from "@middleware/appUse.ts";
+await import("@secret/const.ts");
 
 const app = new OpenAPIHono();
 
