@@ -31,7 +31,7 @@ export class SupabaseAgent {
         return error ? err(error) : ok(data);
     }
 
-    async PgVersion() {
+    async PgVer() {
         return await this.executeSQL(`SELECT json_build_object('version', version())`); // make one returning object
     }
 
@@ -43,7 +43,7 @@ export class SupabaseAgent {
         return await this.executeSQL(`SELECT COUNT(*) FROM pg_tables WHERE schemaname = 'public'`);
     }
 
-    async AllTables() {
+    async TableList() {
         return await this.executeSQL(`SELECT json_agg(tablename) FROM pg_tables WHERE schemaname = 'public'`); // group [value] from single column
     }
 

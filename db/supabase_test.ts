@@ -6,13 +6,13 @@ Deno.test(async function ExecuteSQL() {
     console.log(r)
 });
 
-Deno.test(async function PgVersion() {
+Deno.test(async function PgVer() {
     const sa = new SupabaseAgent();
-    const r = await sa.PgVersion()
+    const r = await sa.PgVer()
     console.log(r)
 });
 
-Deno.test(async function GetDbInfo() {
+Deno.test(async function DbInfo() {
     const sa = new SupabaseAgent();
     const r = await sa.DbInfo()
     console.log(r)
@@ -24,9 +24,9 @@ Deno.test(async function TableCount() {
     console.log(r)
 });
 
-Deno.test(async function AllTables() {
+Deno.test(async function TableList() {
     const sa = new SupabaseAgent();
-    const r = await sa.AllTables()
+    const r = await sa.TableList()
     console.log(r)
 });
 
@@ -53,7 +53,7 @@ Deno.test(async function SupaBase() {
     const sb = sa.getSupaBase();
     const { data, error } = await sb
         .from("general")
-        .select("*")
+        .select("id, data")
         .gt('id', 10)
         .order("created_at", { ascending: true });
 
