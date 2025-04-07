@@ -14,5 +14,13 @@
     {
         "email": "cdutwhu@outlook.com",
         "password": "$2b$12$duoqR8LScThX1VNNWS5q1eN/grxd1/NzWK2uL3L6Pf20UVjoPPUci"
+    },
+    {
+        "email": "123@qq.com",
+        "password": "$2a$10$JHU8l2txTnt.savJpoz0FeXDZalryRguxuMQ.xzyaHx2T5dyiYLGq"
+    },
+    {
+        "email": "1234@qq.com",
+        "password": "$2a$10$2qCkQXBfv6KRFOaEU.V1nekkpAvbJOtURemFoaS/FLxulq3a3P.aW"
     }
 ]

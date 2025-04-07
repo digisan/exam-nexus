@@ -1,4 +1,4 @@
-import { SupabaseAgent } from "@db/supabase.ts"
+import { SupabaseAgent } from "@db/dbService.ts"
 
 Deno.test(async function ExecuteSQL() {
     const sa = new SupabaseAgent();
@@ -32,20 +32,22 @@ Deno.test(async function TableList() {
 
 Deno.test(async function TableContent() {
     const sa = new SupabaseAgent();
-    const r = await sa.TableContent('general')
+    const r = await sa.TableContent('register')
     console.log(r)
 });
 
-Deno.test(async function InsertObject() {
+Deno.test(async function InsertDataRow() {
     const sa = new SupabaseAgent();
-    const r = await sa.InsertObject('general', { user: "abc", password: "asdfweradf" })
+    const r = await sa.insertDataRow('register', { user: "abc", password: "asdfweradf" })
     console.log(r)
 });
 
-Deno.test(async function DeleteObject() {
+Deno.test(async function DeleteDataRow() {
     const sa = new SupabaseAgent();
-    const r = await sa.DeleteObject('general', 40)
-    console.log(r)
+    for (let i = 10; i < 50; i++) {
+        const r = await sa.deleteDataRow('register', i)
+        console.log(i, r)
+    }
 });
 
 Deno.test(async function SupaBase() {

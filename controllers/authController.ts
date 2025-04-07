@@ -1,10 +1,12 @@
 import { ok, err } from "neverthrow";
 import { sign } from "hono/jwt";
-import { fileExists, createSafeI18nT } from "@util/util.ts";
 import * as bcrypt from "jsr:@da/bcrypt";
+import { createSafeI18nT } from "@util/util.ts";
+import { SupabaseAgent } from "@db/dbService.ts";
 
 const SIGNATURE_KEY = Deno.env.get("SIGNATURE_KEY");
 const tokenBlacklist = new Set();
+const RegTable = 'register';
 
 export class AuthController {
 
@@ -12,43 +14,28 @@ export class AuthController {
         return SIGNATURE_KEY
     }
 
-    async register(email: string, password: string, ct?: Function) {
-
+    async register(credentials: { email: string; password: string }, ct?: Function) {
         try {
-
             const t = createSafeI18nT(ct);
-            const filePath = "./data/users.json";
-
-            if (await fileExists(filePath)) {
-                const content = await Deno.readTextFile(filePath);
-                const data = JSON.parse(content);
-
-                // check file format
-                if (!Array.isArray(data)) {
-                    return err(t('register.err.fmt_json'))
+            const sa = new SupabaseAgent();
+            const rg = await sa.getSingleRowData(RegTable);
+            if (rg.isOk()) {
+                if (!Array.isArray(rg.value)) {
+                    if (rg.value && rg.value.email === credentials.email) {
+                        return err(t('register.fail.existing'))
+                    }
+                } else {
+                    if (rg.value.some((u) => u.email === credentials.email)) {
+                        return err(t('register.fail.existing'))
+                    }
                 }
-
-                // check user existing status
-                const exists = data.some((u) => u.email === email);
-                if (exists) {
-                    return err(t('register.fail.existing'))
+                const ra = await sa.appendSingleRowData(RegTable, { email: credentials.email, password: await bcrypt.hash(credentials.password) })
+                if (ra.isOk()) {
+                    return ok(t('register.ok.to_route'))
                 }
-
-                // insert with hashed password
-                data.push({ email, password: await bcrypt.hash(password) });
-                await Deno.writeTextFile(filePath, JSON.stringify(data, null, 4));
-
-            } else {
-                await Deno.writeTextFile(
-                    filePath,
-                    JSON.stringify(
-                        [{ email, password: await bcrypt.hash(password) }],
-                        null,
-                        4,
-                    ),
-                );
+                return err(ra.error)
             }
-            return ok(t('register.ok.to_route'))
+            return err(rg.error)
 
         } catch (e) {
             // log here ...
@@ -56,55 +43,47 @@ export class AuthController {
         }
     }
 
-    async login(email: string, password: string, ct?: Function) {
+    private async genToken(email: string) {
+        const expIn = 60 * 100 // Token expires in 100 minutes
+        const payload = {
+            sub: email,
+            role: "user",
+            exp: Math.floor(Date.now() / 1000) + expIn,
+        };
+        if (!SIGNATURE_KEY) {
+            return err(`fatal: SIGNATURE_KEY must be provided!`)
+        }
+        const token = await sign(payload, SIGNATURE_KEY);
+        setTimeout(() => { tokenBlacklist.delete(token); }, expIn * 1100); // remove unnecessary blacklisted token if real
+        return ok(token)
+    }
 
+    async login(credentials: { email: string; password: string }, ct?: Function) {
         try {
-
             const t = createSafeI18nT(ct);
-            const filePath = "./data/users.json";
-
-            if (!await fileExists(filePath)) {
-                return err(t('login.fail.not_existing'))
+            const sa = new SupabaseAgent();
+            const rg = await sa.getSingleRowData(RegTable);
+            if (rg.isOk()) {
+                if (Array.isArray(rg.value)) {
+                    const user = rg.value.find((u) => u.email === credentials.email);
+                    if (!user) {
+                        return err(t('login.fail.not_existing'))
+                    }
+                    if (!await bcrypt.compare(credentials.password, user.password)) {
+                        return err(t('login.fail.verification'))
+                    }
+                    return this.genToken(credentials.email)
+                } else {
+                    if (rg.value?.email === credentials.email) {
+                        if (!await bcrypt.compare(credentials.password, rg.value.password)) {
+                            return err(t('login.fail.verification'))
+                        }
+                        return this.genToken(credentials.email)
+                    }
+                    return err(t('login.fail.not_existing'))
+                }
             }
-
-            const content = await Deno.readTextFile(filePath);
-            const data = JSON.parse(content);
-
-            // check file format
-            if (!Array.isArray(data)) {
-                return err(t('login.err.fmt_json'))
-            }
-
-            // check user existing status
-            // const exists = data.some((u) => u.email === email);
-            // if (!exists) {
-            //     return err(t('login.fail.not_existing'))
-            // }
-
-            const userData = data.find((u) => u.email == email);
-            if (!userData) {
-                return err(t('login.fail.not_existing'))
-            }
-            if (!await bcrypt.compare(password, userData.password)) {
-                return err(t('login.fail.verification'))
-            }
-
-            // create user session token
-
-            const expIn = 60 * 100 // Token expires in 100 minutes
-
-            const payload = {
-                sub: email,
-                role: "user",
-                exp: Math.floor(Date.now() / 1000) + expIn,
-            };
-
-            if (!SIGNATURE_KEY) {
-                return err(`fatal: SIGNATURE_KEY must be provided!`)
-            }
-            const token = await sign(payload, SIGNATURE_KEY);
-            ct && setTimeout(() => { tokenBlacklist.delete(token); }, expIn * 1100); // remove unnecessary blacklisted token if real
-            return ok(token)
+            return err(rg.error)
 
         } catch (e) {
             // log here ...
