@@ -1,12 +1,8 @@
-import { ok, err, Result } from "neverthrow"
+import { ok, err } from "neverthrow"
 await import('@secret/const.ts')
 
 const HCAPTCHA_SECRET = Deno.env.get("HCAPTCHA_SECRET");
 const HCAPTCHA_VERIFY_URL = Deno.env.get("HCAPTCHA_VERIFY_URL");
-
-export const isFatalErr = (r: Result<string, Error>) => r.isErr() && r.error.message.toLowerCase().includes('fatal');
-
-export const createSafeI18nT = (f?: Function) => (args: any) => (f ? f(args) : args);
 
 export const bools2idx = (...flags: boolean[]): number => {
     return flags.reduce((acc, flag, i) => acc | (+flag << (flags.length - 1 - i)), 0);
