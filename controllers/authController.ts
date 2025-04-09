@@ -1,7 +1,7 @@
 import { ok, err, Result } from "neverthrow";
 import { sign } from "hono/jwt";
 import * as bcrypt from "jsr:@da/bcrypt";
-import { createSafeI18nT } from "@i18n/msg_auth.ts";
+import { createSafeI18nT } from "@i18n/util.ts";
 import { SupabaseAgent } from "@db/dbService.ts";
 
 const SIGNATURE_KEY = Deno.env.get("SIGNATURE_KEY");
@@ -19,6 +19,8 @@ export class AuthController {
     constructor(agent?: SupabaseAgent) {
         this.agent = agent ?? new SupabaseAgent();
     }
+
+    SignatureKey(): string { return SIGNATURE_KEY ?? "" }
 
     async register(credentials: { email: string; password: string }, ct?: Function): Promise<Result<string, string>> {
         const t = createSafeI18nT(ct);
@@ -68,7 +70,7 @@ export class AuthController {
         }
     }
 
-    private async genToken(email: string) {
+    private async genToken(email: string): Promise<Result<string, string>> {
 
         const expiresInSeconds = 60 * 100; // 100 minutes
         const exp = Math.floor(Date.now() / 1000) + expiresInSeconds;
@@ -131,7 +133,7 @@ export class AuthController {
         tokenBlacklist.add(token);
     }
 
-    alreadyLogout(token: string) {
+    alreadyLogout(token: string): boolean {
         return tokenBlacklist.has(token)
     }
 }

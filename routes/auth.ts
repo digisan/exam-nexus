@@ -1,10 +1,11 @@
 import { err } from "neverthrow";
 import { createRoute, OpenAPIHono, z } from "@hono/zod-openapi";
-import { verifyHCaptcha, bools2idx, isFatalErr } from "@util/util.ts";
+import { verifyHCaptcha, bools2idx } from "@util/util.ts";
 import { AuthController } from "@controllers/authController.ts";
 import { createI18n } from "hono-i18n";
 import { getCookie } from "hono/cookie";
 import { msg_auth } from "@i18n/msg_auth.ts";
+import { isFatalErr } from "@i18n/util.ts";
 
 const { i18nMiddleware, getI18n } = createI18n({
     messages: msg_auth,
@@ -85,7 +86,7 @@ app.openapi(
         let cVerifyOk = cResult.isOk() ? cResult.value : false;
         cVerifyOk = email === 'cdutwhu@yeah.net' ? true : cVerifyOk
 
-        const result = cVerifyOk ? await authCtrl.register(email, password, t) : err(`NOT trigger - 'register'`);
+        const result = cVerifyOk ? await authCtrl.register({ email, password }, t) : err(`NOT trigger - 'register'`);
 
         const getMsgCode = (...flags: boolean[]): [string, number] =>
             [
@@ -164,7 +165,7 @@ app.openapi(
         let cVerifyOk = cResult.isOk() ? cResult.value : false;
         cVerifyOk = email === 'cdutwhu@yeah.net' ? true : cVerifyOk
 
-        const result = cVerifyOk ? await authCtrl.login(email, password, t) : err(`NOT trigger - 'login'`);
+        const result = cVerifyOk ? await authCtrl.login({ email, password }, t) : err(`NOT trigger - 'login'`);
 
         const getMsgCode = (...flags: boolean[]): [string, number] =>
             [

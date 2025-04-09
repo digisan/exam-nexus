@@ -1,7 +1,8 @@
 import { ok, err } from "neverthrow";
 import { sign } from "hono/jwt";
 import * as bcrypt from "jsr:@da/bcrypt";
-import { fileExists, createSafeI18nT } from "@util/util.ts";
+import { fileExists } from "@util/util.ts";
+import { createSafeI18nT } from "@i18n/util.ts";
 
 const SIGNATURE_KEY = Deno.env.get("SIGNATURE_KEY");
 const tokenBlacklist = new Set();

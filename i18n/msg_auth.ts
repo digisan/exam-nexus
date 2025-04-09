@@ -1,9 +1,3 @@
-import { Result } from "neverthrow"
-
-export const isFatalErr = (r: Result<string, Error>) => r.isErr() && r.error.message.toLowerCase().includes('fatal');
-
-export const createSafeI18nT = (f?: Function) => (args: any) => (f ? f(args) : args);
-
 export const msg_auth = {
     "en-AU": {
         captcha: {

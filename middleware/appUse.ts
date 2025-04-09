@@ -26,7 +26,7 @@ export const applyMiddleWare = (app: OpenAPIHono) => {
     app.use("*", mwRATE);
 
     const authCtrl = new AuthController();
-    const mwJWT = jwt({ secret: authCtrl.SignatureKey });
+    const mwJWT = jwt({ secret: authCtrl.SignatureKey() });
     const authPathList = [
         "/api/user/*",
         "/api/auth/logout",

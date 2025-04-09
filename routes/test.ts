@@ -1,6 +1,6 @@
 import { createRoute, OpenAPIHono, z } from "@hono/zod-openapi";
 import { getConnInfo } from 'hono/deno'
-import { SupabaseAgent } from "@db/supabase.ts";
+import { SupabaseAgent } from "@db/dbService.ts";
 import { getPublicIP } from "@util/util.ts";
 
 const app = new OpenAPIHono();
@@ -51,7 +51,7 @@ app.openapi(
         },
     }),
     async (c) => {
-        await sb_agent.insertMessage("my test message");
+        await sb_agent.insertDataRow("messages", { msg: "my test message" });
         return c.text("insert test message to supabase table success");
     },
 );
