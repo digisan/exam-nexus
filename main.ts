@@ -31,8 +31,8 @@ app.openapi(
                 },
             },
         },
-    }),
-    (c: any) => c.text("hello exam-nexus"),
+    } as const),
+    (c) => c.text("hello exam-nexus"),
 );
 
 // Swagger UI [Authorize] Button

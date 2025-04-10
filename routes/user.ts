@@ -32,7 +32,7 @@ app.openapi(
             401: { description: "未授权(JWT 令牌无效,缺失或失效)" },
         },
     }),
-    async (c: any) => {
+    async (c) => {
         return c.json(await userCtrl.getUserList());
     },
 );
@@ -65,7 +65,7 @@ app.openapi(
             404: { description: "用户 ID 未找到" },
         },
     }),
-    async (c: any) => {
+    async (c) => {
         const email = c.req.param("email");
         const user = await userCtrl.getUserInfo(email);
         return user ? c.json(user) : c.text("User not found", 404);

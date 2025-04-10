@@ -6,6 +6,7 @@ import { createI18n } from "hono-i18n";
 import { getCookie } from "hono/cookie";
 import { msg_auth } from "@i18n/msg_auth.ts";
 import { isFatalErr } from "@i18n/util.ts";
+import { StatusCode } from "http-status-code";
 
 const { i18nMiddleware, getI18n } = createI18n({
     messages: msg_auth,
@@ -73,8 +74,8 @@ app.openapi(
             },
             500: { description: "Internal Deno Server Error" }
         },
-    }),
-    async (c: any) => {
+    } as const),
+    async (c) => {
 
         const { email, password, captchaToken } = c.req.valid("json");
         const t = getI18n(c) // 获取翻译函数
@@ -88,7 +89,7 @@ app.openapi(
 
         const result = cVerifyOk ? await authCtrl.register({ email, password }, t) : err(`NOT trigger - 'register'`);
 
-        const getMsgCode = (...flags: boolean[]): [string, number] =>
+        const getMsgCode = (...flags: boolean[]): [string, StatusCode] =>
             [
                 ...new Array(8).fill([t('register.err._'), 500]), //  0***
                 ...new Array(4).fill([t('captcha.fail'), 400]), //    10**
@@ -152,8 +153,8 @@ app.openapi(
             401: { description: "Unauthorized" },
             500: { description: "Internal Deno Server Error" }
         },
-    }),
-    async (c: any) => {
+    } as const),
+    async (c) => {
 
         const { email, password, captchaToken } = c.req.valid("json");
         const t = getI18n(c) // 获取翻译函数
@@ -167,7 +168,7 @@ app.openapi(
 
         const result = cVerifyOk ? await authCtrl.login({ email, password }, t) : err(`NOT trigger - 'login'`);
 
-        const getMsgCode = (...flags: boolean[]): [string, number] =>
+        const getMsgCode = (...flags: boolean[]): [string, StatusCode] =>
             [
                 ...new Array(8).fill([t('login.err._'), 500]), //  0***
                 ...new Array(4).fill([t('captcha.fail'), 400]), // 10**
@@ -194,14 +195,23 @@ app.openapi(
         method: "post",
         path: "/logout",
         tags: ["Auth"],
+        request: {
+            headers: z.object({
+                Authorization: z.string().openapi({
+                    description: "Bearer token",
+                    example: "Bearer xxx.yyy.zzz",
+                }),
+            }),
+        },
         responses: {
             204: { description: "Disable Token" },
             401: { description: "Invalid Token" },
             500: { description: "Internal Deno Server Error" }
         },
-    }),
-    (c: any) => {
-        const token = c.req.header('Authorization').split(' ')[1];
+    } as const),
+    (c) => {
+        const { Authorization } = c.req.valid('header') // ✅ 自动校验，不再 undefined
+        const token = Authorization.split(' ')[1]
         authCtrl.logout(token)
         return new Response(null, { status: 204 })
     },
@@ -209,18 +219,18 @@ app.openapi(
 
 // /////////////////////////////////////////////////////////////////////////////////////
 
-app.openapi(
-    createRoute({
-        method: "get",
-        path: "/validate-token",
-        tags: ["Auth"],
-        responses: {
-            200: { description: "Valid Token" },
-            401: { description: "Invalid Token" },
-            500: { description: "Internal Deno Server Error" }
-        },
-    }),
-    (c: any) => new Response(null, { status: 200 }),
-);
+// app.openapi(
+//     createRoute({
+//         method: "get",
+//         path: "/validate-token",
+//         tags: ["Auth"],
+//         responses: {
+//             200: { description: "Valid Token" },
+//             401: { description: "Invalid Token" },
+//             500: { description: "Internal Deno Server Error" }
+//         },
+//     } as const),
+//     (_c) => new Response(null, { status: 200 }),
+// );
 
 export default app;

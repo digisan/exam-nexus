@@ -25,7 +25,7 @@ app.openapi(
                 },
             },
         },
-    }),
+    } as const),
     (c) => {
         const SUPABASE_URL = Deno.env.get("SUPABASE_URL") ?? "";
         const SUPABASE_KEY = Deno.env.get("SUPABASE_KEY") ?? "";
@@ -49,9 +49,9 @@ app.openapi(
                 },
             },
         },
-    }),
+    } as const),
     async (c) => {
-        await sb_agent.insertDataRow("messages", { msg: "my test message" });
+        await sb_agent.insertDataRow("general", { msg: "my test message" });
         return c.text("insert test message to supabase table success");
     },
 );
@@ -77,7 +77,7 @@ app.openapi(
                 },
             },
         },
-    }),
+    } as const),
     async (c) => {
         return c.json({ ip: await getPublicIP() });
     },
@@ -104,7 +104,7 @@ app.openapi(
                 },
             },
         },
-    }),
+    } as const),
     (c) => {
         const info = getConnInfo(c)
         return c.json({ ip: info.remote.address ?? "" });

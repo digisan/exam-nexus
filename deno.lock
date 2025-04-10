@@ -21,6 +21,7 @@
     "npm:@types/node@*": "22.12.0",
     "npm:hono-i18n@^1.1.1": "1.1.1",
     "npm:hono@^4.7.5": "4.7.5",
+    "npm:http-status-code@^2.1.0": "2.1.0",
     "npm:neverthrow@^8.2.0": "8.2.0",
     "npm:zod-openapi@^4.2.3": "4.2.3_zod@3.24.2",
     "npm:zod@^3.24.2": "3.24.2"
@@ -155,6 +156,12 @@
     "hono@4.7.5": {
       "integrity": "sha512-fDOK5W2C1vZACsgLONigdZTRZxuBqFtcKh7bUQ5cVSbwI2RWjloJDcgFOVzbQrlI6pCmhlTsVYZ7zpLj4m4qMQ=="
     },
+    "http-status-code@2.1.0": {
+      "integrity": "sha512-xlSRDG0i4j2HDR85FW2VGxFBo9GB1LpBp37/gldjrS5ZlAaHp1h0dbq96crIN/D0ur1jAa75ACrN8WezebLXSw==",
+      "dependencies": [
+        "strip-json-comments"
+      ]
+    },
     "neverthrow@8.2.0": {
       "integrity": "sha512-kOCT/1MCPAxY5iUV3wytNFUMUolzuwd/VF/1KCx7kf6CutrOsTie+84zTGTpgQycjvfLdBBdvBvFLqFD2c0wkQ==",
       "dependencies": [
@@ -166,6 +173,9 @@
       "dependencies": [
         "yaml"
       ]
+    },
+    "strip-json-comments@1.0.4": {
+      "integrity": "sha512-AOPG8EBc5wAikaG1/7uFCNFJwnKOuQwFTpYBdTW6OvWHeZBQBrAA/amefHGrEiOnCPcLFZK6FUPtWVKpQVIRgg=="
     },
     "tr46@0.0.3": {
       "integrity": "sha512-N3WMsuqV66lT30CrXNbEjx4GEwlow3v6rr4mCcv6prnfwhS01rkgyFdjPNBYd9br7LpXV1+Emh01fHnq2Gdgrw=="
@@ -209,6 +219,7 @@
       "npm:@hono/zod-openapi@~0.19.2",
       "npm:hono-i18n@^1.1.1",
       "npm:hono@^4.7.5",
+      "npm:http-status-code@^2.1.0",
       "npm:neverthrow@^8.2.0",
       "npm:zod-openapi@^4.2.3",
       "npm:zod@^3.24.2"
