@@ -2,7 +2,8 @@ import { ok, err } from "neverthrow";
 import { sign } from "hono/jwt";
 import * as bcrypt from "jsr:@da/bcrypt";
 import { fileExists } from "@util/util.ts";
-import { createSafeI18nT } from "@i18n/util.ts";
+import { createSaferT } from "@i18n/util.ts";
+import type { SafeT } from "@i18n/msg_auth_t.ts";
 
 const SIGNATURE_KEY = Deno.env.get("SIGNATURE_KEY");
 const tokenBlacklist = new Set();
@@ -14,9 +15,9 @@ export class AuthControllerLocal {
         return SIGNATURE_KEY
     }
 
-    async register(credentials: { email: string; password: string }, ct?: Function) {
+    async register(credentials: { email: string; password: string }, ct?: SafeT) {
         try {
-            const t = createSafeI18nT(ct);
+            const t = createSaferT(ct);
             if (await fileExists(localFilePath)) {
                 const content = await Deno.readTextFile(localFilePath);
                 const data = JSON.parse(content);
@@ -69,9 +70,9 @@ export class AuthControllerLocal {
         return ok(token)
     }
 
-    async login(credentials: { email: string; password: string }, ct?: Function) {
+    async login(credentials: { email: string; password: string }, ct?: SafeT) {
         try {
-            const t = createSafeI18nT(ct);
+            const t = createSaferT(ct);
             if (!await fileExists(localFilePath)) {
                 return err(t('login.fail.not_existing'))
             }

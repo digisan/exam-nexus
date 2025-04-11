@@ -38,7 +38,7 @@ export const msg_auth = {
                 _: "Token is invalid"
             }
         }
-    },
+    } as const,
     "zh-CN": {
         captcha: {
             err: "验证码无法验证，因第三方访问错误",
@@ -78,5 +78,41 @@ export const msg_auth = {
                 _: "令牌无效或失效"
             }
         }
-    }
+    } as const
 }
+
+// import { flatten } from 'flat'
+
+// function flattenToMap(obj: Record<string, any>): Map<string, any> {
+//     const flat = flatten(obj) as Record<string, any>;
+//     return new Map(Object.entries(flat));
+// }
+
+// function generateConstKeysToFile(map: Map<string, any>, filename: string) {
+//     const keys = Array.from(map.keys());
+//     const content1 = `const keys = ${JSON.stringify(keys, null, 4)} as const;\n\n`;
+//     const content2 = `export type TranslationKey = typeof keys[number];\n\n`;
+//     const content3 = `export type SafeT = (key: TranslationKey, params?: Record<string, unknown>) => string;`;
+//     Deno.writeTextFileSync(filename, content1 + content2 + content3);
+//     console.log(`Keys written to ${filename}`);
+// }
+
+// function validateTransKeys(m1: Map<string, any>, m2: Map<string, any>) {
+//     const keys1 = new Set(Array.from(m1.keys()))
+//     const keys2 = new Set(Array.from(m2.keys()))
+//     if (keys1.size !== keys2.size) return false;
+//     for (const item of keys1) {
+//         if (!keys2.has(item)) return false;
+//     }
+//     return true;
+// }
+
+// const m_en = flattenToMap(msg_auth['en-AU'])
+// const m_zh = flattenToMap(msg_auth['zh-CN'])
+
+// if (validateTransKeys(m_en, m_zh)) {
+//     generateConstKeysToFile(flattenToMap(msg_auth['zh-CN']), "./msg_auth_t.ts")
+// } else {
+//     throw new Error("validateTransKeys went wrong");
+// }
+

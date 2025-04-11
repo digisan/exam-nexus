@@ -19,6 +19,7 @@
     "npm:@supabase/realtime-js@2.11.2": "2.11.2",
     "npm:@supabase/storage-js@2.7.1": "2.7.1",
     "npm:@types/node@*": "22.12.0",
+    "npm:flat@^6.0.1": "6.0.1",
     "npm:hono-i18n@^1.1.1": "1.1.1",
     "npm:hono@^4.7.5": "4.7.5",
     "npm:http-status-code@^2.1.0": "2.1.0",
@@ -147,6 +148,9 @@
     "core-i18n@1.1.8": {
       "integrity": "sha512-G99PyXvGCBKAsoR06tlJvk7aPAJpyHh8sVyOabpsLyEj0TqkwQ6Pxgn8LjcGiQUknSFU4wtVAngbPW4UjvgdCw=="
     },
+    "flat@6.0.1": {
+      "integrity": "sha512-/3FfIa8mbrg3xE7+wAhWeV+bd7L2Mof+xtZb5dRDKZ+wDvYJK4WDYeIOuOhre5Yv5aQObZrlbRmk3RTSiuQBtw=="
+    },
     "hono-i18n@1.1.1": {
       "integrity": "sha512-WzyueyQ0SpZrP1z0g3ZjUGPNEkgOra8hE27TRhcBphZbSH9sm3R6VAC3v6LoNEcnT8y5BXjetGQx+GYCKl/Xsg==",
       "dependencies": [
@@ -217,6 +221,7 @@
       "jsr:@supabase/supabase-js@^2.49.1",
       "npm:@hono/swagger-ui@~0.5.1",
       "npm:@hono/zod-openapi@~0.19.2",
+      "npm:flat@^6.0.1",
       "npm:hono-i18n@^1.1.1",
       "npm:hono@^4.7.5",
       "npm:http-status-code@^2.1.0",

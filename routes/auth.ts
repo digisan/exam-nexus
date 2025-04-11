@@ -1,10 +1,11 @@
-import { err } from "neverthrow";
+import { ok, err, Result } from "neverthrow";
 import { createRoute, OpenAPIHono, z } from "@hono/zod-openapi";
-import { verifyHCaptcha, bools2idx } from "@util/util.ts";
+import { verifyHCaptcha, bools2idx, len, lastElem, true2err, false2err } from "@util/util.ts";
 import { AuthController } from "@controllers/authController.ts";
 import { createI18n } from "hono-i18n";
 import { getCookie } from "hono/cookie";
 import { msg_auth } from "@i18n/msg_auth.ts";
+import type { TranslationKey, SafeT } from "@i18n/msg_auth_t.ts";
 import { isFatalErr } from "@i18n/util.ts";
 import { StatusCode } from "http-status-code";
 
@@ -13,6 +14,22 @@ const { i18nMiddleware, getI18n } = createI18n({
     defaultLocale: "en-AU",
     getLocale: (c) => getCookie(c, "locale-cookie"),
 })
+
+const getMsgCode = (listMsgCode: [Result<any, string>, TranslationKey, StatusCode][], t: SafeT): [string, StatusCode] => {
+    if (len(listMsgCode) === 0) {
+        return ['listMsgCode is empty', 500]
+    }
+    for (const [_i, mc] of listMsgCode.entries()) {
+        if (mc[0].isErr()) {
+            return [t(mc[1]), mc[2]]
+        }
+    }
+    const last = lastElem(listMsgCode)
+    if (last && last[0].isOk()) {
+        return [t(last[1]), last[2]]
+    }
+    return ['missing last OK status from listMsgCode', 500]
+}
 
 const app = new OpenAPIHono();
 app.use(i18nMiddleware)
@@ -78,32 +95,31 @@ app.openapi(
     async (c) => {
 
         const { email, password, captchaToken } = c.req.valid("json");
-        const t = getI18n(c) // 获取翻译函数
+        const t = getI18n(c) as SafeT // 获取翻译函数
 
-        const cResult = await verifyHCaptcha(captchaToken);
-        // const cVerifyOk = cResult.isOk() ? cResult.value : false; // prod env
+        const cAccessResult = await verifyHCaptcha(captchaToken);
 
-        // only for debug
-        let cVerifyOk = cResult.isOk() ? cResult.value : false;
-        cVerifyOk = email === 'cdutwhu@yeah.net' ? true : cVerifyOk
+        let cVerifyResult: Result<boolean, string>;
+        if (cAccessResult.isOk()) {
+            if (email.startsWith(`c`)) {
+                cVerifyResult = ok(true)  // only for debug !!!
+            } else {
+                cVerifyResult = false2err(cAccessResult.value, "captcha failed"); // only this line in prod
+            }
+        } else {
+            cVerifyResult = err(cAccessResult.error); // 原始错误
+        }
 
-        const result = cVerifyOk ? await authCtrl.register({ email, password }, t) : err(`NOT trigger - 'register'`);
-
-        const getMsgCode = (...flags: boolean[]): [string, StatusCode] =>
-            [
-                ...new Array(8).fill([t('register.err._'), 500]), //  0***
-                ...new Array(4).fill([t('captcha.fail'), 400]), //    10**
-                ...new Array(2).fill([t('register.err._'), 500]), //  110*
-                ...new Array(1).fill([t('register.fail._'), 500]), // 1110
-                ...new Array(1).fill([t('register.ok._'), 201]), //   1111
-            ][bools2idx(...flags)] || ['undefined status', 500];
-
-        const mc = getMsgCode(
-            cResult.isOk(),
-            cVerifyOk,
-            isFatalErr(result),
-            result.isOk()
-        );
+        const result = cVerifyResult.isOk() ? await authCtrl.register({ email, password }, t) : err(`NOT trigger - 'register'`);
+        const isFatalResult = true2err(isFatalErr(result), 'fatal at register');
+        const listMsgCode: [Result<string | boolean, string>, TranslationKey, StatusCode][] = [
+            [cAccessResult, 'register.err._', 500],
+            [cVerifyResult, 'captcha.fail', 400],
+            [isFatalResult, 'register.err._', 500],
+            [result, 'register.fail._', 500],
+            [result, 'register.ok._', 201],
+        ]
+        const mc = getMsgCode(listMsgCode, t);
         return c.json({ success: result.isOk(), message: mc[0] }, mc[1])
     }
 );

@@ -1,5 +1,8 @@
 import { Result } from "neverthrow"
+import type { SafeT } from "@i18n/msg_auth_t.ts";
 
-export const isFatalErr = (r: Result<string, string>) => r.isErr() && r.error.toLowerCase().includes('fatal');
+export const isFatalErr = (r: Result<any, string>) => r.isErr() && r.error.toLowerCase().includes('fatal');
 
-export const createSafeI18nT = (f?: Function) => (args: any) => (f ? f(args) : args);
+export const isNotFatal = (r: Result<any, string>) => !isFatalErr(r);
+
+export const createSaferT = (f?: SafeT) => (args: any) => (f ? f(args) : args);

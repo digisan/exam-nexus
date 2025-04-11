@@ -1,7 +1,8 @@
 import { ok, err, Result } from "neverthrow";
 import { sign } from "hono/jwt";
 import * as bcrypt from "jsr:@da/bcrypt";
-import { createSafeI18nT } from "@i18n/util.ts";
+import { createSaferT } from "@i18n/util.ts";
+import type { SafeT } from "@i18n/msg_auth_t.ts";
 import { SupabaseAgent } from "@db/dbService.ts";
 
 const SIGNATURE_KEY = Deno.env.get("SIGNATURE_KEY");
@@ -22,8 +23,8 @@ export class AuthController {
 
     SignatureKey(): string { return SIGNATURE_KEY ?? "" }
 
-    async register(credentials: { email: string; password: string }, ct?: Function): Promise<Result<string, string>> {
-        const t = createSafeI18nT(ct);
+    async register(credentials: { email: string; password: string }, ct?: SafeT): Promise<Result<string, string>> {
+        const t = createSaferT(ct);
 
         // Step 1: 校验邮箱格式
         if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(credentials.email)) {
@@ -100,9 +101,9 @@ export class AuthController {
         return data?.email === email ? data : null;
     }
 
-    async login(credentials: { email: string; password: string }, ct?: Function): Promise<Result<string, string>> {
+    async login(credentials: { email: string; password: string }, ct?: SafeT): Promise<Result<string, string>> {
 
-        const t = createSafeI18nT(ct);
+        const t = createSaferT(ct);
 
         try {
             const rg = await this.agent.getSingleRowData(RegTable);
