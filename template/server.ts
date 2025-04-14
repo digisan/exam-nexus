@@ -8,24 +8,26 @@ const app = new OpenAPIHono();
 applyMiddleWare(app);
 
 app.openapi(
-    createRoute({
-        method: "get",
-        path: "/",
-        summary: "Root API",
-        description: "hello exam-nexus",
-        tags: ["Root"],
-        security: [], // without swagger UI jwt security
-        responses: {
-            200: {
-                description: "return 'hello exam-nexus'",
-                content: {
-                    "text/plain": {
-                        schema: z.string(),
+    createRoute(
+        {
+            method: "get",
+            path: "/",
+            summary: "Root API",
+            description: "hello exam-nexus",
+            tags: ["Root"],
+            security: [], // without swagger UI jwt security
+            responses: {
+                200: {
+                    description: "return 'hello exam-nexus'",
+                    content: {
+                        "text/plain": {
+                            schema: z.string(),
+                        },
                     },
                 },
             },
-        },
-    } as const),
+        } as const,
+    ),
     (c) => c.text("hello exam-nexus"),
 );
 

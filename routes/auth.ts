@@ -48,52 +48,54 @@ const RegisterRequestBody = z.object({
 
 // 创建 OpenAPI 路由
 app.openapi(
-    createRoute({
-        method: "post",
-        path: "/register",
-        tags: ["Auth"],
-        security: [], // without swagger UI jwt security
-        request: {
-            body: {
-                description: "Register request body",
-                content: {
-                    "application/json": {
-                        schema: RegisterRequestBody,
-                        example: { // 添加测试参数输入
-                            email: "john.doe@example.com",
-                            password: "secure-password-123",
-                            captchaToken: "valid_captcha_token",
+    createRoute(
+        {
+            method: "post",
+            path: "/register",
+            tags: ["Auth"],
+            security: [], // without swagger UI jwt security
+            request: {
+                body: {
+                    description: "Register request body",
+                    content: {
+                        "application/json": {
+                            schema: RegisterRequestBody,
+                            example: { // 添加测试参数输入
+                                email: "john.doe@example.com",
+                                password: "secure-password-123",
+                                captchaToken: "valid_captcha_token",
+                            },
                         },
                     },
                 },
             },
-        },
-        responses: {
-            201: {
-                description: "Registration successful",
-                content: {
-                    "application/json": {
-                        schema: z.object({
-                            success: z.boolean().openapi({ example: true }),
-                            message: z.string().openapi({ example: "registered" }),
-                        }),
+            responses: {
+                201: {
+                    description: "Registration successful",
+                    content: {
+                        "application/json": {
+                            schema: z.object({
+                                success: z.boolean().openapi({ example: true }),
+                                message: z.string().openapi({ example: "registered" }),
+                            }),
+                        },
                     },
                 },
-            },
-            400: {
-                description: "Bad request", // 邮箱格式错误, 密码太弱, 用户已存在
-                content: {
-                    "application/json": {
-                        schema: z.object({
-                            success: z.boolean().openapi({ example: false }),
-                            message: z.string().openapi({ example: "failed" }),
-                        }),
+                400: {
+                    description: "Bad request", // 邮箱格式错误, 密码太弱, 用户已存在
+                    content: {
+                        "application/json": {
+                            schema: z.object({
+                                success: z.boolean().openapi({ example: false }),
+                                message: z.string().openapi({ example: "failed" }),
+                            }),
+                        },
                     },
                 },
+                500: { description: "Internal Deno Server Error" } // 数据库异常, 邮件服务崩溃 等
             },
-            500: { description: "Internal Deno Server Error" } // 数据库异常, 邮件服务崩溃 等
-        },
-    } as const),
+        } as const,
+    ),
     async (c) => {
 
         const { email, password, captchaToken } = c.req.valid("json");
@@ -137,43 +139,45 @@ const LoginRequestBody = z.object({
 });
 
 app.openapi(
-    createRoute({
-        method: "post",
-        path: "/login",
-        tags: ["Auth"],
-        security: [], // without swagger UI jwt security
-        request: {
-            body: {
-                description: "Login request body",
-                content: {
-                    "application/json": {
-                        schema: LoginRequestBody,
-                        example: { // 添加测试参数输入
-                            email: "john.doe@example.com",
-                            password: "password123",
-                            captchaToken: "valid_captcha_token",
+    createRoute(
+        {
+            method: "post",
+            path: "/login",
+            tags: ["Auth"],
+            security: [], // without swagger UI jwt security
+            request: {
+                body: {
+                    description: "Login request body",
+                    content: {
+                        "application/json": {
+                            schema: LoginRequestBody,
+                            example: { // 添加测试参数输入
+                                email: "john.doe@example.com",
+                                password: "password123",
+                                captchaToken: "valid_captcha_token",
+                            },
                         },
                     },
                 },
             },
-        },
-        responses: {
-            200: {
-                description: "Return Token",
-                content: {
-                    "application/json": {
-                        schema: z.object({
-                            message: z.string().openapi({ example: "ok" }),
-                            token: z.string().openapi({ example: "token string" }),
-                        }),
+            responses: {
+                200: {
+                    description: "Return Token",
+                    content: {
+                        "application/json": {
+                            schema: z.object({
+                                message: z.string().openapi({ example: "ok" }),
+                                token: z.string().openapi({ example: "token string" }),
+                            }),
+                        },
                     },
                 },
+                400: { description: "Bad Request" }, // 参数缺失
+                401: { description: "Unauthorized" }, // 账号或密码错误
+                500: { description: "Internal Deno Server Error" }
             },
-            400: { description: "Bad Request" }, // 参数缺失
-            401: { description: "Unauthorized" }, // 账号或密码错误
-            500: { description: "Internal Deno Server Error" }
-        },
-    } as const),
+        } as const,
+    ),
     async (c) => {
 
         const { email, password, captchaToken } = c.req.valid("json");
@@ -211,24 +215,26 @@ app.openapi(
 // /////////////////////////////////////////////////////////////////////////////////////
 
 app.openapi(
-    createRoute({
-        method: "post",
-        path: "/logout",
-        tags: ["Auth"],
-        request: {
-            headers: z.object({
-                Authorization: z.string().openapi({
-                    description: "Bearer token",
-                    example: "Bearer xxx.yyy.zzz",
+    createRoute(
+        {
+            method: "post",
+            path: "/logout",
+            tags: ["Auth"],
+            request: {
+                headers: z.object({
+                    Authorization: z.string().openapi({
+                        description: "Bearer token",
+                        example: "Bearer xxx.yyy.zzz",
+                    }),
                 }),
-            }),
-        },
-        responses: {
-            204: { description: "Disable Token" },
-            401: { description: "Invalid Token" }, // 未登录或 token 失效
-            500: { description: "Internal Deno Server Error" }
-        },
-    } as const),
+            },
+            responses: {
+                204: { description: "Disable Token" },
+                401: { description: "Invalid Token" }, // 未登录或 token 失效
+                500: { description: "Internal Deno Server Error" }
+            },
+        } as const,
+    ),
     (c) => {
         const { Authorization } = c.req.valid('header') // ✅ 自动校验，不再 undefined
         const token = Authorization.split(' ')[1]
@@ -239,18 +245,21 @@ app.openapi(
 
 // /////////////////////////////////////////////////////////////////////////////////////
 
-// app.openapi(
-//     createRoute({
-//         method: "get",
-//         path: "/validate-token",
-//         tags: ["Auth"],
-//         responses: {
-//             200: { description: "Valid Token" },
-//             401: { description: "Invalid Token" },
-//             500: { description: "Internal Deno Server Error" }
-//         },
-//     } as const),
-//     (_c) => new Response(null, { status: 200 }),
-// );
+// for front-end checking token when it's page routing
+app.openapi(
+    createRoute(
+        {
+            method: "get",
+            path: "/validate-token",
+            tags: ["Auth"],
+            responses: {
+                200: { description: "Valid Token" },
+                401: { description: "Invalid Token" },
+                500: { description: "Internal Deno Server Error" }
+            },
+        } as const,
+    ),
+    (_c) => new Response(null, { status: 200 }),
+);
 
 export default app;

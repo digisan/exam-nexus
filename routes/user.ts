@@ -14,24 +14,26 @@ const UserIdListSchema = z.array(z.string()).openapi({
 
 // 定义 API 路由，并关联 OpenAPI 规范
 app.openapi(
-    createRoute({
-        method: "get",
-        path: "/list",
-        tags: ["User"],
-        // security: [{ BearerAuth: [] }],
-        responses: {
-            200: {
-                description: "返回所有用户的 ID 列表",
-                content: {
-                    "application/json": {
-                        schema: UserIdListSchema,
+    createRoute(
+        {
+            method: "get",
+            path: "/list",
+            tags: ["User"],
+            // security: [{ BearerAuth: [] }],
+            responses: {
+                200: {
+                    description: "返回所有用户的 ID 列表",
+                    content: {
+                        "application/json": {
+                            schema: UserIdListSchema,
+                        },
                     },
                 },
+                204: { description: "列表为空" },
+                401: { description: "未授权(JWT 令牌无效,缺失或失效)" },
             },
-            204: { description: "列表为空" },
-            401: { description: "未授权(JWT 令牌无效,缺失或失效)" },
-        },
-    }),
+        } as const,
+    ),
     async (c) => {
         return c.json(await userCtrl.getUserList());
     },
@@ -43,28 +45,30 @@ const UserSchema = z.object({
 });
 
 app.openapi(
-    createRoute({
-        method: "get",
-        path: "/{email}",
-        tags: ["User"],
-        // security: [{ BearerAuth: [] }],
-        request: {
-            params: z.object({ email: z.string().email() }),
-        },
-        responses: {
-            200: {
-                description: "返回所有用户的 ID 列表",
-                content: {
-                    "application/json": {
-                        schema: UserSchema,
+    createRoute(
+        {
+            method: "get",
+            path: "/{email}",
+            tags: ["User"],
+            // security: [{ BearerAuth: [] }],
+            request: {
+                params: z.object({ email: z.string().email() }),
+            },
+            responses: {
+                200: {
+                    description: "返回所有用户的 ID 列表",
+                    content: {
+                        "application/json": {
+                            schema: UserSchema,
+                        },
                     },
                 },
+                400: { description: "非法输入, email格式有误?" },
+                401: { description: "未授权(JWT 令牌无效,缺失或失效)" },
+                404: { description: "用户 ID 未找到" },
             },
-            400: { description: "非法输入, email格式有误?" },
-            401: { description: "未授权(JWT 令牌无效,缺失或失效)" },
-            404: { description: "用户 ID 未找到" },
-        },
-    }),
+        } as const,
+    ),
     async (c) => {
         const email = c.req.param("email");
         const user = await userCtrl.getUserInfo(email);
