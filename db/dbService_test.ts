@@ -62,3 +62,10 @@ Deno.test(async function SupaBase() {
     error && console.error(error)
     data && console.log(data)
 });
+
+Deno.test(async function InsertTextRow() {
+    const sa = new SupabaseAgent();
+    const r = await sa.insertTextRow('messages', "hello")
+    console.log(typeof r)
+    console.log(r.isOk() ? r.value.content : r.error)
+});

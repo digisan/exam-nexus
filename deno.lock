@@ -1,8 +1,6 @@
 {
   "version": "4",
   "specifiers": {
-    "jsr:@da/bcrypt@*": "1.0.1",
-    "jsr:@da/bcrypt@^1.0.1": "1.0.1",
     "jsr:@hono/hono@*": "4.7.4",
     "jsr:@hono/hono@^4.7.4": "4.7.4",
     "jsr:@std/assert@*": "1.0.11",
@@ -19,6 +17,8 @@
     "npm:@supabase/realtime-js@2.11.2": "2.11.2",
     "npm:@supabase/storage-js@2.7.1": "2.7.1",
     "npm:@types/node@*": "22.12.0",
+    "npm:bcrypt-ts@*": "6.0.0",
+    "npm:bcrypt-ts@6": "6.0.0",
     "npm:flat@^6.0.1": "6.0.1",
     "npm:hono-i18n@^1.1.1": "1.1.1",
     "npm:hono@^4.7.5": "4.7.5",
@@ -28,9 +28,6 @@
     "npm:zod@^3.24.2": "3.24.2"
   },
   "jsr": {
-    "@da/bcrypt@1.0.1": {
-      "integrity": "d2172d3acbcff52e0465557a1a48b1ff1c92df08c90712dae5372255a8c45eb3"
-    },
     "@hono/hono@4.7.4": {
       "integrity": "c03c9cbe0fbfc4e51f3fee6502a7903aa4f9ef7c2c98635607b15eee14258825"
     },
@@ -145,6 +142,9 @@
         "@types/node"
       ]
     },
+    "bcrypt-ts@6.0.0": {
+      "integrity": "sha512-P6B36krzeMDEIzG2o2SiDxHCSHeWF2Fvj/Kvmr5gAMBs6jpKfU/9LPXkrd4Ztp3reeq9nNZEU3DQq/e0xZ1T9w=="
+    },
     "core-i18n@1.1.8": {
       "integrity": "sha512-G99PyXvGCBKAsoR06tlJvk7aPAJpyHh8sVyOabpsLyEj0TqkwQ6Pxgn8LjcGiQUknSFU4wtVAngbPW4UjvgdCw=="
     },
@@ -215,12 +215,12 @@
   },
   "workspace": {
     "dependencies": [
-      "jsr:@da/bcrypt@^1.0.1",
       "jsr:@hono/hono@^4.7.4",
       "jsr:@std/assert@^1.0.11",
       "jsr:@supabase/supabase-js@^2.49.1",
       "npm:@hono/swagger-ui@~0.5.1",
       "npm:@hono/zod-openapi@~0.19.2",
+      "npm:bcrypt-ts@6",
       "npm:flat@^6.0.1",
       "npm:hono-i18n@^1.1.1",
       "npm:hono@^4.7.5",

@@ -1,6 +1,6 @@
 import { ok, err, Result } from "neverthrow";
 import { sign } from "hono/jwt";
-import * as bcrypt from "jsr:@da/bcrypt";
+import { hash, compare } from "npm:bcrypt-ts";
 import { createSaferT } from "@i18n/util.ts";
 import type { SafeT } from "@i18n/msg_auth_t.ts";
 import { SupabaseAgent } from "@db/dbService.ts";
@@ -9,6 +9,7 @@ import { isEmail } from "@util/util.ts";
 const SIGNATURE_KEY = Deno.env.get("SIGNATURE_KEY");
 const tokenBlacklist = new Set();
 const RegTable = 'register';
+const DebugTable = 'messages';
 const MIN_PASSWORD_LENGTH = 3;
 
 type Object = Record<string, any>;
@@ -57,7 +58,7 @@ export class AuthController {
 
             const ra = await this.agent.appendSingleRowData(RegTable, {
                 email: credentials.email,
-                password: await bcrypt.hash(credentials.password),
+                password: await hash(credentials.password, 10),
                 registered_at: new Date().toISOString(),
             })
             if (ra.isErr()) {
@@ -68,6 +69,8 @@ export class AuthController {
 
         } catch (e) {
             // log here ...
+            await this.agent.insertTextRow(DebugTable, `catch - ${e}`)
+            // 
             return err(`fatal: registering failed: ${e}`)
         }
     }
@@ -118,7 +121,7 @@ export class AuthController {
                 return err(t('login.fail.verification'));
             }
 
-            const passwordMatch = await bcrypt.compare(credentials.password, user.password);
+            const passwordMatch = await compare(credentials.password, user.password);
             if (!passwordMatch) {
                 return err(t('login.fail.verification'));
             }

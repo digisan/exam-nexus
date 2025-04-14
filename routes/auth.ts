@@ -1,6 +1,6 @@
 import { ok, err, Result } from "neverthrow";
 import { createRoute, OpenAPIHono, z } from "@hono/zod-openapi";
-import { verifyHCaptcha, bools2idx, len, lastElem, true2err, false2err } from "@util/util.ts";
+import { verifyHCaptcha, len, lastElem, true2err, false2err } from "@util/util.ts";
 import { AuthController } from "@controllers/authController.ts";
 import { createI18n } from "hono-i18n";
 import { getCookie } from "hono/cookie";
@@ -8,6 +8,8 @@ import { msg_auth } from "@i18n/msg_auth.ts";
 import type { TranslationKey, SafeT } from "@i18n/msg_auth_t.ts";
 import { isFatalErr } from "@i18n/util.ts";
 import { StatusCode } from "http-status-code";
+// import { SupabaseAgent } from "@db/dbService.ts";
+// const sa = new SupabaseAgent();
 
 const { i18nMiddleware, getI18n } = createI18n({
     messages: msg_auth,

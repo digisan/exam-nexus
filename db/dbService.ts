@@ -139,4 +139,18 @@ export class SupabaseAgent {
         if (!data) return err('Delete succeeded but no data returned');
         return ok(data);
     }
+
+    ////////////////////////////////////////////////////////////////////////////////////////
+
+    async insertTextRow(table: string, value: string): Promise<Result<Object, string>> {
+        const { data, error } = await supabase
+            .from(table)
+            .insert({ content: value })
+            .select()
+            .single();
+
+        if (error) return err(error.message);
+        if (!data) return err('Insert succeeded but no data returned');
+        return ok(data);
+    }
 }
