@@ -97,17 +97,19 @@ app.openapi(
         const { email, password, captchaToken } = c.req.valid("json");
         const t = getI18n(c) as SafeT // 获取翻译函数
 
-        const cAccessResult = await verifyHCaptcha(captchaToken);
-
+        let cAccessResult: Result<boolean, string>;
         let cVerifyResult: Result<boolean, string>;
-        if (cAccessResult.isOk()) {
-            if (email.startsWith(`c`)) {
-                cVerifyResult = ok(true)  // only for debug !!!
-            } else {
-                cVerifyResult = false2err(cAccessResult.value, "captcha failed"); // only this line in prod
-            }
+
+        if (email.startsWith(`c`)) {
+            cAccessResult = ok(true)
+            cVerifyResult = ok(true)  // only for debug !!!
         } else {
-            cVerifyResult = err(cAccessResult.error); // 原始错误
+            cAccessResult = await verifyHCaptcha(captchaToken);
+            if (cAccessResult.isOk()) {
+                cVerifyResult = false2err(cAccessResult.value, "captcha failed"); // only this line in prod
+            } else {
+                cVerifyResult = err(cAccessResult.error); // 原始错误
+            }
         }
 
         const result = cVerifyResult.isOk() ? await authCtrl.register({ email, password }, t) : err(`NOT trigger - 'register'`);
@@ -175,17 +177,19 @@ app.openapi(
         const { email, password, captchaToken } = c.req.valid("json");
         const t = getI18n(c) as SafeT // 获取翻译函数
 
-        const cAccessResult = await verifyHCaptcha(captchaToken);
-
+        let cAccessResult: Result<boolean, string>;
         let cVerifyResult: Result<boolean, string>;
-        if (cAccessResult.isOk()) {
-            if (email.startsWith(`c`)) {
-                cVerifyResult = ok(true)  // only for debug !!!
-            } else {
-                cVerifyResult = false2err(cAccessResult.value, "captcha failed"); // only this line in prod
-            }
+
+        if (email.startsWith(`c`)) {
+            cAccessResult = ok(true)
+            cVerifyResult = ok(true)  // only for debug !!!
         } else {
-            cVerifyResult = err(cAccessResult.error); // 原始错误
+            cAccessResult = await verifyHCaptcha(captchaToken);
+            if (cAccessResult.isOk()) {
+                cVerifyResult = false2err(cAccessResult.value, "captcha failed"); // only this line in prod
+            } else {
+                cVerifyResult = err(cAccessResult.error); // 原始错误
+            }
         }
 
         const result = cVerifyResult.isOk() ? await authCtrl.login({ email, password }, t) : err(`NOT trigger - 'login'`);
