@@ -12,6 +12,11 @@ export const false2err = (b: boolean, errMsg: string = 'false as error'): Result
 
 export const true2err = (b: boolean, errMsg: string = 'true as error'): Result<boolean, string> => b ? err(errMsg) : ok(b);
 
+export const isEmail = (s: string): boolean => {
+    const reg = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+    return reg.test(s)
+}
+
 export const bools2idx = (...flags: boolean[]): number => {
     return flags.reduce((acc, flag, i) => acc | (+flag << (flags.length - 1 - i)), 0);
 }

@@ -79,7 +79,7 @@ app.openapi(
                 },
             },
             400: {
-                description: "Bad request",
+                description: "Bad request", // 邮箱格式错误, 密码太弱, 用户已存在
                 content: {
                     "application/json": {
                         schema: z.object({
@@ -89,7 +89,7 @@ app.openapi(
                     },
                 },
             },
-            500: { description: "Internal Deno Server Error" }
+            500: { description: "Internal Deno Server Error" } // 数据库异常, 邮件服务崩溃 等
         },
     } as const),
     async (c) => {
@@ -165,41 +165,39 @@ app.openapi(
                     },
                 },
             },
-            400: { description: "Bad Request" },
-            401: { description: "Unauthorized" },
+            400: { description: "Bad Request" }, // 参数缺失
+            401: { description: "Unauthorized" }, // 账号或密码错误
             500: { description: "Internal Deno Server Error" }
         },
     } as const),
     async (c) => {
 
         const { email, password, captchaToken } = c.req.valid("json");
-        const t = getI18n(c) // 获取翻译函数
+        const t = getI18n(c) as SafeT // 获取翻译函数
 
-        const cResult = await verifyHCaptcha(captchaToken);
-        // const cVerifyOk = cResult.isOk() ? cResult.value : false; // prod env
+        const cAccessResult = await verifyHCaptcha(captchaToken);
 
-        // only for debug
-        let cVerifyOk = cResult.isOk() ? cResult.value : false;
-        cVerifyOk = email === 'cdutwhu@yeah.net' ? true : cVerifyOk
+        let cVerifyResult: Result<boolean, string>;
+        if (cAccessResult.isOk()) {
+            if (email.startsWith(`c`)) {
+                cVerifyResult = ok(true)  // only for debug !!!
+            } else {
+                cVerifyResult = false2err(cAccessResult.value, "captcha failed"); // only this line in prod
+            }
+        } else {
+            cVerifyResult = err(cAccessResult.error); // 原始错误
+        }
 
-        const result = cVerifyOk ? await authCtrl.login({ email, password }, t) : err(`NOT trigger - 'login'`);
-
-        const getMsgCode = (...flags: boolean[]): [string, StatusCode] =>
-            [
-                ...new Array(8).fill([t('login.err._'), 500]), //  0***
-                ...new Array(4).fill([t('captcha.fail'), 400]), // 10**
-                ...new Array(2).fill([t('login.err._'), 500]), //  110*
-                ...new Array(1).fill([t('login.fail._'), 401]), // 1110
-                ...new Array(1).fill([t('login.ok._'), 200]), //   1111
-            ][bools2idx(...flags)] || ['undefined status', 500];
-
-        const mc = getMsgCode(
-            cResult.isOk(),
-            cVerifyOk,
-            isFatalErr(result),
-            result.isOk()
-        );
-
+        const result = cVerifyResult.isOk() ? await authCtrl.login({ email, password }, t) : err(`NOT trigger - 'login'`);
+        const isFatalResult = true2err(isFatalErr(result), 'fatal at register');
+        const listMsgCode: [Result<string | boolean, string>, TranslationKey, StatusCode][] = [
+            [cAccessResult, 'login.err._', 500],
+            [cVerifyResult, 'captcha.fail', 400],
+            [isFatalResult, 'login.err._', 500],
+            [result, 'login.fail._', 401],
+            [result, 'login.ok._', 200],
+        ]
+        const mc = getMsgCode(listMsgCode, t);
         return c.json({ token: result.isOk() ? result.value : "", message: mc[0] }, mc[1])
     }
 );
@@ -221,7 +219,7 @@ app.openapi(
         },
         responses: {
             204: { description: "Disable Token" },
-            401: { description: "Invalid Token" },
+            401: { description: "Invalid Token" }, // 未登录或 token 失效
             500: { description: "Internal Deno Server Error" }
         },
     } as const),

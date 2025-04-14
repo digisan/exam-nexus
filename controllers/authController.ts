@@ -4,6 +4,7 @@ import * as bcrypt from "jsr:@da/bcrypt";
 import { createSaferT } from "@i18n/util.ts";
 import type { SafeT } from "@i18n/msg_auth_t.ts";
 import { SupabaseAgent } from "@db/dbService.ts";
+import { isEmail } from "@util/util.ts";
 
 const SIGNATURE_KEY = Deno.env.get("SIGNATURE_KEY");
 const tokenBlacklist = new Set();
@@ -27,7 +28,7 @@ export class AuthController {
         const t = createSaferT(ct);
 
         // Step 1: 校验邮箱格式
-        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(credentials.email)) {
+        if (!isEmail(credentials.email)) {
             return err(t('register.fail.invalid_email'));
         }
 
