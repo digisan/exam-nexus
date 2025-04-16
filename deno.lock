@@ -1,55 +1,46 @@
 {
   "version": "4",
   "specifiers": {
-    "jsr:@hono/hono@*": "4.7.4",
-    "jsr:@hono/hono@^4.7.4": "4.7.4",
-    "jsr:@std/assert@*": "1.0.11",
-    "jsr:@std/assert@^1.0.11": "1.0.11",
     "jsr:@std/cli@*": "1.0.13",
-    "jsr:@std/internal@^1.0.5": "1.0.5",
-    "jsr:@supabase/supabase-js@^2.49.1": "2.49.1",
-    "npm:@hono/swagger-ui@~0.5.1": "0.5.1_hono@4.7.5",
-    "npm:@hono/zod-openapi@~0.19.2": "0.19.2_hono@4.7.5_zod@3.24.2",
+    "jsr:@supabase/supabase-js@2.49.4": "2.49.4",
+    "npm:@hono/swagger-ui@0.5.1": "0.5.1_hono@4.7.7",
+    "npm:@hono/swagger-ui@~0.5.1": "0.5.1_hono@4.7.7",
+    "npm:@hono/zod-openapi@0.19.4": "0.19.4_hono@4.7.7_zod@3.24.2",
+    "npm:@hono/zod-openapi@~0.19.2": "0.19.4_hono@4.7.7_zod@3.24.2",
     "npm:@supabase/auth-js@2.68.0": "2.68.0",
+    "npm:@supabase/auth-js@2.69.1": "2.69.1",
     "npm:@supabase/functions-js@2.4.4": "2.4.4",
     "npm:@supabase/node-fetch@2.6.15": "2.6.15",
     "npm:@supabase/postgrest-js@1.19.2": "1.19.2",
+    "npm:@supabase/postgrest-js@1.19.4": "1.19.4",
     "npm:@supabase/realtime-js@2.11.2": "2.11.2",
     "npm:@supabase/storage-js@2.7.1": "2.7.1",
     "npm:@types/node@*": "22.12.0",
     "npm:bcrypt-ts@*": "6.0.0",
     "npm:bcrypt-ts@6": "6.0.0",
     "npm:flat@^6.0.1": "6.0.1",
+    "npm:hono-i18n@1.1.1": "1.1.1",
     "npm:hono-i18n@^1.1.1": "1.1.1",
-    "npm:hono@^4.7.5": "4.7.5",
+    "npm:hono@4.7.7": "4.7.7",
+    "npm:hono@^4.7.5": "4.7.7",
+    "npm:http-status-code@2.1.0": "2.1.0",
     "npm:http-status-code@^2.1.0": "2.1.0",
+    "npm:neverthrow@8.2.0": "8.2.0",
     "npm:neverthrow@^8.2.0": "8.2.0",
-    "npm:zod-openapi@^4.2.3": "4.2.3_zod@3.24.2",
+    "npm:zod-openapi@^4.2.3": "4.2.4_zod@3.24.2",
     "npm:zod@^3.24.2": "3.24.2"
   },
   "jsr": {
-    "@hono/hono@4.7.4": {
-      "integrity": "c03c9cbe0fbfc4e51f3fee6502a7903aa4f9ef7c2c98635607b15eee14258825"
-    },
-    "@std/assert@1.0.11": {
-      "integrity": "2461ef3c368fe88bc60e186e7744a93112f16fd110022e113a0849e94d1c83c1",
-      "dependencies": [
-        "jsr:@std/internal"
-      ]
-    },
     "@std/cli@1.0.13": {
       "integrity": "5db2d95ab2dca3bca9fb6ad3c19908c314e93d6391c8b026725e4892d4615a69"
     },
-    "@std/internal@1.0.5": {
-      "integrity": "54a546004f769c1ac9e025abd15a76b6671ddc9687e2313b67376125650dc7ba"
-    },
-    "@supabase/supabase-js@2.49.1": {
-      "integrity": "45dff81927b876287024ff8b43de8741bfe5ddf1fbaf152dd863a367bfcbd380",
+    "@supabase/supabase-js@2.49.4": {
+      "integrity": "4b785f9cd4a62feb7b3f84606bb923a4ea51e3e000eafff0972bc779240b7592",
       "dependencies": [
-        "npm:@supabase/auth-js",
+        "npm:@supabase/auth-js@2.69.1",
         "npm:@supabase/functions-js",
         "npm:@supabase/node-fetch",
-        "npm:@supabase/postgrest-js",
+        "npm:@supabase/postgrest-js@1.19.4",
         "npm:@supabase/realtime-js",
         "npm:@supabase/storage-js"
       ]
@@ -63,14 +54,14 @@
         "zod"
       ]
     },
-    "@hono/swagger-ui@0.5.1_hono@4.7.5": {
+    "@hono/swagger-ui@0.5.1_hono@4.7.7": {
       "integrity": "sha512-XpUCfszLJ9b1rtFdzqOSHfdg9pfBiC2J5piEjuSanYpDDTIwpMz0ciiv5N3WWUaQpz9fEgH8lttQqL41vIFuDA==",
       "dependencies": [
         "hono"
       ]
     },
-    "@hono/zod-openapi@0.19.2_hono@4.7.5_zod@3.24.2": {
-      "integrity": "sha512-lkFa6wdQVgY7d7/m++Ixr3hvKCF5Y+zjTIPM37fex5ylCfX53A/W28gZRDuFZx3aR+noKob7lHfwdk9dURLzxw==",
+    "@hono/zod-openapi@0.19.4_hono@4.7.7_zod@3.24.2": {
+      "integrity": "sha512-wt/Hn5TudVLGQxARVBBGDN/ckDOWUQrw9gdZoDBfRb5+G8+AJ/qeRDV8iorKE3SyEeiRkJ5ErKevkjCsAgH69Q==",
       "dependencies": [
         "@asteasolutions/zod-to-openapi",
         "@hono/zod-validator",
@@ -78,18 +69,24 @@
         "zod"
       ]
     },
-    "@hono/zod-validator@0.4.3_hono@4.7.5_zod@3.24.2": {
+    "@hono/zod-validator@0.4.3_hono@4.7.7_zod@3.24.2": {
       "integrity": "sha512-xIgMYXDyJ4Hj6ekm9T9Y27s080Nl9NXHcJkOvkXPhubOLj8hZkOL8pDnnXfvCf5xEE8Q4oMFenQUZZREUY2gqQ==",
       "dependencies": [
         "hono",
         "zod"
       ]
     },
-    "@rollup/rollup-linux-x64-gnu@4.35.0": {
-      "integrity": "sha512-Pim1T8rXOri+0HmV4CdKSGrqcBWX0d1HoPnQ0uw0bdp1aP5SdQVNBy8LjYncvnLgu3fnnCt17xjWGd4cqh8/hA=="
+    "@rollup/rollup-linux-x64-gnu@4.40.0": {
+      "integrity": "sha512-RcDGMtqF9EFN8i2RYN2W+64CdHruJ5rPqrlYw+cgM3uOVPSsnAQps7cpjXe9be/yDp8UC7VLoCoKC8J3Kn2FkQ=="
     },
     "@supabase/auth-js@2.68.0": {
       "integrity": "sha512-odG7nb7aOmZPUXk6SwL2JchSsn36Ppx11i2yWMIc/meUO2B2HK9YwZHPK06utD9Ql9ke7JKDbwGin/8prHKxxQ==",
+      "dependencies": [
+        "@supabase/node-fetch"
+      ]
+    },
+    "@supabase/auth-js@2.69.1": {
+      "integrity": "sha512-FILtt5WjCNzmReeRLq5wRs3iShwmnWgBvxHfqapC/VoljJl+W8hDAyFmf1NVw3zH+ZjZ05AKxiKxVeb0HNWRMQ==",
       "dependencies": [
         "@supabase/node-fetch"
       ]
@@ -108,6 +105,12 @@
     },
     "@supabase/postgrest-js@1.19.2": {
       "integrity": "sha512-MXRbk4wpwhWl9IN6rIY1mR8uZCCG4MZAEji942ve6nMwIqnBgBnZhZlON6zTTs6fgveMnoCILpZv1+K91jN+ow==",
+      "dependencies": [
+        "@supabase/node-fetch"
+      ]
+    },
+    "@supabase/postgrest-js@1.19.4": {
+      "integrity": "sha512-O4soKqKtZIW3olqmbXXbKugUtByD2jPa8kL2m2c1oozAO11uCcGrRhkZL0kVxjBLrXHE0mdSkFsMj7jDSfyNpw==",
       "dependencies": [
         "@supabase/node-fetch"
       ]
@@ -136,8 +139,8 @@
     "@types/phoenix@1.6.6": {
       "integrity": "sha512-PIzZZlEppgrpoT2QgbnDU+MMzuR6BbCjllj0bM70lWoejMeNJAxCchxnv7J3XFkI8MpygtRpzXrIlmWUBclP5A=="
     },
-    "@types/ws@8.18.0": {
-      "integrity": "sha512-8svvI3hMyvN0kKCJMvTJP/x6Y/EoQbepff882wL+Sn5QsXb3etnamgrJq4isrBxSJj5L2AuXcI0+bgkoAXGUJw==",
+    "@types/ws@8.18.1": {
+      "integrity": "sha512-ThVF6DCVhA8kUGy+aazFQ4kXQ7E1Ty7A3ypFOe0IcJV8O/M511G99AW24irKrW56Wt44yG9+ij8FaqoBGkuBXg==",
       "dependencies": [
         "@types/node"
       ]
@@ -157,8 +160,8 @@
         "core-i18n"
       ]
     },
-    "hono@4.7.5": {
-      "integrity": "sha512-fDOK5W2C1vZACsgLONigdZTRZxuBqFtcKh7bUQ5cVSbwI2RWjloJDcgFOVzbQrlI6pCmhlTsVYZ7zpLj4m4qMQ=="
+    "hono@4.7.7": {
+      "integrity": "sha512-2PCpQRbN87Crty8/L/7akZN3UyZIAopSoRxCwRbJgUuV1+MHNFHzYFxZTg4v/03cXUm+jce/qa2VSBZpKBm3Qw=="
     },
     "http-status-code@2.1.0": {
       "integrity": "sha512-xlSRDG0i4j2HDR85FW2VGxFBo9GB1LpBp37/gldjrS5ZlAaHp1h0dbq96crIN/D0ur1jAa75ACrN8WezebLXSw==",
@@ -200,11 +203,11 @@
     "ws@8.18.1": {
       "integrity": "sha512-RKW2aJZMXeMxVpnZ6bck+RswznaxmzdULiBr6KY7XkTnW8uvt0iT9H5DkHUChXrc+uurzwa0rVI16n/Xzjdz1w=="
     },
-    "yaml@2.7.0": {
-      "integrity": "sha512-+hSoy/QHluxmC9kCIJyL/uyFmLmc+e5CFR5Wa+bpIhIj85LVb9ZH2nVnqrHoSvKogwODv0ClqZkmiSSaIH5LTA=="
+    "yaml@2.7.1": {
+      "integrity": "sha512-10ULxpnOCQXxJvBgxsn9ptjq6uviG/htZKk9veJGhlqn3w/DxQ631zFF+nlQXLwmImeS5amR2dl2U8sg6U9jsQ=="
     },
-    "zod-openapi@4.2.3_zod@3.24.2": {
-      "integrity": "sha512-i0SqpcdXfsvVWTIY1Jl3Tk421s9fBIkpXvaA86zDas+8FjfZjm+GX6ot6SPB2SyuHwUNTN02gE5uIVlYXlyrDQ==",
+    "zod-openapi@4.2.4_zod@3.24.2": {
+      "integrity": "sha512-tsrQpbpqFCXqVXUzi3TPwFhuMtLN3oNZobOtYnK6/5VkXsNdnIgyNr4r8no4wmYluaxzN3F7iS+8xCW8BmMQ8g==",
       "dependencies": [
         "zod"
       ]
@@ -215,19 +218,19 @@
   },
   "workspace": {
     "dependencies": [
-      "jsr:@hono/hono@^4.7.4",
-      "jsr:@std/assert@^1.0.11",
-      "jsr:@supabase/supabase-js@^2.49.1",
-      "npm:@hono/swagger-ui@~0.5.1",
-      "npm:@hono/zod-openapi@~0.19.2",
-      "npm:bcrypt-ts@6",
-      "npm:flat@^6.0.1",
-      "npm:hono-i18n@^1.1.1",
-      "npm:hono@^4.7.5",
-      "npm:http-status-code@^2.1.0",
-      "npm:neverthrow@^8.2.0",
-      "npm:zod-openapi@^4.2.3",
-      "npm:zod@^3.24.2"
+      "jsr:@hono/hono@4.7.7",
+      "jsr:@std/assert@1.0.12",
+      "jsr:@supabase/supabase-js@2.49.4",
+      "npm:@hono/swagger-ui@0.5.1",
+      "npm:@hono/zod-openapi@0.19.4",
+      "npm:bcrypt-ts@6.0.0",
+      "npm:flat@6.0.1",
+      "npm:hono-i18n@1.1.1",
+      "npm:hono@4.7.7",
+      "npm:http-status-code@2.1.0",
+      "npm:neverthrow@8.2.0",
+      "npm:zod-openapi@4.2.4",
+      "npm:zod@3.24.2"
     ]
   }
 }
