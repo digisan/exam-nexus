@@ -4,7 +4,7 @@ import { cors } from "hono/cors";
 import { createI18n } from "hono-i18n";
 import { getCookie } from "hono/cookie";
 import { msg_auth } from "@i18n/msg_auth.ts";
-import { AuthController } from "@controllers/authController.ts";
+import { AuthController } from "@controllers/auth.ts";
 import { rateLimitMiddleware } from "@middleware/rateLimit.ts";
 
 export const applyMiddleWare = (app: OpenAPIHono) => {

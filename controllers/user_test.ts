@@ -1,4 +1,4 @@
-import { UserController } from "@controllers/userController.ts";
+import { UserController } from "./user.ts";
 
 Deno.test(async function UserCtrlList() {
     const userCtrl = new UserController()

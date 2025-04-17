@@ -1,4 +1,4 @@
-import { AuthController } from "@controllers/authController.ts";
+import { AuthController } from "./auth.ts";
 
 Deno.test(async function AuthCtrlReg() {
     const ac = new AuthController();

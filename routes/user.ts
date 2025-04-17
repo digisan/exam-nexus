@@ -1,5 +1,5 @@
 import { createRoute, OpenAPIHono, z } from "@hono/zod-openapi";
-import { UserController } from "@controllers/userController.ts";
+import { UserController } from "@controllers/user.ts";
 
 const app = new OpenAPIHono();
 const userCtrl = new UserController();
