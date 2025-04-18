@@ -11,6 +11,7 @@ export const msg_auth = {
             },
             fail: {
                 existing: "already registered",
+                invalid_email: "invalid email format",
                 _: "Invalid register information."
             },
             ok: {
@@ -51,6 +52,7 @@ export const msg_auth = {
             },
             fail: {
                 existing: "已注册",
+                invalid_email: "无效Email格式",
                 _: "无效的注册信息"
             },
             ok: {

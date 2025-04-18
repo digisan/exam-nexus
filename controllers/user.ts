@@ -1,4 +1,5 @@
 import { fileExists } from "@util/util.ts";
+import type { Email } from "@util/util.ts";
 
 export class UserController {
     async getUserList() {
@@ -14,7 +15,7 @@ export class UserController {
         return null
     }
 
-    async getUserInfo(email: string) {
+    async getUserInfo(email: Email) {
         const filePath = "./data/users.json";
         if (await fileExists(filePath)) {
             const content = await Deno.readTextFile(filePath);

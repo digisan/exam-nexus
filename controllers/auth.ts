@@ -3,13 +3,14 @@ import { sign } from "hono/jwt";
 import { hash, compare } from "npm:bcrypt-ts";
 import { createSaferT } from "@i18n/util.ts";
 import type { SafeT } from "@i18n/msg_auth_t.ts";
+import type { TableKey } from "@db/dbService.ts";
+import type { Email } from "@util/util.ts";
 import { SupabaseAgent } from "@db/dbService.ts";
-import { isEmail } from "@util/util.ts";
 
 const SIGNATURE_KEY = Deno.env.get("SIGNATURE_KEY");
 const tokenBlacklist = new Set();
-const RegTable = 'register';
-const DebugTable = 'messages';
+const TABLE_REG: TableKey = 'register';
+const TABLE_DEBUG: TableKey = 'messages';
 const MIN_PASSWORD_LENGTH = 3;
 
 type Object = Record<string, any>;
@@ -25,27 +26,22 @@ export class AuthController {
 
     SignatureKey(): string { return SIGNATURE_KEY ?? "" }
 
-    async register(credentials: { email: string; password: string }, ct?: SafeT): Promise<Result<string, string>> {
+    async register(credentials: { email: Email; password: string }, ct?: SafeT): Promise<Result<string, string>> {
         const t = createSaferT(ct);
 
-        // Step 1: 校验邮箱格式
-        if (!isEmail(credentials.email)) {
-            return err(t('register.fail.invalid_email'));
-        }
-
-        // Step 2: 校验密码长度
+        // Step 1: 校验密码长度
         if (credentials.password.length < MIN_PASSWORD_LENGTH) {
             return err(t('register.fail.weak_password'));
         }
 
         try {
-            // Step 3: 拉取用户注册内容
-            const rg = await this.agent.getSingleRowData(RegTable);
+            // Step 2: 拉取用户注册内容
+            const rg = await this.agent.getSingleRowData(TABLE_REG);
             if (rg.isErr()) {
                 return err(rg.error)
             }
 
-            // Step 4: 判断邮箱是否已存在
+            // Step 3: 判断邮箱是否已存在
             if (Array.isArray(rg.value)) {
                 if (rg.value.some((u) => u.email === credentials.email)) {
                     return err(t('register.fail.existing'))
@@ -56,7 +52,7 @@ export class AuthController {
                 }
             }
 
-            const ra = await this.agent.appendSingleRowData(RegTable, {
+            const ra = await this.agent.appendSingleRowData(TABLE_REG, {
                 email: credentials.email,
                 password: await hash(credentials.password, 10),
                 registered_at: new Date().toISOString(),
@@ -69,13 +65,13 @@ export class AuthController {
 
         } catch (e) {
             // log here ...
-            await this.agent.insertTextRow(DebugTable, `catch - ${e}`)
+            await this.agent.insertTextRow(TABLE_DEBUG, `catch - ${e}`)
             // 
             return err(`fatal: registering failed: ${e}`)
         }
     }
 
-    private async genToken(email: string): Promise<Result<string, string>> {
+    private async genToken(email: Email): Promise<Result<string, string>> {
 
         const expiresInSeconds = 60 * 100; // 100 minutes
         const exp = Math.floor(Date.now() / 1000) + expiresInSeconds;
@@ -98,19 +94,19 @@ export class AuthController {
         }
     }
 
-    private findUserByEmail(data: Data, email: string): Object | null {
+    private findUserByEmail(data: Data, email: Email): Object | null {
         if (Array.isArray(data)) {
             return data.find((u) => u.email === email) ?? null;
         }
         return data?.email === email ? data : null;
     }
 
-    async login(credentials: { email: string; password: string }, ct?: SafeT): Promise<Result<string, string>> {
+    async login(credentials: { email: Email; password: string }, ct?: SafeT): Promise<Result<string, string>> {
 
         const t = createSaferT(ct);
 
         try {
-            const rg = await this.agent.getSingleRowData(RegTable);
+            const rg = await this.agent.getSingleRowData(TABLE_REG);
             if (rg.isErr()) {
                 return err(rg.error);
             }

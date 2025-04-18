@@ -16,13 +16,6 @@ const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
 type Object = Record<string, any>;
 type Data = Object | Object[] | null;
 
-const SB_TABLES = [
-    "general",
-    "messages",
-    "register",
-    "test1",
-];
-
 const normalizeDataStructure = (value: Data): Data => {
     if (Array.isArray(value)) {
         if (value.length === 0) return null;
@@ -161,16 +154,25 @@ export class SupabaseAgent {
     }
 }
 
-// validate SupaBaseDB
+const SB_TABLES = [
+    "general",
+    "messages",
+    "register",
+    "user_sys_config",    
+] as const;
+
+export type TableKey = typeof SB_TABLES[number];
+
+// validate SupaBaseDB tables
 await (async () => {
     const sa = new SupabaseAgent();
     const r = await sa.TableList()
     if (r.isOk()) {
         const tables = r.value as string[]
-        if (!unorderedSetsEqual(tables, SB_TABLES)) {
+        if (!unorderedSetsEqual([...SB_TABLES], tables)) {
             console.debug(tables)
             console.debug(SB_TABLES)
-            throw new Error(`SupaBase Tables are inconsistent with ${SB_TABLES}`)
+            throw new Error(`SupaBase Tables [${tables}] are inconsistent with [${SB_TABLES}]`)
         }
     } else {
         console.log(`SupaBase Tables are OK`)

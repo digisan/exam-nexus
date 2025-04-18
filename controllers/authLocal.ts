@@ -4,6 +4,7 @@ import * as bcrypt from "jsr:@da/bcrypt";
 import { fileExists } from "@util/util.ts";
 import { createSaferT } from "@i18n/util.ts";
 import type { SafeT } from "@i18n/msg_auth_t.ts";
+import type { Email } from "@util/util.ts";
 
 const SIGNATURE_KEY = Deno.env.get("SIGNATURE_KEY");
 const tokenBlacklist = new Set();
@@ -15,7 +16,7 @@ export class AuthControllerLocal {
         return SIGNATURE_KEY
     }
 
-    async register(credentials: { email: string; password: string }, ct?: SafeT) {
+    async register(credentials: { email: Email; password: string }, ct?: SafeT) {
         try {
             const t = createSaferT(ct);
             if (await fileExists(localFilePath)) {
@@ -55,7 +56,7 @@ export class AuthControllerLocal {
         }
     }
 
-    private async genToken(email: string) {
+    private async genToken(email: Email) {
         const expIn = 60 * 100 // Token expires in 100 minutes
         const payload = {
             sub: email,
@@ -70,7 +71,7 @@ export class AuthControllerLocal {
         return ok(token)
     }
 
-    async login(credentials: { email: string; password: string }, ct?: SafeT) {
+    async login(credentials: { email: Email; password: string }, ct?: SafeT) {
         try {
             const t = createSaferT(ct);
             if (!await fileExists(localFilePath)) {

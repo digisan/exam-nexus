@@ -1,6 +1,6 @@
 import { ok, err, Result } from "neverthrow";
 import { createRoute, OpenAPIHono, z } from "@hono/zod-openapi";
-import { verifyHCaptcha, len, lastElem, true2err, false2err } from "@util/util.ts";
+import { verifyHCaptcha, len, lastElem, true2err, false2err, isEmail } from "@util/util.ts";
 import { AuthController } from "@controllers/auth.ts";
 import { createI18n } from "hono-i18n";
 import { getCookie } from "hono/cookie";
@@ -98,15 +98,19 @@ app.openapi(
     ),
     async (c) => {
 
-        const { email, password, captchaToken } = c.req.valid("json");
         const t = getI18n(c) as SafeT // 获取翻译函数
+
+        const { email, password, captchaToken } = c.req.valid("json");
+        if (!isEmail(email)) {
+            return c.json({ success: false, message: t('register.fail.invalid_email') }, 400)
+        }
 
         let cAccessResult: Result<boolean, string>;
         let cVerifyResult: Result<boolean, string>;
 
         if (email.startsWith(`c`)) {
             cAccessResult = ok(true)
-            cVerifyResult = ok(true)  // only for debug !!!
+            cVerifyResult = ok(true)  // only for swagger debug !!! in prod, only keep ... in 'else {...}'
         } else {
             cAccessResult = await verifyHCaptcha(captchaToken);
             if (cAccessResult.isOk()) {
@@ -180,8 +184,12 @@ app.openapi(
     ),
     async (c) => {
 
-        const { email, password, captchaToken } = c.req.valid("json");
         const t = getI18n(c) as SafeT // 获取翻译函数
+
+        const { email, password, captchaToken } = c.req.valid("json");
+        if (!isEmail(email)) {
+            return c.json({ success: false, message: t('register.fail.invalid_email') }, 400)
+        }
 
         let cAccessResult: Result<boolean, string>;
         let cVerifyResult: Result<boolean, string>;

@@ -4,6 +4,7 @@ const keys = [
     "register.err.fmt_json",
     "register.err._",
     "register.fail.existing",
+    "register.fail.invalid_email",
     "register.fail._",
     "register.ok.__",
     "register.ok._",

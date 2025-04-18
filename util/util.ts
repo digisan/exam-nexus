@@ -12,7 +12,8 @@ export const false2err = (b: boolean, errMsg: string = 'false as error'): Result
 
 export const true2err = (b: boolean, errMsg: string = 'true as error'): Result<boolean, string> => b ? err(errMsg) : ok(b);
 
-export const isEmail = (s: string): boolean => {
+export type Email = string & { __brand: 'Email' };
+export const isEmail = (s: string): s is Email => {
     const reg = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
     return reg.test(s)
 }
