@@ -17,9 +17,23 @@ export const isEmail = (s: string): boolean => {
     return reg.test(s)
 }
 
-export const bools2idx = (...flags: boolean[]): number => {
-    return flags.reduce((acc, flag, i) => acc | (+flag << (flags.length - 1 - i)), 0);
+export const bools2idx = (...flags: boolean[]): number => flags.reduce((acc, flag, i) => acc | (+flag << (flags.length - 1 - i)), 0);
+
+export const firstWord = (sql: string): string | null => sql.trim().split(/\s+/)[0] ?? null;
+
+export const arraysEqual = <T>(a: T[], b: T[]): boolean => {
+    if (a.length !== b.length) return false;
+    return a.every((val, i) => val === b[i]);
 }
+
+export const unorderedArraysEqual = <T>(a: T[], b: T[]): boolean => {
+    if (a.length !== b.length) return false;
+    const sortedA = [...a].sort();
+    const sortedB = [...b].sort();
+    return sortedA.every((val, i) => val === sortedB[i]);
+};
+
+export const unorderedSetsEqual = <T>(a: T[], b: T[]): boolean => unorderedArraysEqual([...new Set(a)], [...new Set(b)]);
 
 export const fileExists = async (path: string): Promise<boolean> => {
     try {

@@ -1,5 +1,6 @@
 // dbService.ts
 import { ok, err, Result } from "neverthrow"
+import { firstWord, unorderedSetsEqual } from "@util/util.ts"
 import { createClient } from "@supabase/supabase-js"
 await import('@secret/const.ts')
 
@@ -15,7 +16,14 @@ const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
 type Object = Record<string, any>;
 type Data = Object | Object[] | null;
 
-function normalizeDataStructure(value: Data): Data {
+const SB_TABLES = [
+    "general",
+    "messages",
+    "register",
+    "test1",
+];
+
+const normalizeDataStructure = (value: Data): Data => {
     if (Array.isArray(value)) {
         if (value.length === 0) return null;
         if (value.length === 1) return value[0];
@@ -23,8 +31,6 @@ function normalizeDataStructure(value: Data): Data {
     }
     return value;
 }
-
-const firstWord = (sql: string): string | null => sql.trim().split(/\s+/)[0] ?? null;
 
 // --- Public CRUD methods ---
 
@@ -127,13 +133,13 @@ export class SupabaseAgent {
         return ok(data);
     }
 
-    async deleteDataRow(table: string, id: number): Promise<Result<Object, string>> {
+    async deleteDataRows(table: string, ...ids: number[]): Promise<Result<Object[], string>> {
+        if (ids.length === 0) return ok([]);
         const { data, error } = await supabase
             .from(table)
             .delete()
-            .eq('id', id)
-            .select()
-            .single();
+            .in('id', ids)
+            .select();
 
         if (error) return err(error.message);
         if (!data) return err('Delete succeeded but no data returned');
@@ -154,3 +160,19 @@ export class SupabaseAgent {
         return ok(data);
     }
 }
+
+// validate SupaBaseDB
+await (async () => {
+    const sa = new SupabaseAgent();
+    const r = await sa.TableList()
+    if (r.isOk()) {
+        const tables = r.value as string[]
+        if (!unorderedSetsEqual(tables, SB_TABLES)) {
+            console.debug(tables)
+            console.debug(SB_TABLES)
+            throw new Error(`SupaBase Tables are inconsistent with ${SB_TABLES}`)
+        }
+    } else {
+        console.log(`SupaBase Tables are OK`)
+    }
+})();
