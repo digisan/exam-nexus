@@ -1,4 +1,3 @@
-// dbService.ts
 import { ok, err, Result } from "neverthrow"
 import { firstWord, unorderedSetsEqual } from "@util/util.ts"
 import { createClient } from "@supabase/supabase-js"
@@ -6,15 +5,21 @@ await import('@define/const.ts')
 
 const SUPABASE_URL = Deno.env.get("SUPABASE_URL");
 const SUPABASE_KEY = Deno.env.get("SUPABASE_KEY");
-
 if (!SUPABASE_URL || !SUPABASE_KEY) {
     throw new Error("SUPABASE_URL and SUPABASE_KEY must be provided");
 }
-
 const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
 
-type Object = Record<string, any>;
-type Data = Object | Object[] | null;
+const SB_TABLES = [
+    "general",
+    "messages",
+    "register",
+    "user_sys_config",
+] as const;
+
+export type TableName = typeof SB_TABLES[number];
+export type Object = Record<string, any>;
+export type Data = Object | Object[] | null;
 
 const normalizeDataStructure = (value: Data): Data => {
     if (Array.isArray(value)) {
@@ -24,8 +29,6 @@ const normalizeDataStructure = (value: Data): Data => {
     }
     return value;
 }
-
-// --- Public CRUD methods ---
 
 export class SupabaseAgent {
 
@@ -59,11 +62,11 @@ export class SupabaseAgent {
         return this.executeSQL(`SELECT json_agg(tablename) FROM pg_tables WHERE schemaname = 'public'`); // group [value] from single column
     }
 
-    TableContent(table: string): Promise<Result<Data, string>> {
+    TableContent(table: TableName): Promise<Result<Data, string>> {
         return this.executeSQL(`SELECT json_agg(t) FROM (SELECT * FROM ${table}) AS t`); // group [{key: value; ...}] from multiple column
     }
 
-    async getSingleRowData(table: string): Promise<Result<Data, string>> {
+    async getSingleRowData(table: TableName): Promise<Result<Data, string>> {
         const { data, error } = await supabase.from(table).select().limit(2);
         if (error) return err(error.message);
         if (!data || data.length === 0) return ok(null);
@@ -71,7 +74,7 @@ export class SupabaseAgent {
         return ok(data[0].data);
     }
 
-    async setSingleRowData(table: string, value: Data): Promise<Result<Data, string>> {
+    async setSingleRowData(table: TableName, value: Data): Promise<Result<Data, string>> {
         const { data, error } = await supabase.from(table).select().limit(2);
         if (error) return err(error.message);
 
@@ -85,7 +88,7 @@ export class SupabaseAgent {
         return this.updateDataRow(table, data[0].id, newData);
     }
 
-    async appendSingleRowData(table: string, value: Object): Promise<Result<Data, string>> {
+    async appendSingleRowData(table: TableName, value: Object): Promise<Result<Data, string>> {
         const current = await this.getSingleRowData(table);
         if (current.isErr()) return err(current.error);
 
@@ -101,7 +104,7 @@ export class SupabaseAgent {
 
     ////////////////////////////////////////////////////////////////////////////////////////
 
-    async insertDataRow(table: string, value: Data): Promise<Result<Object, string>> {
+    async insertDataRow(table: TableName, value: Data): Promise<Result<Object, string>> {
         const { data, error } = await supabase
             .from(table)
             .insert({ data: value })
@@ -113,7 +116,7 @@ export class SupabaseAgent {
         return ok(data);
     }
 
-    async updateDataRow(table: string, id: number, value: Data): Promise<Result<Object, string>> {
+    async updateDataRow(table: TableName, id: number, value: Data): Promise<Result<Object, string>> {
         const { data, error } = await supabase
             .from(table)
             .update({ data: value })
@@ -126,7 +129,7 @@ export class SupabaseAgent {
         return ok(data);
     }
 
-    async deleteDataRows(table: string, ...ids: number[]): Promise<Result<Object[], string>> {
+    async deleteDataRows(table: TableName, ...ids: number[]): Promise<Result<Object[], string>> {
         if (ids.length === 0) return ok([]);
         const { data, error } = await supabase
             .from(table)
@@ -141,7 +144,7 @@ export class SupabaseAgent {
 
     ////////////////////////////////////////////////////////////////////////////////////////
 
-    async insertTextRow(table: string, value: string): Promise<Result<Object, string>> {
+    async insertTextRow(table: TableName, value: string): Promise<Result<Object, string>> {
         const { data, error } = await supabase
             .from(table)
             .insert({ content: value })
@@ -153,15 +156,6 @@ export class SupabaseAgent {
         return ok(data);
     }
 }
-
-const SB_TABLES = [
-    "general",
-    "messages",
-    "register",
-    "user_sys_config",
-] as const;
-
-export type TableKey = typeof SB_TABLES[number];
 
 // validate SupaBaseDB tables
 await (async () => {

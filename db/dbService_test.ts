@@ -1,4 +1,5 @@
-import { SupabaseAgent } from "@db/dbService.ts"
+import { SupabaseAgent, type Object } from "@db/dbService.ts"
+import { T_REG, T_DEBUG, T_G } from "@define/const.ts";
 
 Deno.test(async function ExecuteSQL() {
     const sa = new SupabaseAgent();
@@ -52,9 +53,9 @@ Deno.test(async function TableList() {
 
 Deno.test(async function TableContent() {
     const sa = new SupabaseAgent();
-    const r = await sa.TableContent('register')
+    const r = await sa.TableContent(T_REG)
     if (r.isOk()) {
-        console.log(r.value)
+        console.log((r.value as Object[])[0].data)
     } else {
         console.debug(r.error)
     }
@@ -62,7 +63,7 @@ Deno.test(async function TableContent() {
 
 Deno.test(async function InsertDataRow() {
     const sa = new SupabaseAgent();
-    const r = await sa.insertDataRow('register', { user: "abc", password: "asdfweradf" })
+    const r = await sa.insertDataRow(T_REG, { user: "abc", password: "asdfweradf" })
     if (r.isOk()) {
         console.log(r.value)
     } else {
@@ -72,7 +73,7 @@ Deno.test(async function InsertDataRow() {
 
 Deno.test(async function DeleteDataRow() {
     const sa = new SupabaseAgent();
-    const r = await sa.deleteDataRows('register', 41, 42, 43)
+    const r = await sa.deleteDataRows(T_REG, 41, 42, 43)
     if (r.isOk()) {
         console.log(r.value)
     } else {
@@ -84,18 +85,17 @@ Deno.test(async function SupaBase() {
     const sa = new SupabaseAgent();
     const sb = sa.getSupaBase();
     const { data, error } = await sb
-        .from("general")
+        .from(T_G)
         .select("id, data")
         .gt('id', 10)
         .order("created_at", { ascending: true });
-
     error && console.error(error)
     data && console.log(data)
 });
 
 Deno.test(async function InsertTextRow() {
     const sa = new SupabaseAgent();
-    const r = await sa.insertTextRow('messages', "hello")
+    const r = await sa.insertTextRow(T_DEBUG, "hello")
     console.log(typeof r)
     console.log(r.isOk() ? r.value.content : r.error)
 });

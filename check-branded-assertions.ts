@@ -10,15 +10,37 @@ async function checkFile(filePath: string, ...excl: string[]) {
     const lines = code.split('\n');
 
     // Step 1: 获取所有通过 import type 引入的品牌类型
+    // ts.forEachChild(sourceFile, (node) => {
+    //     if (
+    //         ts.isImportDeclaration(node) &&
+    //         node.importClause?.isTypeOnly &&
+    //         node.importClause.namedBindings &&
+    //         ts.isNamedImports(node.importClause.namedBindings)
+    //     ) {
+    //         for (const spec of node.importClause.namedBindings.elements) {
+    //             importedTypes.add(spec.name.text);
+    //         }
+    //     }
+    // });
+
+    // Step 1: 获取所有通过 import type 或 import { type ... } 引入的类型
     ts.forEachChild(sourceFile, (node) => {
         if (
             ts.isImportDeclaration(node) &&
-            node.importClause?.isTypeOnly &&
-            node.importClause.namedBindings &&
-            ts.isNamedImports(node.importClause.namedBindings)
+            (node.importClause?.isTypeOnly || (node.importClause?.namedBindings && ts.isNamedImports(node.importClause.namedBindings)))
         ) {
-            for (const spec of node.importClause.namedBindings.elements) {
-                importedTypes.add(spec.name.text);
+            if (node.importClause?.namedBindings) {
+                if (ts.isNamedImports(node.importClause.namedBindings)) {
+                    // NamedImports
+                    for (const spec of node.importClause.namedBindings.elements) {
+                        if (spec.propertyName?.text === "type" || spec.name.text) {
+                            importedTypes.add(spec.name.text);
+                        }
+                    }
+                } else if (ts.isNamespaceImport(node.importClause.namedBindings)) {
+                    // NamespaceImport (没有 elements 属性)
+                    // 如果需要支持命名空间导入，你可以添加额外的逻辑来处理
+                }
             }
         }
     });

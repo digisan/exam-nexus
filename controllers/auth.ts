@@ -3,14 +3,12 @@ import { sign } from "hono/jwt";
 import { hash, compare } from "npm:bcrypt-ts";
 import { createSaferT } from "@i18n/util.ts";
 import type { SafeT } from "@i18n/msg_auth_t.ts";
-import type { TableKey } from "@db/dbService.ts";
-import type { Email, Password } from "@define/type.ts";
 import { SupabaseAgent } from "@db/dbService.ts";
+import { type Email, type Password } from "@define/type.ts";
+import { T_REG, T_DEBUG } from "@define/const.ts";
 
 const SIGNATURE_KEY = Deno.env.get("SIGNATURE_KEY");
 const tokenBlacklist = new Set();
-const TABLE_REG: TableKey = 'register';
-const TABLE_DEBUG: TableKey = 'messages';
 
 type Object = Record<string, any>;
 type Data = Object | Object[] | null;
@@ -30,7 +28,7 @@ export class AuthController {
 
         try {
             // Step 1: 拉取用户注册内容
-            const rg = await this.agent.getSingleRowData(TABLE_REG);
+            const rg = await this.agent.getSingleRowData(T_REG);
             if (rg.isErr()) {
                 return err(rg.error)
             }
@@ -46,7 +44,7 @@ export class AuthController {
                 }
             }
 
-            const ra = await this.agent.appendSingleRowData(TABLE_REG, {
+            const ra = await this.agent.appendSingleRowData(T_REG, {
                 email: credentials.email,
                 password: await hash(credentials.password, 10),
                 registered_at: new Date().toISOString(),
@@ -59,7 +57,7 @@ export class AuthController {
 
         } catch (e) {
             // log here ...
-            await this.agent.insertTextRow(TABLE_DEBUG, `catch - ${e}`)
+            await this.agent.insertTextRow(T_DEBUG, `catch - ${e}`)
             // 
             return err(`fatal: registering failed: ${e}`)
         }
@@ -100,7 +98,7 @@ export class AuthController {
         const t = createSaferT(ct);
 
         try {
-            const rg = await this.agent.getSingleRowData(TABLE_REG);
+            const rg = await this.agent.getSingleRowData(T_REG);
             if (rg.isErr()) {
                 return err(rg.error);
             }
