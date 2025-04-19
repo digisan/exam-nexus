@@ -73,7 +73,7 @@ Deno.test(async function UpsertDataObject() {
 
 Deno.test(async function RemoveDataObject() {
     const sa = new SupabaseAgent();
-    const r = await sa.removeSingleRowDataObject(T_REG, "email", "test@test.com")
+    const r = await sa.removeSingleRowDataObject(T_REG, "email", "test1@test.com")
     if (r.isOk()) {
         console.log(r.value)
     } else {

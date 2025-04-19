@@ -93,7 +93,7 @@ export class SupabaseAgent {
             return err(`${table}'s data item value has no id name as ${object_id_name}`);
         }
         const result = await this.getSingleRowData(table)
-        if (!result.isOk()) {
+        if (result.isErr()) {
             return result
         }
         if (!result.value) {
@@ -114,7 +114,7 @@ export class SupabaseAgent {
             }
             return this.setSingleRowData(table, data)
         }
-        
+
         // single object data
         const data = result.value as JSONObject
         if (!haveSameStructure(value, data)) {
@@ -128,31 +128,34 @@ export class SupabaseAgent {
 
     async removeSingleRowDataObject(table: TableName, object_id_name: string, object_id_value: any): Promise<Result<Data, string>> {
         const result = await this.getSingleRowData(table)
-        if (result.isOk()) {
-            if (result.value) {
-                if (Array.isArray(result.value)) {
-                    const data = result.value as JSONObject[]
-                    if (!(object_id_name in data[0])) {
-                        return err(`table [${table}] data has no id field as ${object_id_name}`)
-                    }
-                    const i = data.findIndex(item => item[object_id_name] === object_id_value)
-                    if (i !== -1) {
-                        data.splice(i, 1)
-                        return this.setSingleRowData(table, data)
-                    }
-                } else {
-                    const data = result.value as JSONObject
-                    if (!(object_id_name in data)) {
-                        return err(`table [${table}] data has no id field as ${object_id_name}`)
-                    }
-                    if (data[object_id_name] === object_id_value) {
-                        return this.setSingleRowData(table, null)
-                    }
-                }
+        if (result.isErr()) {
+            return result
+        }
+        if (!result.value) {
+            return ok(null)
+        }
+        // array data
+        if (Array.isArray(result.value)) {
+            const data = result.value as JSONObject[]
+            if (!(object_id_name in data[0])) {
+                return err(`table [${table}] data has no id field as '${object_id_name}'`)
+            }
+            const i = data.findIndex(item => item[object_id_name] === object_id_value)
+            if (i !== -1) {
+                data.splice(i, 1)
+                return this.setSingleRowData(table, data)
             }
             return ok(null)
         }
-        return result
+        // single object data
+        const data = result.value as JSONObject
+        if (!(object_id_name in data)) {
+            return err(`table [${table}] data has no id field as '${object_id_name}'`)
+        }
+        if (data[object_id_name] === object_id_value) {
+            return this.setSingleRowData(table, null)
+        }
+        return ok(null)
     }
 
     async appendSingleRowData(table: TableName, value: JSONObject): Promise<Result<Data, string>> {
