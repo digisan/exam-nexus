@@ -1,5 +1,6 @@
 import { createRoute, OpenAPIHono, z } from "@hono/zod-openapi";
 import { UserController } from "@controllers/user.ts";
+import { isEmail } from "@util/util.ts";
 
 const app = new OpenAPIHono();
 const userCtrl = new UserController();
@@ -71,6 +72,9 @@ app.openapi(
     ),
     async (c) => {
         const email = c.req.param("email");
+        if (!isEmail(email)) {
+            return c.text("Email format error", 400)
+        }
         const user = await userCtrl.getUserInfo(email);
         return user ? c.json(user) : c.text("User not found", 404);
     },

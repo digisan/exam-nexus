@@ -1,4 +1,4 @@
-import { Email } from "@util/util.ts";
+import type { Email } from "@util/util.ts";
 import { UserController } from "./user.ts";
 
 Deno.test(async function UserCtrlList() {

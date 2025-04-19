@@ -27,7 +27,8 @@
     },
     "compilerOptions": {
         "jsx": "precompile",
-        "jsxImportSource": "hono/jsx"
+        "jsxImportSource": "hono/jsx",
+        "verbatimModuleSyntax": true
     },
     "deploy": {
         "project": "exam-nexus",

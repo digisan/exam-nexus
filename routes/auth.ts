@@ -8,14 +8,14 @@ import { msg_auth } from "@i18n/msg_auth.ts";
 import type { TranslationKey, SafeT } from "@i18n/msg_auth_t.ts";
 import { isFatalErr } from "@i18n/util.ts";
 import { StatusCode } from "http-status-code";
-// import { SupabaseAgent } from "@db/dbService.ts";
-// const sa = new SupabaseAgent();
 
 const { i18nMiddleware, getI18n } = createI18n({
     messages: msg_auth,
     defaultLocale: "en-AU",
     getLocale: (c) => getCookie(c, "locale-cookie"),
 })
+
+const withSafeT = (c: any): SafeT => getI18n(c) as SafeT // 获取翻译函数
 
 const getMsgCode = (listMsgCode: [Result<any, string>, TranslationKey, StatusCode][], t: SafeT): [string, StatusCode] => {
     if (len(listMsgCode) === 0) {
@@ -98,7 +98,7 @@ app.openapi(
     ),
     async (c) => {
 
-        const t = getI18n(c) as SafeT // 获取翻译函数
+        const t = withSafeT(c)
 
         const { email, password, captchaToken } = c.req.valid("json");
         if (!isEmail(email)) {
@@ -187,7 +187,7 @@ app.openapi(
     ),
     async (c) => {
 
-        const t = getI18n(c) as SafeT // 获取翻译函数
+        const t = withSafeT(c)
 
         const { email, password, captchaToken } = c.req.valid("json");
         if (!isEmail(email)) {

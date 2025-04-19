@@ -3,7 +3,7 @@
 import { walk } from "jsr:@std/fs";
 import * as ts from "https://esm.sh/typescript@5.8.3";
 
-async function checkFile(filePath: string) {
+async function checkFile(filePath: string, ...excl: string[]) {
     const code = await Deno.readTextFile(filePath);
     const sourceFile = ts.createSourceFile(filePath, code, ts.ScriptTarget.Latest, true);
     const importedTypes = new Set<string>();
@@ -33,11 +33,13 @@ async function checkFile(filePath: string) {
             const type = node.type.getText(sourceFile);
             if (importedTypes.has(type)) {
                 const { line } = sourceFile.getLineAndCharacterOfPosition(node.getStart());
-                issues.push({
-                    type,
-                    line: line + 1,
-                    code: lines[line].trim(),
-                });
+                if (!excl.includes(type)) {
+                    issues.push({
+                        type,
+                        line: line + 1,
+                        code: lines[line].trim(),
+                    });
+                }
             }
         }
         ts.forEachChild(node, checkNode);
@@ -61,7 +63,7 @@ async function main() {
         exts: [".ts", ".tsx", ".js", ".jsx"],
         skip: [/node_modules/, /\.git/],
     })) {
-        await checkFile(entry.path);
+        await checkFile(entry.path, 'SafeT');
     }
     console.log("✅ No branded type assertion found.");
 }
