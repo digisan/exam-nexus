@@ -2,7 +2,7 @@
 import { ok, err, Result } from "neverthrow"
 import { firstWord, unorderedSetsEqual } from "@util/util.ts"
 import { createClient } from "@supabase/supabase-js"
-await import('@secret/const.ts')
+await import('@define/const.ts')
 
 const SUPABASE_URL = Deno.env.get("SUPABASE_URL");
 const SUPABASE_KEY = Deno.env.get("SUPABASE_KEY");
@@ -158,7 +158,7 @@ const SB_TABLES = [
     "general",
     "messages",
     "register",
-    "user_sys_config",    
+    "user_sys_config",
 ] as const;
 
 export type TableKey = typeof SB_TABLES[number];

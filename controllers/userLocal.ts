@@ -1,5 +1,5 @@
+import { type Email } from "@define/type.ts";
 import { fileExists } from "@util/util.ts";
-import type { Email } from "@util/util.ts";
 
 export class UserController {
     async getUserList() {

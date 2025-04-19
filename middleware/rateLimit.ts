@@ -1,5 +1,5 @@
 import { getConnInfo } from 'hono/deno'
-import { Next } from "hono";
+import { type Next } from "hono";
 
 const rateLimitMap = new Map()
 

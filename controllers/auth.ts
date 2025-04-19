@@ -4,7 +4,7 @@ import { hash, compare } from "npm:bcrypt-ts";
 import { createSaferT } from "@i18n/util.ts";
 import type { SafeT } from "@i18n/msg_auth_t.ts";
 import type { TableKey } from "@db/dbService.ts";
-import type { Email, Password } from "@util/util.ts";
+import type { Email, Password } from "@define/type.ts";
 import { SupabaseAgent } from "@db/dbService.ts";
 
 const SIGNATURE_KEY = Deno.env.get("SIGNATURE_KEY");

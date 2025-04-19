@@ -32,9 +32,7 @@ export class UserConfigController {
 
     async setSysCfg(cfg: { region: RegionKey; language: LanguageKey }, ct?: SafeT): Promise<Result<boolean, string>> {
         const t = createSaferT(ct);
-
         
-
         const result = await this.agent.setSingleRowData(TABLE_USERSYSCFG, cfg)
 
         return err(t('not implemented'))

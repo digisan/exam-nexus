@@ -1,5 +1,5 @@
 import { ok, err, Result } from "neverthrow"
-await import('@secret/const.ts')
+await import('@define/const.ts')
 
 const HCAPTCHA_SECRET = Deno.env.get("HCAPTCHA_SECRET");
 const HCAPTCHA_VERIFY_URL = Deno.env.get("HCAPTCHA_VERIFY_URL");
@@ -11,18 +11,6 @@ export const lastElem = <T>(arr: T[] | null | undefined): T | undefined => arr?.
 export const false2err = (b: boolean, errMsg: string = 'false as error'): Result<boolean, string> => !b ? err(errMsg) : ok(b);
 
 export const true2err = (b: boolean, errMsg: string = 'true as error'): Result<boolean, string> => b ? err(errMsg) : ok(b);
-
-export type Email = string & { __brand: 'Email' };
-export const isEmail = (s: string): s is Email => {
-    const reg = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
-    return reg.test(s)
-}
-
-export type Password = string & { __brand: 'Password' };
-export const isAllowedPassword = (s: string): s is Password => {
-    const reg = /^\S*(?=\S{8,})(?=\S*\d)(?=\S*[A-Z])(?=\S*[a-z])(?=\S*[!@#$%^&*? ])\S*$/
-    return reg.test(s)
-}
 
 export const bools2idx = (...flags: boolean[]): number => flags.reduce((acc, flag, i) => acc | (+flag << (flags.length - 1 - i)), 0);
 
