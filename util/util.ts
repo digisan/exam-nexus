@@ -30,6 +30,20 @@ export const unorderedArraysEqual = <T>(a: T[], b: T[]): boolean => {
 
 export const unorderedSetsEqual = <T>(a: T[], b: T[]): boolean => unorderedArraysEqual([...new Set(a)], [...new Set(b)]);
 
+export const haveSameStructure = (a: object, b: object): boolean => {
+    const aKeys = Object.keys(a);
+    const bKeys = Object.keys(b);
+    if (aKeys.length !== bKeys.length) return false;
+    const aKeySet = new Set(aKeys);
+    for (const key of bKeys) {
+        if (!aKeySet.has(key)) return false;
+        const aType = typeof (a as any)[key];
+        const bType = typeof (b as any)[key];
+        if (aType !== bType) return false;
+    }
+    return true;
+}
+
 export const fileExists = async (path: string): Promise<boolean> => {
     try {
         await Deno.stat(path);

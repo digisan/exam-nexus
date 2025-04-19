@@ -1,4 +1,4 @@
-import { SupabaseAgent, type Object } from "@db/dbService.ts";
+import { SupabaseAgent, type JSONObject } from "@db/dbService.ts";
 import { T_REG } from "@define/const.ts";
 
 type Brand<K, T> = K & { __brand: T };
@@ -19,12 +19,12 @@ export const isAllowedPassword = (s: string): s is Password => {
 export type ExistEmail = Brand<string, 'ExistEmail'>;
 
 // 异步校验函数（返回 Promise<boolean>）
-const isExistEmail = async (s: string): Promise<boolean> => {
+const isExist = async (s: string): Promise<boolean> => {
     if (!isEmail(s)) return false;
     const sa = new SupabaseAgent();
     const r = await sa.TableContent(T_REG);
     if (r.isOk()) {
-        const users = (r.value as Object[])[0].data;
+        const users = (r.value as JSONObject[])[0].data;
         return users.some((u: { email: string }) => u.email === s);
     }
     return false;
@@ -32,5 +32,5 @@ const isExistEmail = async (s: string): Promise<boolean> => {
 
 // 异步转换函数（返回 Promise<ExistEmail | null>）
 export const toExistEmail = async (s: string): Promise<ExistEmail | null> => {
-    return (await isExistEmail(s)) ? (s as ExistEmail) : null;
+    return (await isExist(s)) ? (s as ExistEmail) : null;
 }

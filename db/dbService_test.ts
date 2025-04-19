@@ -1,4 +1,4 @@
-import { SupabaseAgent, type Object } from "@db/dbService.ts"
+import { SupabaseAgent, type JSONObject } from "@db/dbService.ts"
 import { T_REG, T_DEBUG, T_G } from "@define/const.ts";
 
 Deno.test(async function ExecuteSQL() {
@@ -55,7 +55,27 @@ Deno.test(async function TableContent() {
     const sa = new SupabaseAgent();
     const r = await sa.TableContent(T_REG)
     if (r.isOk()) {
-        console.log((r.value as Object[])[0].data)
+        console.log((r.value as JSONObject[])[0].data)
+    } else {
+        console.debug(r.error)
+    }
+});
+
+Deno.test(async function UpsertDataObject() {
+    const sa = new SupabaseAgent();
+    const r = await sa.upsertSingleRowDataObject(T_REG, "email", { email: "test1@test.com", password: "abcdefg", registered_at: "adfe" })
+    if (r.isOk()) {
+        console.log(r.value)
+    } else {
+        console.debug(r.error)
+    }
+});
+
+Deno.test(async function RemoveDataObject() {
+    const sa = new SupabaseAgent();
+    const r = await sa.removeSingleRowDataObject(T_REG, "email", "test@test.com")
+    if (r.isOk()) {
+        console.log(r.value)
     } else {
         console.debug(r.error)
     }

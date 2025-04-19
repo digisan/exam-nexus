@@ -3,6 +3,7 @@ import { createSaferT } from "@i18n/util.ts";
 import type { SafeT } from "@i18n/msg_auth_t.ts";
 import { SupabaseAgent } from "@db/dbService.ts";
 import { T_USERSYSCFG } from "@define/const.ts";
+import type { ExistEmail } from "@define/type.ts";
 
 const regions = [
     "au",
@@ -19,20 +20,18 @@ const languages = [
 type RegionKey = typeof regions[number];
 type LanguageKey = typeof languages[number];
 
-export class UserConfigController {
+// export class UserConfigController {
 
-    private agent: SupabaseAgent;
+//     private agent: SupabaseAgent;
 
-    constructor(agent?: SupabaseAgent) {
-        this.agent = agent ?? new SupabaseAgent();
-    }
+//     constructor(agent?: SupabaseAgent) {
+//         this.agent = agent ?? new SupabaseAgent();
+//     }
 
-    async setSysCfg(cfg: { region: RegionKey; language: LanguageKey }, ct?: SafeT): Promise<Result<boolean, string>> {
-        const t = createSaferT(ct);
+//     async setSysCfg(cfg: { email: ExistEmail, region: RegionKey; language: LanguageKey }, ct?: SafeT): Promise<Result<boolean, string>> {
+//         const t = createSaferT(ct);
+//         const result = await this.agent.setSingleRowData(T_USERSYSCFG, cfg)
+        
+//     }
 
-        const result = await this.agent.setSingleRowData(T_USERSYSCFG, cfg)
-
-        return err(t('not implemented'))
-    }
-
-}
+// }

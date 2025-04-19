@@ -1,5 +1,5 @@
 import { ok, err, Result } from "neverthrow"
-import { firstWord, unorderedSetsEqual } from "@util/util.ts"
+import { firstWord, haveSameStructure, unorderedSetsEqual } from "@util/util.ts"
 import { createClient } from "@supabase/supabase-js"
 await import('@define/const.ts')
 
@@ -18,8 +18,8 @@ const SB_TABLES = [
 ] as const;
 
 export type TableName = typeof SB_TABLES[number];
-export type Object = Record<string, any>;
-export type Data = Object | Object[] | null;
+export type JSONObject = Record<string, any>;
+type Data = JSONObject | JSONObject[] | null;
 
 const normalizeDataStructure = (value: Data): Data => {
     if (Array.isArray(value)) {
@@ -88,7 +88,74 @@ export class SupabaseAgent {
         return this.updateDataRow(table, data[0].id, newData);
     }
 
-    async appendSingleRowData(table: TableName, value: Object): Promise<Result<Data, string>> {
+    async upsertSingleRowDataObject(table: TableName, object_id_name: string, value: JSONObject): Promise<Result<Data, string>> {
+        if (!(object_id_name in value)) {
+            return err(`${table}'s data item value has no id name as ${object_id_name}`);
+        }
+        const result = await this.getSingleRowData(table)
+        if (!result.isOk()) {
+            return result
+        }
+        if (!result.value) {
+            return this.appendSingleRowData(table, value)
+        }
+
+        // array data
+        if (Array.isArray(result.value)) {
+            const data = result.value as JSONObject[]
+            if (!haveSameStructure(value, data[0])) {
+                return err(`structure mismatch: expected ${JSON.stringify(data[0])}, got ${JSON.stringify(value)}`)
+            }
+            const i = data.findIndex(item => item[object_id_name] === value[object_id_name])
+            if (i !== -1) {
+                data[i] = value
+            } else {
+                data.push(value)
+            }
+            return this.setSingleRowData(table, data)
+        }
+        
+        // single object data
+        const data = result.value as JSONObject
+        if (!haveSameStructure(value, data)) {
+            return err(`structure mismatch: expected ${JSON.stringify(data)}, got ${JSON.stringify(value)}`)
+        }
+        if (data[object_id_name] === value[object_id_name]) {
+            return this.setSingleRowData(table, value)
+        }
+        return this.appendSingleRowData(table, value)
+    }
+
+    async removeSingleRowDataObject(table: TableName, object_id_name: string, object_id_value: any): Promise<Result<Data, string>> {
+        const result = await this.getSingleRowData(table)
+        if (result.isOk()) {
+            if (result.value) {
+                if (Array.isArray(result.value)) {
+                    const data = result.value as JSONObject[]
+                    if (!(object_id_name in data[0])) {
+                        return err(`table [${table}] data has no id field as ${object_id_name}`)
+                    }
+                    const i = data.findIndex(item => item[object_id_name] === object_id_value)
+                    if (i !== -1) {
+                        data.splice(i, 1)
+                        return this.setSingleRowData(table, data)
+                    }
+                } else {
+                    const data = result.value as JSONObject
+                    if (!(object_id_name in data)) {
+                        return err(`table [${table}] data has no id field as ${object_id_name}`)
+                    }
+                    if (data[object_id_name] === object_id_value) {
+                        return this.setSingleRowData(table, null)
+                    }
+                }
+            }
+            return ok(null)
+        }
+        return result
+    }
+
+    async appendSingleRowData(table: TableName, value: JSONObject): Promise<Result<Data, string>> {
         const current = await this.getSingleRowData(table);
         if (current.isErr()) return err(current.error);
 
@@ -104,7 +171,7 @@ export class SupabaseAgent {
 
     ////////////////////////////////////////////////////////////////////////////////////////
 
-    async insertDataRow(table: TableName, value: Data): Promise<Result<Object, string>> {
+    async insertDataRow(table: TableName, value: Data): Promise<Result<JSONObject, string>> {
         const { data, error } = await supabase
             .from(table)
             .insert({ data: value })
@@ -116,7 +183,7 @@ export class SupabaseAgent {
         return ok(data);
     }
 
-    async updateDataRow(table: TableName, id: number, value: Data): Promise<Result<Object, string>> {
+    async updateDataRow(table: TableName, id: number, value: Data): Promise<Result<JSONObject, string>> {
         const { data, error } = await supabase
             .from(table)
             .update({ data: value })
@@ -129,7 +196,7 @@ export class SupabaseAgent {
         return ok(data);
     }
 
-    async deleteDataRows(table: TableName, ...ids: number[]): Promise<Result<Object[], string>> {
+    async deleteDataRows(table: TableName, ...ids: number[]): Promise<Result<JSONObject[], string>> {
         if (ids.length === 0) return ok([]);
         const { data, error } = await supabase
             .from(table)
@@ -144,7 +211,7 @@ export class SupabaseAgent {
 
     ////////////////////////////////////////////////////////////////////////////////////////
 
-    async insertTextRow(table: TableName, value: string): Promise<Result<Object, string>> {
+    async insertTextRow(table: TableName, value: string): Promise<Result<JSONObject, string>> {
         const { data, error } = await supabase
             .from(table)
             .insert({ content: value })

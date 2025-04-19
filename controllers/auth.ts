@@ -10,8 +10,8 @@ import { T_REG, T_DEBUG } from "@define/const.ts";
 const SIGNATURE_KEY = Deno.env.get("SIGNATURE_KEY");
 const tokenBlacklist = new Set();
 
-type Object = Record<string, any>;
-type Data = Object | Object[] | null;
+type JSONObject = Record<string, any>;
+type Data = JSONObject | JSONObject[] | null;
 
 export class AuthController {
 
@@ -86,7 +86,7 @@ export class AuthController {
         }
     }
 
-    private findUserByEmail(data: Data, email: Email): Object | null {
+    private findUserByEmail(data: Data, email: Email): JSONObject | null {
         if (Array.isArray(data)) {
             return data.find((u) => u.email === email) ?? null;
         }

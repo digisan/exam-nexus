@@ -11,5 +11,4 @@ Deno.test(async function Test() {
     const existEmail = await toExistEmail(s);
     if (!existEmail) return;
     p(existEmail);
-    p(s as ExistEmail)
 });
