@@ -10,8 +10,9 @@ export const msg_auth = {
                 _: "Service is temporarily unavailable. Please try again later"
             },
             fail: {
-                existing: "already registered",
                 invalid_email: "invalid email format",
+                weak_password: "weak password format",
+                existing: "already registered",
                 _: "Invalid register information."
             },
             ok: {
@@ -25,6 +26,8 @@ export const msg_auth = {
                 _: "Service is temporarily unavailable. Please try again later"
             },
             fail: {
+                invalid_email: "invalid email format",
+                weak_password: "weak password format",
                 not_existing: "not registered yet",
                 verification: "incorrect email or password",
                 _: "Incorrect login information"
@@ -51,8 +54,9 @@ export const msg_auth = {
                 _: "服务暂时不可用，请稍后再试"
             },
             fail: {
-                existing: "已注册",
                 invalid_email: "无效Email格式",
+                weak_password: "密码不符合强度要求",
+                existing: "已注册",
                 _: "无效的注册信息"
             },
             ok: {
@@ -66,6 +70,8 @@ export const msg_auth = {
                 _: "服务暂时不可用，请稍后再试"
             },
             fail: {
+                invalid_email: "无效Email格式",
+                weak_password: "密码不符合强度要求",
                 not_existing: "尚未注册",
                 verification: "邮箱或密码错误",
                 _: "登录信息无效"

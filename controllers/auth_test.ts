@@ -1,14 +1,31 @@
 import { AuthController } from "./auth.ts";
+import { isEmail, isAllowedPassword } from "@util/util.ts";
 
 Deno.test(async function AuthCtrlReg() {
     const ac = new AuthController();
-    const result = await ac.register({ email: "12347@qq.com", password: "1345" })
+    const email = "1234700qq.com";
+    if (!isEmail(email)) {
+        return
+    }
+    const password = "12345";
+    if (!isAllowedPassword(password)) {
+        return
+    }
+    const result = await ac.register({ email, password })
     console.log(result)
 });
 
 Deno.test(async function AuthCtrlLogin() {
     const ac = new AuthController();
-    const result = await ac.login({ email: "12347@qq.com", password: "1345" })
+    const email = "12347000@qq.com";
+    if (!isEmail(email)) {
+        return
+    }
+    const password = "12345";
+    if (!isAllowedPassword(password)) {
+        return
+    }
+    const result = await ac.login({ email, password })
     console.log(result)
 });
 

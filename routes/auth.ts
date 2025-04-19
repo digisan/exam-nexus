@@ -1,6 +1,6 @@
 import { ok, err, Result } from "neverthrow";
 import { createRoute, OpenAPIHono, z } from "@hono/zod-openapi";
-import { verifyHCaptcha, len, lastElem, true2err, false2err, isEmail } from "@util/util.ts";
+import { verifyHCaptcha, len, lastElem, true2err, false2err, isEmail, isAllowedPassword } from "@util/util.ts";
 import { AuthController } from "@controllers/auth.ts";
 import { createI18n } from "hono-i18n";
 import { getCookie } from "hono/cookie";
@@ -42,7 +42,7 @@ const authCtrl = new AuthController();
 
 const RegisterRequestBody = z.object({
     email: z.string().email("Invalid email address"),
-    password: z.string().min(6, "Password must be at least 6 characters"),
+    password: z.string().min(8, "Password must be at least 8 characters"),
     captchaToken: z.string().min(1, "Captcha token is required"),
 });
 
@@ -104,6 +104,9 @@ app.openapi(
         if (!isEmail(email)) {
             return c.json({ success: false, message: t('register.fail.invalid_email') }, 400)
         }
+        if (!isAllowedPassword(password)) {
+            return c.json({ success: false, message: t('register.fail.weak_password') }, 400)
+        }
 
         let cAccessResult: Result<boolean, string>;
         let cVerifyResult: Result<boolean, string>;
@@ -138,7 +141,7 @@ app.openapi(
 
 const LoginRequestBody = z.object({
     email: z.string().email("Invalid email address"),
-    password: z.string().min(3, "Password must be at least 3 characters"),
+    password: z.string().min(8, "Password must be at least 8 characters"),
     captchaToken: z.string().min(1, "Captcha token is required"),
 });
 
@@ -188,7 +191,10 @@ app.openapi(
 
         const { email, password, captchaToken } = c.req.valid("json");
         if (!isEmail(email)) {
-            return c.json({ success: false, message: t('register.fail.invalid_email') }, 400)
+            return c.json({ success: false, message: t('login.fail.invalid_email') }, 400)
+        }
+        if (!isAllowedPassword(password)) {
+            return c.json({ success: false, message: t('login.fail.weak_password') }, 400)
         }
 
         let cAccessResult: Result<boolean, string>;

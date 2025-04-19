@@ -18,6 +18,12 @@ export const isEmail = (s: string): s is Email => {
     return reg.test(s)
 }
 
+export type Password = string & { __brand: 'Password' };
+export const isAllowedPassword = (s: string): s is Password => {
+    const reg = /^\S*(?=\S{8,})(?=\S*\d)(?=\S*[A-Z])(?=\S*[a-z])(?=\S*[!@#$%^&*? ])\S*$/
+    return reg.test(s)
+}
+
 export const bools2idx = (...flags: boolean[]): number => flags.reduce((acc, flag, i) => acc | (+flag << (flags.length - 1 - i)), 0);
 
 export const firstWord = (sql: string): string | null => sql.trim().split(/\s+/)[0] ?? null;

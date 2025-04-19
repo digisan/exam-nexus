@@ -4,14 +4,13 @@ import { hash, compare } from "npm:bcrypt-ts";
 import { createSaferT } from "@i18n/util.ts";
 import type { SafeT } from "@i18n/msg_auth_t.ts";
 import type { TableKey } from "@db/dbService.ts";
-import type { Email } from "@util/util.ts";
+import type { Email, Password } from "@util/util.ts";
 import { SupabaseAgent } from "@db/dbService.ts";
 
 const SIGNATURE_KEY = Deno.env.get("SIGNATURE_KEY");
 const tokenBlacklist = new Set();
 const TABLE_REG: TableKey = 'register';
 const TABLE_DEBUG: TableKey = 'messages';
-const MIN_PASSWORD_LENGTH = 3;
 
 type Object = Record<string, any>;
 type Data = Object | Object[] | null;
@@ -26,22 +25,17 @@ export class AuthController {
 
     SignatureKey(): string { return SIGNATURE_KEY ?? "" }
 
-    async register(credentials: { email: Email; password: string }, ct?: SafeT): Promise<Result<string, string>> {
+    async register(credentials: { email: Email; password: Password }, ct?: SafeT): Promise<Result<string, string>> {
         const t = createSaferT(ct);
 
-        // Step 1: 校验密码长度
-        if (credentials.password.length < MIN_PASSWORD_LENGTH) {
-            return err(t('register.fail.weak_password'));
-        }
-
         try {
-            // Step 2: 拉取用户注册内容
+            // Step 1: 拉取用户注册内容
             const rg = await this.agent.getSingleRowData(TABLE_REG);
             if (rg.isErr()) {
                 return err(rg.error)
             }
 
-            // Step 3: 判断邮箱是否已存在
+            // Step 2: 判断邮箱是否已存在
             if (Array.isArray(rg.value)) {
                 if (rg.value.some((u) => u.email === credentials.email)) {
                     return err(t('register.fail.existing'))
@@ -101,7 +95,7 @@ export class AuthController {
         return data?.email === email ? data : null;
     }
 
-    async login(credentials: { email: Email; password: string }, ct?: SafeT): Promise<Result<string, string>> {
+    async login(credentials: { email: Email; password: Password }, ct?: SafeT): Promise<Result<string, string>> {
 
         const t = createSaferT(ct);
 
