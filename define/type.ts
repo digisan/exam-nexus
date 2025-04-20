@@ -18,7 +18,7 @@ export const isEmail = (s: string | null): s is Email => {
 
 export type Password = Brand<string, 'Password'>;
 export const isAllowedPassword = (s: string | null): s is Password => {
-    const reg = /^\S*(?=\S{8,})(?=\S*\d)(?=\S*[A-Z])(?=\S*[a-z])(?=\S*[!@#$%^&*? ])\S*$/
+    const reg = /^\S*(?=\S{8,})(?=\S*\d)(?=\S*[A-Z])(?=\S*[a-z])(?=\S*[!@#$%^&*?_ ])\S*$/
     return reg.test(s ?? "")
 }
 
@@ -35,8 +35,18 @@ const isExist = async (s: string | null): Promise<boolean> => {
     const sa = new SupabaseAgent();
     const r = await sa.TableContent(T_REG);
     if (r.isOk()) {
-        const users = (r.value as JSONObject[])[0].data;
-        return users.some((u: { email: string }) => u.email === s);
+        if (!r.value) {
+            return false
+        }
+        const first_row = (r.value as JSONObject[])[0];
+        const users = first_row.data;
+        if (!users) {
+            return false
+        }
+        if (Array.isArray(users)) {
+            return users.some((u: { email: string }) => u.email === s);
+        }
+        return users.email === s
     }
     return false;
 }

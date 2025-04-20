@@ -13,6 +13,10 @@ export class UserConfigController {
         this.agent = agent ?? new SupabaseAgent();
     }
 
+    getUserCfg(email: ExistEmail): Promise<Result<Data, string>> {
+        this.agent.getSingleRowData(T_USERSYSCFG)
+    }
+
     setUserCfg(cfg: { email: ExistEmail, region: Region; language: Language }, ct?: SafeT): Promise<Result<Data, string>> {
         return this.agent.upsertSingleRowDataObject(T_USERSYSCFG, "email", cfg)
     }

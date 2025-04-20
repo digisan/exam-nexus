@@ -3,12 +3,14 @@ import { isEmail, isAllowedPassword } from "@define/type.ts";
 
 Deno.test(async function AuthCtrlReg() {
     const ac = new AuthController();
-    const email = "1234700qq.com";
+    const email = "123470@qq.com";
     if (!isEmail(email)) {
+        console.debug(`'${email}' is NOT valid Email`)
         return
     }
-    const password = "12345";
+    const password = "123abcDEF_";
     if (!isAllowedPassword(password)) {
+        console.debug(`'${password}' is NOT valid Password`)
         return
     }
     const result = await ac.register({ email, password })
