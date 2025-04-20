@@ -1,4 +1,4 @@
-import type { TableKey } from "@define/type.ts";
+import type { TableType } from "@define/type.ts";
 
 // 
 // Environment
@@ -27,10 +27,10 @@ export const TABLES_SB = [
     "user_sys_config",
 ] as const;
 
-export const T_G: TableKey = 'general';
-export const T_REG: TableKey = 'register';
-export const T_DEBUG: TableKey = 'messages';
-export const T_USERSYSCFG: TableKey = 'user_sys_config';
+export const T_G: TableType = 'general';
+export const T_REG: TableType = 'register';
+export const T_DEBUG: TableType = 'messages';
+export const T_USERSYSCFG: TableType = 'user_sys_config';
 
 //
 // User Configuration

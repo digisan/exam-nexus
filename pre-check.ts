@@ -2,7 +2,7 @@ import { walk } from "jsr:@std/fs";
 import * as ts from "https://esm.sh/typescript@5.8.3";
 import { unorderedSetsEqual } from "@util/util.ts";
 import { TABLES_SB } from "@define/const.ts";
-import type { TableKey } from "@define/type.ts";
+import type { TableType } from "@define/type.ts";
 import { SupabaseAgent } from "@db/dbService.ts";
 
 async function checkFile(filePath: string, ...excl: string[]) {
@@ -100,7 +100,7 @@ async function main() {
         if (r.isErr()) {
             throw new Error(`❌ SupaBase Tables are not ready`)
         }
-        const tables = r.value as TableKey[]
+        const tables = r.value as TableType[]
         if (!unorderedSetsEqual([...TABLES_SB], tables)) {
             console.debug(tables)
             console.debug(TABLES_SB)

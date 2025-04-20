@@ -4,9 +4,9 @@ import { SupabaseAgent } from "@db/dbService.ts";
 export type JSONObject = Record<string, any>;
 export type Data = JSONObject | JSONObject[] | null;
 
-export type TableKey = typeof TABLES_SB[number];
-export type RegionKey = typeof REGIONS[number];
-export type LanguageKey = typeof LANGUAGES[number];
+export type TableType = typeof TABLES_SB[number];
+export type RegionType = typeof REGIONS[number];
+export type LanguageType = typeof LANGUAGES[number];
 
 type Brand<K, T> = K & { __brand: T };
 
@@ -23,10 +23,10 @@ export const isAllowedPassword = (s: string | null): s is Password => {
 }
 
 export type Region = Brand<typeof REGIONS[number], 'Region'>;
-export const isValidRegion = (s: string | null): s is Region => REGIONS.includes(s as RegionKey)
+export const isValidRegion = (s: string | null): s is Region => REGIONS.includes(s as RegionType)
 
 export type Language = Brand<typeof LANGUAGES[number], 'Language'>;
-export const isValidLanguage = (s: string | null): s is Language => LANGUAGES.includes(s as LanguageKey)
+export const isValidLanguage = (s: string | null): s is Language => LANGUAGES.includes(s as LanguageType)
 
 export type ExistEmail = Brand<string, 'ExistEmail'>;
 // 异步校验函数（返回 Promise<boolean>）
