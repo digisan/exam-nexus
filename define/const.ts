@@ -1,4 +1,4 @@
-import type { TableName } from "@define/type.ts";
+import type { TableKey } from "@define/type.ts";
 
 // 
 // Environment
@@ -20,17 +20,17 @@ console.log('init env variables')
 //
 // System Configuration
 //
-export const SB_TABLES = [
+export const TABLES_SB = [
     "general",
     "messages",
     "register",
     "user_sys_config",
 ] as const;
 
-export const T_G: TableName = 'general';
-export const T_REG: TableName = 'register';
-export const T_DEBUG: TableName = 'messages';
-export const T_USERSYSCFG: TableName = 'user_sys_config';
+export const T_G: TableKey = 'general';
+export const T_REG: TableKey = 'register';
+export const T_DEBUG: TableKey = 'messages';
+export const T_USERSYSCFG: TableKey = 'user_sys_config';
 
 //
 // User Configuration

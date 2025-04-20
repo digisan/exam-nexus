@@ -1,5 +1,5 @@
 import { AuthController } from "./auth.ts";
-import { isEmail, isAllowedPassword } from "@define/type_b.ts";
+import { isEmail, isAllowedPassword } from "@define/type.ts";
 
 Deno.test(async function AuthCtrlReg() {
     const ac = new AuthController();

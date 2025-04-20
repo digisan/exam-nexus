@@ -1,6 +1,6 @@
 import { createRoute, OpenAPIHono, z } from "@hono/zod-openapi";
 import { UserController } from "@controllers/userLocal.ts";
-import { isEmail } from "@define/type_b.ts";
+import { isEmail } from "@define/type.ts";
 
 const app = new OpenAPIHono();
 const userCtrl = new UserController();

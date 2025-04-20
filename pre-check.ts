@@ -1,8 +1,8 @@
 import { walk } from "jsr:@std/fs";
 import * as ts from "https://esm.sh/typescript@5.8.3";
 import { unorderedSetsEqual } from "@util/util.ts";
-import { SB_TABLES } from "@define/const.ts";
-import type { TableName } from "@define/type.ts";
+import { TABLES_SB } from "@define/const.ts";
+import type { TableKey } from "@define/type.ts";
 import { SupabaseAgent } from "@db/dbService.ts";
 
 async function checkFile(filePath: string, ...excl: string[]) {
@@ -100,11 +100,11 @@ async function main() {
         if (r.isErr()) {
             throw new Error(`❌ SupaBase Tables are not ready`)
         }
-        const tables = r.value as TableName[]
-        if (!unorderedSetsEqual([...SB_TABLES], tables)) {
+        const tables = r.value as TableKey[]
+        if (!unorderedSetsEqual([...TABLES_SB], tables)) {
             console.debug(tables)
-            console.debug(SB_TABLES)
-            throw new Error(`SupaBase Tables [${tables}] are inconsistent with [${SB_TABLES}]`)
+            console.debug(TABLES_SB)
+            throw new Error(`SupaBase Tables [${tables}] are inconsistent with [${TABLES_SB}]`)
         }
         console.log("✅ SupaBase Tables are OK");
     })();

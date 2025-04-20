@@ -4,7 +4,7 @@ import * as bcrypt from "jsr:@da/bcrypt";
 import { fileExists } from "@util/util.ts";
 import { createSaferT } from "@i18n/util.ts";
 import type { SafeT } from "@i18n/msg_auth_t.ts";
-import type { Email, Password } from "@define/type_b.ts";
+import type { Email, Password } from "@define/type.ts";
 
 const SIGNATURE_KEY = Deno.env.get("SIGNATURE_KEY");
 const tokenBlacklist = new Set();
