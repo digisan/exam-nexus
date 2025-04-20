@@ -15,9 +15,7 @@ export const isAllowedPassword = (s: string): s is Password => {
     return reg.test(s)
 }
 
-// 定义 Branded Type
 export type ExistEmail = Brand<string, 'ExistEmail'>;
-
 // 异步校验函数（返回 Promise<boolean>）
 const isExist = async (s: string): Promise<boolean> => {
     if (!isEmail(s)) return false;
@@ -29,7 +27,6 @@ const isExist = async (s: string): Promise<boolean> => {
     }
     return false;
 }
-
 // 异步转换函数（返回 Promise<ExistEmail | null>）
 export const toExistEmail = async (s: string): Promise<ExistEmail | null> => {
     return (await isExist(s)) ? (s as ExistEmail) : null;

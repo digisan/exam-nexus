@@ -1,5 +1,3 @@
-import { type TableName } from "@db/dbService.ts";
-
 const SIGNATURE_KEY = "mySecretKey";
 const HCAPTCHA_VERIFY_URL = "https://api.hcaptcha.com/siteverify";
 const HCAPTCHA_SECRET = "ES_d9b1e2678035429d92d31e64f99227b6"; // hCaptcha 私钥
@@ -12,11 +10,18 @@ Deno.env.set('HCAPTCHA_SECRET', HCAPTCHA_SECRET)
 Deno.env.set('SUPABASE_URL', SUPABASE_URL)
 Deno.env.set('SUPABASE_KEY', SUPABASE_KEY)
 
-// console.log('init env variables')
+console.log('init env variables')
+
+export const SB_TABLES = [
+    "general",
+    "messages",
+    "register",
+    "user_sys_config",
+] as const;
+
+export type TableName = typeof SB_TABLES[number];
 
 export const T_G: TableName = 'general';
 export const T_REG: TableName = 'register';
 export const T_DEBUG: TableName = 'messages';
 export const T_USERSYSCFG: TableName = 'user_sys_config';
-
-export { };

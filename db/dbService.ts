@@ -1,6 +1,7 @@
 import { ok, err, Result } from "neverthrow"
-import { firstWord, haveSameStructure, unorderedSetsEqual } from "@util/util.ts"
+import { firstWord, haveSameStructure } from "@util/util.ts"
 import { createClient } from "@supabase/supabase-js"
+import { type TableName } from "@define/const.ts"
 await import('@define/const.ts')
 
 const SUPABASE_URL = Deno.env.get("SUPABASE_URL");
@@ -10,14 +11,6 @@ if (!SUPABASE_URL || !SUPABASE_KEY) {
 }
 const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
 
-const SB_TABLES = [
-    "general",
-    "messages",
-    "register",
-    "user_sys_config",
-] as const;
-
-export type TableName = typeof SB_TABLES[number];
 export type JSONObject = Record<string, any>;
 type Data = JSONObject | JSONObject[] | null;
 
@@ -226,19 +219,3 @@ export class SupabaseAgent {
         return ok(data);
     }
 }
-
-// validate SupaBaseDB tables
-await (async () => {
-    const sa = new SupabaseAgent();
-    const r = await sa.TableList()
-    if (r.isOk()) {
-        const tables = r.value as string[]
-        if (!unorderedSetsEqual([...SB_TABLES], tables)) {
-            console.debug(tables)
-            console.debug(SB_TABLES)
-            throw new Error(`SupaBase Tables [${tables}] are inconsistent with [${SB_TABLES}]`)
-        }
-    } else {
-        console.log(`SupaBase Tables are OK`)
-    }
-})();

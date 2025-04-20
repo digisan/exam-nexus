@@ -1,7 +1,8 @@
-// check-branded-assertions.ts
-
 import { walk } from "jsr:@std/fs";
 import * as ts from "https://esm.sh/typescript@5.8.3";
+import { unorderedSetsEqual } from "@util/util.ts";
+import { SB_TABLES, type TableName } from "@define/const.ts";
+import { SupabaseAgent } from "@db/dbService.ts";
 
 async function checkFile(filePath: string, ...excl: string[]) {
     const code = await Deno.readTextFile(filePath);
@@ -80,6 +81,8 @@ async function checkFile(filePath: string, ...excl: string[]) {
 }
 
 async function main() {
+
+    // 1. check branded assertions
     for await (const entry of walk(".", {
         includeDirs: false,
         exts: [".ts", ".tsx", ".js", ".jsx"],
@@ -88,9 +91,24 @@ async function main() {
         await checkFile(entry.path, 'SafeT');
     }
     console.log("✅ No branded type assertion found.");
+
+    // 2. validate SupaBaseDB tables
+    await (async () => {
+        const sa = new SupabaseAgent();
+        const r = await sa.TableList()
+        if (r.isErr()) {
+            throw new Error(`❌ SupaBase Tables are not ready`)
+        }
+        const tables = r.value as TableName[]
+        if (!unorderedSetsEqual([...SB_TABLES], tables)) {
+            console.debug(tables)
+            console.debug(SB_TABLES)
+            throw new Error(`SupaBase Tables [${tables}] are inconsistent with [${SB_TABLES}]`)
+        }
+        console.log("✅ SupaBase Tables are OK");
+    })();
 }
 
 if (import.meta.main) {
     await main();
 }
-
