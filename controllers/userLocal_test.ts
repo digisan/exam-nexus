@@ -1,4 +1,4 @@
-import { isEmail } from "@define/type.ts";
+import { isEmail } from "@define/type_b.ts";
 import { UserController } from "./userLocal.ts";
 
 Deno.test(async function UserCtrlList() {

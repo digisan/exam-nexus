@@ -1,7 +1,8 @@
 import { walk } from "jsr:@std/fs";
 import * as ts from "https://esm.sh/typescript@5.8.3";
 import { unorderedSetsEqual } from "@util/util.ts";
-import { SB_TABLES, type TableName } from "@define/const.ts";
+import { SB_TABLES } from "@define/const.ts";
+import type { TableName } from "@define/type.ts";
 import { SupabaseAgent } from "@db/dbService.ts";
 
 async function checkFile(filePath: string, ...excl: string[]) {
@@ -88,7 +89,7 @@ async function main() {
         exts: [".ts", ".tsx", ".js", ".jsx"],
         skip: [/node_modules/, /\.git/],
     })) {
-        await checkFile(entry.path, 'SafeT');
+        await checkFile(entry.path, 'SafeT', 'JSONObject');
     }
     console.log("✅ No branded type assertion found.");
 

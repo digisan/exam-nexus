@@ -1,37 +1,19 @@
-import { ok, err, Result } from "neverthrow";
-import { createSaferT } from "@i18n/util.ts";
+import { Result } from "neverthrow";
 import type { SafeT } from "@i18n/msg_auth_t.ts";
 import { SupabaseAgent } from "@db/dbService.ts";
 import { T_USERSYSCFG } from "@define/const.ts";
-import type { ExistEmail } from "@define/type.ts";
+import type { Data, RegionKey, LanguageKey } from "@define/type.ts";
+import type { ExistEmail } from "@define/type_b.ts";
 
-const regions = [
-    "au",
-    "cn",
-    "us",
-    "jp",
-] as const;
+export class UserConfigController {
 
-const languages = [
-    "en",
-    "zh"
-] as const;
+    private agent: SupabaseAgent;
 
-type RegionKey = typeof regions[number];
-type LanguageKey = typeof languages[number];
+    constructor(agent?: SupabaseAgent) {
+        this.agent = agent ?? new SupabaseAgent();
+    }
 
-// export class UserConfigController {
-
-//     private agent: SupabaseAgent;
-
-//     constructor(agent?: SupabaseAgent) {
-//         this.agent = agent ?? new SupabaseAgent();
-//     }
-
-//     async setSysCfg(cfg: { email: ExistEmail, region: RegionKey; language: LanguageKey }, ct?: SafeT): Promise<Result<boolean, string>> {
-//         const t = createSaferT(ct);
-//         const result = await this.agent.setSingleRowData(T_USERSYSCFG, cfg)
-        
-//     }
-
-// }
+    setSysCfg(cfg: { email: ExistEmail, region: RegionKey; language: LanguageKey }, ct?: SafeT): Promise<Result<Data, string>> {
+        return this.agent.upsertSingleRowDataObject(T_USERSYSCFG, "email", cfg)
+    }
+}

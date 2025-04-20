@@ -1,4 +1,5 @@
-import { SupabaseAgent, type JSONObject } from "@db/dbService.ts"
+import { SupabaseAgent } from "@db/dbService.ts";
+import type { JSONObject } from "@define/type.ts";
 import { T_REG, T_DEBUG, T_G } from "@define/const.ts";
 
 Deno.test(async function ExecuteSQL() {

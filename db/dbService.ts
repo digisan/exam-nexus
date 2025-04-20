@@ -1,7 +1,7 @@
 import { ok, err, Result } from "neverthrow"
 import { firstWord, haveSameStructure } from "@util/util.ts"
 import { createClient } from "@supabase/supabase-js"
-import { type TableName } from "@define/const.ts"
+import type { TableName, Data, JSONObject } from "@define/type.ts"
 await import('@define/const.ts')
 
 const SUPABASE_URL = Deno.env.get("SUPABASE_URL");
@@ -10,9 +10,6 @@ if (!SUPABASE_URL || !SUPABASE_KEY) {
     throw new Error("SUPABASE_URL and SUPABASE_KEY must be provided");
 }
 const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
-
-export type JSONObject = Record<string, any>;
-type Data = JSONObject | JSONObject[] | null;
 
 const normalizeDataStructure = (value: Data): Data => {
     if (Array.isArray(value)) {

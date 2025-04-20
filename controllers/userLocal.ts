@@ -1,4 +1,4 @@
-import { type Email } from "@define/type.ts";
+import type { Email } from "@define/type_b.ts";
 import { fileExists } from "@util/util.ts";
 
 export class UserController {

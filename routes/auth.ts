@@ -1,7 +1,7 @@
 import { ok, err, Result } from "neverthrow";
 import { createRoute, OpenAPIHono, z } from "@hono/zod-openapi";
 import { verifyHCaptcha, len, lastElem, true2err, false2err } from "@util/util.ts";
-import { isEmail, isAllowedPassword } from "@define/type.ts";
+import { isEmail, isAllowedPassword } from "@define/type_b.ts";
 import { AuthController } from "@controllers/auth.ts";
 import { createI18n } from "hono-i18n";
 import { getCookie } from "hono/cookie";

@@ -1,5 +1,5 @@
-import { toExistEmail } from "@define/type.ts";
-import { type ExistEmail } from "@define/type.ts";
+import { toExistEmail } from "./type_b.ts";
+import type { ExistEmail } from "./type_b.ts";
 // import type { ExistEmail } from "@define/type.ts";
 
 const p = (u: ExistEmail) => {
