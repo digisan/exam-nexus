@@ -27,23 +27,33 @@ export const applyMiddleWare = (app: OpenAPIHono) => {
 
     const authCtrl = new AuthController();
     const mwJWT = jwt({ secret: authCtrl.SignatureKey() });
+
     const authPathList = [
         "/api/user/*",
         "/api/auth/logout",
         "/api/auth/validate-token",
     ];
-    authPathList.forEach((item) => {
+
+    type c_type = Parameters<typeof getI18n>[0]
+
+    const extractToken = (c: c_type): string | null => {
+        const auth = c.req.header("Authorization");
+        if (!auth || !auth.startsWith("Bearer ")) return null;
+        return auth.split(" ")[1];
+    }
+
+    authPathList.forEach((path) => {
         // standard JWT
-        app.use(item, mwJWT);
+        app.use(path, mwJWT);
+
         // manual logout blacklist check
-        app.use(item, async (c: any, next) => {
-            const t = getI18n(c) // 获取翻译函数
-            const token = c.req.header("Authorization").split(" ")[1];
-            if (authCtrl.alreadyLogout(token)) {
+        app.use(path, async (c: c_type, next) => {
+            const token = extractToken(c);
+            if (!token || authCtrl.alreadyLogout(token)) {
+                const t = getI18n(c) // 获取翻译函数
                 return c.json({ message: t('token.fail._') }, 401);
             }
             await next();
         });
     });
 }
-

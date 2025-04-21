@@ -3,8 +3,9 @@ import { type Next } from "hono";
 
 const rateLimitMap = new Map()
 
-const rateLimitMiddleware = (limit = 5, duration = 2 * 1000, blockTime = 5 * 1000) => {
-    return async (c: any, next: Next) => {
+export const rateLimitMiddleware = (limit = 5, duration = 2 * 1000, blockTime = 5 * 1000) => {
+    type c_type = Parameters<typeof getConnInfo>[0]
+    return async (c: c_type, next: Next) => {
 
         const info = getConnInfo(c)
         const ip = info.remote.address
@@ -43,5 +44,3 @@ const rateLimitMiddleware = (limit = 5, duration = 2 * 1000, blockTime = 5 * 100
         await next()
     }
 }
-
-export { rateLimitMiddleware }

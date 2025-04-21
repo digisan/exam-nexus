@@ -16,7 +16,7 @@ const { i18nMiddleware, getI18n } = createI18n({
     getLocale: (c) => getCookie(c, "locale-cookie"),
 })
 
-const withSafeT = (c: any): SafeT => getI18n(c) as SafeT // 获取翻译函数
+const withSafeT = (c: Parameters<typeof getI18n>[0]): SafeT => getI18n(c) as SafeT // 获取翻译函数
 
 const getMsgCode = (listMsgCode: [Result<any, string>, TranslationKey, StatusCode][], t: SafeT): [string, StatusCode] => {
     if (len(listMsgCode) === 0) {
