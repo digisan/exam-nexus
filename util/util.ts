@@ -1,5 +1,5 @@
 import { ok, err, Result } from "neverthrow"
-await import('@define/const.ts')
+await import('@define/env.ts')
 
 const HCAPTCHA_SECRET = Deno.env.get("HCAPTCHA_SECRET");
 const HCAPTCHA_VERIFY_URL = Deno.env.get("HCAPTCHA_VERIFY_URL");

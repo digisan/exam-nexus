@@ -4,7 +4,7 @@ import { hash, compare } from "npm:bcrypt-ts";
 import { createSaferT } from "@i18n/util.ts";
 import type { SafeT } from "@i18n/msg_auth_t.ts";
 import { SupabaseAgent } from "@db/dbService.ts";
-import { T_REG, T_DEBUG } from "@define/const.ts";
+import { T_REGISTER, T_TEST } from "@define/system.ts";
 import type { Data, JSONObject, Email, Password } from "@define/type.ts";
 
 const SIGNATURE_KEY = Deno.env.get("SIGNATURE_KEY");
@@ -25,7 +25,7 @@ export class AuthController {
 
         try {
             // Step 1: 拉取用户注册内容
-            const rg = await this.agent.getSingleRowData(T_REG);
+            const rg = await this.agent.getSingleRowData(T_REGISTER);
             if (rg.isErr()) {
                 return err(rg.error)
             }
@@ -41,7 +41,7 @@ export class AuthController {
                 }
             }
 
-            const ra = await this.agent.appendSingleRowData(T_REG, {
+            const ra = await this.agent.appendSingleRowData(T_REGISTER, {
                 email: credentials.email,
                 password: await hash(credentials.password, 10),
                 registered_at: new Date().toISOString(),
@@ -54,7 +54,7 @@ export class AuthController {
 
         } catch (e) {
             // log here ...
-            await this.agent.insertTextRow(T_DEBUG, `catch - ${e}`)
+            await this.agent.insertTextRow(T_TEST, `catch - ${e}`)
             // 
             return err(`fatal: registering failed: ${e}`)
         }
@@ -95,7 +95,7 @@ export class AuthController {
         const t = createSaferT(ct);
 
         try {
-            const rg = await this.agent.getSingleRowData(T_REG);
+            const rg = await this.agent.getSingleRowData(T_REGISTER);
             if (rg.isErr()) {
                 return err(rg.error);
             }

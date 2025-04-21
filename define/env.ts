@@ -1,8 +1,5 @@
-import type { TableType } from "@define/type.ts";
+// ****************** Environment ****************** //
 
-// 
-// Environment
-//
 const SIGNATURE_KEY = "mySecretKey";
 const HCAPTCHA_VERIFY_URL = "https://api.hcaptcha.com/siteverify";
 const HCAPTCHA_SECRET = "ES_d9b1e2678035429d92d31e64f99227b6"; // hCaptcha 私钥
@@ -16,37 +13,3 @@ Deno.env.set('SUPABASE_URL', SUPABASE_URL)
 Deno.env.set('SUPABASE_KEY', SUPABASE_KEY)
 
 console.log('init env variables')
-
-//
-// System Configuration
-//
-export const TABLES_SB = [
-    "general",
-    "messages",
-    "register",
-    "user_sys_config",
-    "register_new",
-    "test2"
-] as const;
-
-export const T_G: TableType = 'general';
-export const T_REG: TableType = 'register';
-export const T_DEBUG: TableType = 'messages';
-export const T_USER_SYSCFG: TableType = 'user_sys_config';
-export const T_REG_NEW: TableType = 'register_new';
-export const T_TEST: TableType = 'test2';
-
-//
-// User Configuration
-//
-export const REGIONS = [
-    "au",
-    "cn",
-    "us",
-    "jp",
-] as const;
-
-export const LANGUAGES = [
-    "en",
-    "zh"
-] as const;

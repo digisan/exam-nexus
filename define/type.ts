@@ -1,12 +1,10 @@
-import { TABLES_SB, T_REG, REGIONS, LANGUAGES } from "@define/const.ts";
 import { SupabaseAgent } from "@db/dbService.ts";
+import type { LanguageType, RegionType } from "@define/config.ts";
+import { REGIONS, LANGUAGES } from "@define/config.ts";
+import { T_REGISTER } from "@define/system.ts";
 
 export type JSONObject = Record<string, any>;
 export type Data = JSONObject | JSONObject[] | null;
-
-export type TableType = typeof TABLES_SB[number];
-export type RegionType = typeof REGIONS[number];
-export type LanguageType = typeof LANGUAGES[number];
 
 type Brand<K, T> = K & { __brand: T };
 
@@ -22,10 +20,10 @@ export const isAllowedPassword = (s: string | null): s is Password => {
     return reg.test(s ?? "")
 }
 
-export type Region = Brand<typeof REGIONS[number], 'Region'>;
+export type Region = Brand<RegionType, 'Region'>;
 export const isValidRegion = (s: string | null): s is Region => REGIONS.includes(s as RegionType)
 
-export type Language = Brand<typeof LANGUAGES[number], 'Language'>;
+export type Language = Brand<LanguageType, 'Language'>;
 export const isValidLanguage = (s: string | null): s is Language => LANGUAGES.includes(s as LanguageType)
 
 export type EmailExist = Brand<string, 'EmailExist'>;
@@ -33,7 +31,7 @@ export type EmailExist = Brand<string, 'EmailExist'>;
 const isExist = async (s: string | null): Promise<boolean> => {
     if (!isEmail(s)) return false;
     const sa = new SupabaseAgent();
-    const r = await sa.TableContent(T_REG);
+    const r = await sa.TableContent(T_REGISTER);
     if (r.isOk()) {
         if (!r.value) {
             return false

@@ -1,8 +1,18 @@
 import { SupabaseAgent } from "@db/dbService.ts";
 import type { JSONObject } from "@define/type.ts";
-import { T_REG, T_DEBUG, T_G, T_REG_NEW, T_TEST } from "@define/const.ts";
+import { T_REGISTER, T_TEST } from "@define/system.ts";
 
-Deno.test(async function CreateCustomTable() {
+Deno.test(async function ListUserFunctions() {
+    const sa = new SupabaseAgent();
+    const r = await sa.listUserFunctions()
+    if (r.isOk()) {
+        console.log(r.value)
+    } else {
+        console.debug(r.error)
+    }
+});
+
+Deno.test(async function CreateDataTable() {
     const sa = new SupabaseAgent();
     const r = await sa.createDataTable(T_TEST)
     if (r.isOk()) {
@@ -64,7 +74,7 @@ Deno.test(async function TableList() {
 
 Deno.test(async function TableContent() {
     const sa = new SupabaseAgent();
-    const r = await sa.TableContent(T_REG_NEW)
+    const r = await sa.TableContent(T_REGISTER)
     if (r.isOk()) {
         if (!r.value) {
             console.log(r.value)
@@ -78,29 +88,29 @@ Deno.test(async function TableContent() {
 
 //////////////////////////////////////////////////
 
-Deno.test(async function UpsertDataObject() {
-    const sa = new SupabaseAgent();
-    const r = await sa.upsertSingleRowDataObject(T_REG, "email", { email: "test1@test.com", password: "abcdefg", registered_at: "adfe" })
-    if (r.isOk()) {
-        console.log(r.value)
-    } else {
-        console.debug(r.error)
-    }
-});
+// Deno.test(async function UpsertDataObject() {
+//     const sa = new SupabaseAgent();
+//     const r = await sa.upsertSingleRowDataObject(T_REGISTER, "email", { email: "test1@test.com", password: "abcdefg", registered_at: "adfe" })
+//     if (r.isOk()) {
+//         console.log(r.value)
+//     } else {
+//         console.debug(r.error)
+//     }
+// });
 
-Deno.test(async function RemoveDataObject() {
-    const sa = new SupabaseAgent();
-    const r = await sa.removeSingleRowDataObject(T_REG, "email", "test1@test.com")
-    if (r.isOk()) {
-        console.log(r.value)
-    } else {
-        console.debug(r.error)
-    }
-});
+// Deno.test(async function RemoveDataObject() {
+//     const sa = new SupabaseAgent();
+//     const r = await sa.removeSingleRowDataObject(T_REGISTER, "email", "test1@test.com")
+//     if (r.isOk()) {
+//         console.log(r.value)
+//     } else {
+//         console.debug(r.error)
+//     }
+// });
 
 Deno.test(async function InsertDataRow() {
     const sa = new SupabaseAgent();
-    const r = await sa.insertDataRow(T_REG, { user: "abc", password: "asdfweradf" })
+    const r = await sa.insertDataRow(T_REGISTER, { user: "abc", password: "asdfweradf" })
     if (r.isOk()) {
         console.log(r.value)
     } else {
@@ -110,7 +120,7 @@ Deno.test(async function InsertDataRow() {
 
 Deno.test(async function DeleteDataRow() {
     const sa = new SupabaseAgent();
-    const r = await sa.deleteDataRows(T_REG, 41, 42, 43)
+    const r = await sa.deleteDataRows(T_REGISTER, 41, 42, 43)
     if (r.isOk()) {
         console.log(r.value)
     } else {
@@ -118,21 +128,21 @@ Deno.test(async function DeleteDataRow() {
     }
 });
 
-Deno.test(async function SupaBase() {
-    const sa = new SupabaseAgent();
-    const sb = sa.getSupaBase();
-    const { data, error } = await sb
-        .from(T_G)
-        .select("id, data")
-        .gt('id', 10)
-        .order("created_at", { ascending: true });
-    error && console.error(error)
-    data && console.log(data)
-});
+// Deno.test(async function SupaBase() {
+//     const sa = new SupabaseAgent();
+//     const sb = sa.getSupaBase();
+//     const { data, error } = await sb
+//         .from(T_G)
+//         .select("id, data")
+//         .gt('id', 10)
+//         .order("created_at", { ascending: true });
+//     error && console.error(error)
+//     data && console.log(data)
+// });
 
-Deno.test(async function InsertTextRow() {
-    const sa = new SupabaseAgent();
-    const r = await sa.insertTextRow(T_DEBUG, "hello")
-    console.log(typeof r)
-    console.log(r.isOk() ? r.value.content : r.error)
-});
+// Deno.test(async function InsertTextRow() {
+//     const sa = new SupabaseAgent();
+//     const r = await sa.insertTextRow(T_TEST, "hello")
+//     console.log(typeof r)
+//     console.log(r.isOk() ? r.value.content : r.error)
+// });

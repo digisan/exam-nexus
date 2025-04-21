@@ -1,8 +1,7 @@
 import { walk } from "jsr:@std/fs";
 import * as ts from "https://esm.sh/typescript@5.8.3";
 import { unorderedSetsEqual } from "@util/util.ts";
-import { TABLES_SB } from "@define/const.ts";
-import type { TableType } from "@define/type.ts";
+import { TABLES_SB, type TableType } from "@define/system.ts";
 import { SupabaseAgent } from "@db/dbService.ts";
 
 async function checkFile(filePath: string, ...excl: string[]) {

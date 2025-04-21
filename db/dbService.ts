@@ -1,8 +1,9 @@
 import { ok, err, Result } from "neverthrow"
 import { firstWord, haveSameStructure } from "@util/util.ts"
 import { createClient } from "@supabase/supabase-js"
-import type { TableType, Data, JSONObject } from "@define/type.ts"
-await import('@define/const.ts')
+import type { Data, JSONObject } from "@define/type.ts"
+import { F_PG_EXECUTE, F_CREATE_DATA_TABLE, V_UDF, type TableType } from "@define/system.ts";
+await import('@define/env.ts')
 
 const SUPABASE_URL = Deno.env.get("SUPABASE_URL");
 const SUPABASE_KEY = Deno.env.get("SUPABASE_KEY");
@@ -11,21 +12,27 @@ if (!SUPABASE_URL || !SUPABASE_KEY) {
 }
 const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
 
-const normalizeDataStructure = (value: Data): Data => {
-    if (Array.isArray(value)) {
-        if (value.length === 0) return null;
-        if (value.length === 1) return value[0];
-        return value;
-    }
-    return value;
-}
+// const normalizeDataStructure = (value: Data): Data => {
+//     if (Array.isArray(value)) {
+//         if (value.length === 0) return null;
+//         if (value.length === 1) return value[0];
+//         return value;
+//     }
+//     return value;
+// }
 
 export class SupabaseAgent {
 
     getSupaBase() { return supabase; }
 
+    async listUserFunctions(): Promise<Result<Data, string>> {
+        const { data, error } = await supabase.from(V_UDF).select('function_name')
+        if (error) return err(error.message)
+        return ok(data.map((d) => d.function_name))
+    }
+
     async createDataTable(name: TableType): Promise<Result<Data, string>> {
-        const { data, error } = await supabase.rpc('create_data_table', { name });
+        const { data, error } = await supabase.rpc(F_CREATE_DATA_TABLE, { name });
         if (error) return err(error.message)
         return ok(data)
     }
@@ -35,7 +42,7 @@ export class SupabaseAgent {
         if (!t || !['SELECT', 'INSERT', 'UPDATE', 'DELETE'].includes(t)) {
             return err('Unsupported SQL Expression');
         }
-        const { data, error } = await supabase.rpc('pg_execute', { query: sql, sql_type: t });
+        const { data, error } = await supabase.rpc(F_PG_EXECUTE, { query: sql, sql_type: t });
         if (error) return err(error.message);
         return ok(data);
     }
@@ -60,111 +67,109 @@ export class SupabaseAgent {
         return this.executeSQL(`SELECT json_agg(t) FROM (SELECT * FROM ${table}) AS t`); // group [{key: value; ...}] from multiple column
     }
 
-    async getSingleRowData(table: TableType): Promise<Result<Data, string>> {
-        const { data, error } = await supabase.from(table).select().limit(2);
-        if (error) return err(error.message);
-        if (!data || data.length === 0) return ok(null);
-        if (data.length > 1) return err(`${table} is NOT a single row table`);
-        return ok(data[0].data);
-    }
+    // async getSingleRowData(table: TableType): Promise<Result<Data, string>> {
+    //     const { data, error } = await supabase.from(table).select().limit(2);
+    //     if (error) return err(error.message);
+    //     if (!data || data.length === 0) return ok(null);
+    //     if (data.length > 1) return err(`${table} is NOT a single row table`);
+    //     return ok(data[0].data);
+    // }
 
-    async setSingleRowData(table: TableType, value: Data): Promise<Result<Data, string>> {
-        const { data, error } = await supabase.from(table).select().limit(2);
-        if (error) return err(error.message);
+    // async setSingleRowData(table: TableType, value: Data): Promise<Result<Data, string>> {
+    //     const { data, error } = await supabase.from(table).select().limit(2);
+    //     if (error) return err(error.message);
 
-        const newData = normalizeDataStructure(value);
-        if (!data || data.length === 0) {
-            return this.insertDataRow(table, newData);
-        }
-        if (data.length > 1) {
-            return err(`${table} is NOT a single row table`);
-        }
-        return this.updateDataRow(table, data[0].id, newData);
-    }
+    //     const newData = normalizeDataStructure(value);
+    //     if (!data || data.length === 0) {
+    //         return this.insertDataRow(table, newData);
+    //     }
+    //     if (data.length > 1) {
+    //         return err(`${table} is NOT a single row table`);
+    //     }
+    //     return this.updateDataRow(table, data[0].id, newData);
+    // }
 
-    async upsertSingleRowDataObject(table: TableType, object_id_name: string, value: JSONObject): Promise<Result<Data, string>> {
-        if (!(object_id_name in value)) {
-            return err(`${table}'s data item value has no id name as ${object_id_name}`);
-        }
-        const result = await this.getSingleRowData(table)
-        if (result.isErr()) {
-            return result
-        }
-        if (!result.value) {
-            return this.appendSingleRowData(table, value)
-        }
+    // async upsertSingleRowDataObject(table: TableType, object_id_name: string, value: JSONObject): Promise<Result<Data, string>> {
+    //     if (!(object_id_name in value)) {
+    //         return err(`${table}'s data item value has no id name as ${object_id_name}`);
+    //     }
+    //     const result = await this.getSingleRowData(table)
+    //     if (result.isErr()) {
+    //         return result
+    //     }
+    //     if (!result.value) {
+    //         return this.appendSingleRowData(table, value)
+    //     }
+    //     // array data
+    //     if (Array.isArray(result.value)) {
+    //         const data = result.value as JSONObject[]
+    //         if (!haveSameStructure(value, data[0])) {
+    //             return err(`structure mismatch: expected ${JSON.stringify(data[0])}, got ${JSON.stringify(value)}`)
+    //         }
+    //         const i = data.findIndex(item => item[object_id_name] === value[object_id_name])
+    //         if (i !== -1) {
+    //             data[i] = value
+    //         } else {
+    //             data.push(value)
+    //         }
+    //         return this.setSingleRowData(table, data)
+    //     }
+    //     // single object data
+    //     const data = result.value as JSONObject
+    //     if (!haveSameStructure(value, data)) {
+    //         return err(`structure mismatch: expected ${JSON.stringify(data)}, got ${JSON.stringify(value)}`)
+    //     }
+    //     if (data[object_id_name] === value[object_id_name]) {
+    //         return this.setSingleRowData(table, value)
+    //     }
+    //     return this.appendSingleRowData(table, value)
+    // }
 
-        // array data
-        if (Array.isArray(result.value)) {
-            const data = result.value as JSONObject[]
-            if (!haveSameStructure(value, data[0])) {
-                return err(`structure mismatch: expected ${JSON.stringify(data[0])}, got ${JSON.stringify(value)}`)
-            }
-            const i = data.findIndex(item => item[object_id_name] === value[object_id_name])
-            if (i !== -1) {
-                data[i] = value
-            } else {
-                data.push(value)
-            }
-            return this.setSingleRowData(table, data)
-        }
+    // async removeSingleRowDataObject(table: TableType, object_id_name: string, object_id_value: any): Promise<Result<Data, string>> {
+    //     const result = await this.getSingleRowData(table)
+    //     if (result.isErr()) {
+    //         return result
+    //     }
+    //     if (!result.value) {
+    //         return ok(null)
+    //     }
+    //     // array data
+    //     if (Array.isArray(result.value)) {
+    //         const data = result.value as JSONObject[]
+    //         if (!(object_id_name in data[0])) {
+    //             return err(`table [${table}] data has no id field as '${object_id_name}'`)
+    //         }
+    //         const i = data.findIndex(item => item[object_id_name] === object_id_value)
+    //         if (i !== -1) {
+    //             data.splice(i, 1)
+    //             return this.setSingleRowData(table, data)
+    //         }
+    //         return ok(null)
+    //     }
+    //     // single object data
+    //     const data = result.value as JSONObject
+    //     if (!(object_id_name in data)) {
+    //         return err(`table [${table}] data has no id field as '${object_id_name}'`)
+    //     }
+    //     if (data[object_id_name] === object_id_value) {
+    //         return this.setSingleRowData(table, null)
+    //     }
+    //     return ok(null)
+    // }
 
-        // single object data
-        const data = result.value as JSONObject
-        if (!haveSameStructure(value, data)) {
-            return err(`structure mismatch: expected ${JSON.stringify(data)}, got ${JSON.stringify(value)}`)
-        }
-        if (data[object_id_name] === value[object_id_name]) {
-            return this.setSingleRowData(table, value)
-        }
-        return this.appendSingleRowData(table, value)
-    }
+    // async appendSingleRowData(table: TableType, value: JSONObject): Promise<Result<Data, string>> {
+    //     const current = await this.getSingleRowData(table);
+    //     if (current.isErr()) return err(current.error);
 
-    async removeSingleRowDataObject(table: TableType, object_id_name: string, object_id_value: any): Promise<Result<Data, string>> {
-        const result = await this.getSingleRowData(table)
-        if (result.isErr()) {
-            return result
-        }
-        if (!result.value) {
-            return ok(null)
-        }
-        // array data
-        if (Array.isArray(result.value)) {
-            const data = result.value as JSONObject[]
-            if (!(object_id_name in data[0])) {
-                return err(`table [${table}] data has no id field as '${object_id_name}'`)
-            }
-            const i = data.findIndex(item => item[object_id_name] === object_id_value)
-            if (i !== -1) {
-                data.splice(i, 1)
-                return this.setSingleRowData(table, data)
-            }
-            return ok(null)
-        }
-        // single object data
-        const data = result.value as JSONObject
-        if (!(object_id_name in data)) {
-            return err(`table [${table}] data has no id field as '${object_id_name}'`)
-        }
-        if (data[object_id_name] === object_id_value) {
-            return this.setSingleRowData(table, null)
-        }
-        return ok(null)
-    }
-
-    async appendSingleRowData(table: TableType, value: JSONObject): Promise<Result<Data, string>> {
-        const current = await this.getSingleRowData(table);
-        if (current.isErr()) return err(current.error);
-
-        if (Array.isArray(current.value)) {
-            current.value.push(value);
-            return this.setSingleRowData(table, current.value);
-        }
-        if (current.value) {
-            return this.setSingleRowData(table, [current.value, value]);
-        }
-        return this.setSingleRowData(table, value);
-    }
+    //     if (Array.isArray(current.value)) {
+    //         current.value.push(value);
+    //         return this.setSingleRowData(table, current.value);
+    //     }
+    //     if (current.value) {
+    //         return this.setSingleRowData(table, [current.value, value]);
+    //     }
+    //     return this.setSingleRowData(table, value);
+    // }
 
     ////////////////////////////////////////////////////////////////////////////////////////
 
@@ -208,15 +213,15 @@ export class SupabaseAgent {
 
     ////////////////////////////////////////////////////////////////////////////////////////
 
-    async insertTextRow(table: TableType, value: string): Promise<Result<JSONObject, string>> {
-        const { data, error } = await supabase
-            .from(table)
-            .insert({ content: value })
-            .select()
-            .single();
+    // async insertTextRow(table: TableType, value: string): Promise<Result<JSONObject, string>> {
+    //     const { data, error } = await supabase
+    //         .from(table)
+    //         .insert({ content: value })
+    //         .select()
+    //         .single();
 
-        if (error) return err(error.message);
-        if (!data) return err('Insert succeeded but no data returned');
-        return ok(data);
-    }
+    //     if (error) return err(error.message);
+    //     if (!data) return err('Insert succeeded but no data returned');
+    //     return ok(data);
+    // }
 }
