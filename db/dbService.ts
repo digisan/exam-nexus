@@ -173,10 +173,22 @@ export class SupabaseAgent {
 
     ////////////////////////////////////////////////////////////////////////////////////////
 
-    async insertDataRow(table: TableType, value: Data): Promise<Result<JSONObject, string>> {
+    async getDataRow(table: TableType, id: string): Promise<Result<JSONObject, string>> {
         const { data, error } = await supabase
             .from(table)
-            .insert({ data: value })
+            .select()
+            .eq('id', id)
+            .single();
+
+        if (error) return err(error.message);
+        if (!data) return err('Fetch succeeded but no data returned');
+        return ok(data);
+    }
+
+    async insertDataRow(table: TableType, id: string, value: Data): Promise<Result<JSONObject, string>> {
+        const { data, error } = await supabase
+            .from(table)
+            .insert({ id, data: value })
             .select()
             .single();
 
@@ -185,7 +197,7 @@ export class SupabaseAgent {
         return ok(data);
     }
 
-    async updateDataRow(table: TableType, id: number, value: Data): Promise<Result<JSONObject, string>> {
+    async updateDataRow(table: TableType, id: string, value: Data): Promise<Result<JSONObject, string>> {
         const { data, error } = await supabase
             .from(table)
             .update({ data: value })
@@ -198,7 +210,7 @@ export class SupabaseAgent {
         return ok(data);
     }
 
-    async deleteDataRows(table: TableType, ...ids: number[]): Promise<Result<JSONObject[], string>> {
+    async deleteDataRows(table: TableType, ...ids: string[]): Promise<Result<JSONObject[], string>> {
         if (ids.length === 0) return ok([]);
         const { data, error } = await supabase
             .from(table)

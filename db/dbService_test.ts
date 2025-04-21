@@ -1,6 +1,6 @@
 import { SupabaseAgent } from "@db/dbService.ts";
 import type { JSONObject } from "@define/type.ts";
-import { T_REGISTER, T_TEST } from "@define/system.ts";
+import { T_CONFIG, T_REGISTER, T_TEST } from "@define/system.ts";
 
 Deno.test(async function ListUserFunctions() {
     const sa = new SupabaseAgent();
@@ -14,7 +14,7 @@ Deno.test(async function ListUserFunctions() {
 
 Deno.test(async function CreateDataTable() {
     const sa = new SupabaseAgent();
-    const r = await sa.createDataTable(T_TEST)
+    const r = await sa.createDataTable(T_CONFIG)
     if (r.isOk()) {
         console.log(r.value)
     } else {
@@ -108,25 +108,35 @@ Deno.test(async function TableContent() {
 //     }
 // });
 
-Deno.test(async function InsertDataRow() {
+Deno.test(async function GetDataRow() {
     const sa = new SupabaseAgent();
-    const r = await sa.insertDataRow(T_REGISTER, { user: "abc", password: "asdfweradf" })
+    const r = await sa.getDataRow(T_TEST, "abc")
     if (r.isOk()) {
         console.log(r.value)
     } else {
-        console.debug(r.error)
+        console.debug(`❌ ${r.error}`)
     }
 });
 
-Deno.test(async function DeleteDataRow() {
+Deno.test(async function InsertDataRow() {
     const sa = new SupabaseAgent();
-    const r = await sa.deleteDataRows(T_REGISTER, 41, 42, 43)
+    const r = await sa.insertDataRow(T_TEST, "abc", { user: "abc", password: "asdfweradf" })
     if (r.isOk()) {
         console.log(r.value)
     } else {
-        console.debug(r.error)
+        console.debug(`❌ ${r.error}`)
     }
 });
+
+// Deno.test(async function DeleteDataRow() {
+//     const sa = new SupabaseAgent();
+//     const r = await sa.deleteDataRows(T_REGISTER, 41, 42, 43)
+//     if (r.isOk()) {
+//         console.log(r.value)
+//     } else {
+//         console.debug(r.error)
+//     }
+// });
 
 // Deno.test(async function SupaBase() {
 //     const sa = new SupabaseAgent();

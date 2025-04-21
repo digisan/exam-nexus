@@ -36,3 +36,25 @@ export const T_TEST: TableType = 'test'
 export const T_REGISTER: TableType = 'register'
 export const T_CONFIG: TableType = 'user_config'
 
+//
+// ****************** Validate SupaBaseDB tables ****************** //
+//
+
+// import { unorderedSetsEqual } from "@util/util.ts";
+// import { SupabaseAgent } from "@db/dbService.ts";
+
+// await (async () => {
+//     const sa = new SupabaseAgent();
+//     const r = await sa.TableList()
+//     if (r.isErr()) {
+//         throw new Error(`❌ SupaBase Tables are not ready`)
+//     }
+//     const tables = r.value as TableType[]
+//     if (!unorderedSetsEqual([...TABLES_SB], tables)) {
+//         console.debug(tables)
+//         console.debug(TABLES_SB)
+//         throw new Error(`SupaBase Tables [${tables}] are inconsistent with [${TABLES_SB}]`)
+//     }
+//     console.log("✅ SupaBase Tables are OK");
+// })();
+
