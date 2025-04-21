@@ -1,6 +1,6 @@
-import { type ExistEmail, toExistEmail } from "@define/type.ts";
+import { type EmailExist, toExistEmail } from "@define/type.ts";
 
-const p = (u: ExistEmail) => {
+const p = (u: EmailExist) => {
     console.log(u)
 }
 

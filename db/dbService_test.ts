@@ -1,6 +1,16 @@
 import { SupabaseAgent } from "@db/dbService.ts";
 import type { JSONObject } from "@define/type.ts";
-import { T_REG, T_DEBUG, T_G } from "@define/const.ts";
+import { T_REG, T_DEBUG, T_G, T_REG_NEW, T_TEST } from "@define/const.ts";
+
+Deno.test(async function CreateCustomTable() {
+    const sa = new SupabaseAgent();
+    const r = await sa.createDataTable(T_TEST)
+    if (r.isOk()) {
+        console.log(r.value)
+    } else {
+        console.debug(r.error)
+    }
+});
 
 Deno.test(async function ExecuteSQL() {
     const sa = new SupabaseAgent();
@@ -54,13 +64,19 @@ Deno.test(async function TableList() {
 
 Deno.test(async function TableContent() {
     const sa = new SupabaseAgent();
-    const r = await sa.TableContent(T_REG)
+    const r = await sa.TableContent(T_REG_NEW)
     if (r.isOk()) {
+        if (!r.value) {
+            console.log(r.value)
+            return
+        }
         console.log((r.value as JSONObject[])[0].data)
     } else {
         console.debug(r.error)
     }
 });
+
+//////////////////////////////////////////////////
 
 Deno.test(async function UpsertDataObject() {
     const sa = new SupabaseAgent();

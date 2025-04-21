@@ -28,7 +28,7 @@ export const isValidRegion = (s: string | null): s is Region => REGIONS.includes
 export type Language = Brand<typeof LANGUAGES[number], 'Language'>;
 export const isValidLanguage = (s: string | null): s is Language => LANGUAGES.includes(s as LanguageType)
 
-export type ExistEmail = Brand<string, 'ExistEmail'>;
+export type EmailExist = Brand<string, 'EmailExist'>;
 // 异步校验函数（返回 Promise<boolean>）
 const isExist = async (s: string | null): Promise<boolean> => {
     if (!isEmail(s)) return false;
@@ -50,7 +50,7 @@ const isExist = async (s: string | null): Promise<boolean> => {
     }
     return false;
 }
-// 异步转换函数（返回 Promise<ExistEmail | null>）
-export const toExistEmail = async (s: string | null): Promise<ExistEmail | null> => {
-    return (await isExist(s)) ? (s as ExistEmail) : null;
+// 异步转换函数（返回 Promise<EmailExist | null>）
+export const toExistEmail = async (s: string | null): Promise<EmailExist | null> => {
+    return (await isExist(s)) ? (s as EmailExist) : null;
 }

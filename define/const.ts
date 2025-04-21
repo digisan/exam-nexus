@@ -25,12 +25,16 @@ export const TABLES_SB = [
     "messages",
     "register",
     "user_sys_config",
+    "register_new",
+    "test2"
 ] as const;
 
 export const T_G: TableType = 'general';
 export const T_REG: TableType = 'register';
 export const T_DEBUG: TableType = 'messages';
-export const T_USERSYSCFG: TableType = 'user_sys_config';
+export const T_USER_SYSCFG: TableType = 'user_sys_config';
+export const T_REG_NEW: TableType = 'register_new';
+export const T_TEST: TableType = 'test2';
 
 //
 // User Configuration

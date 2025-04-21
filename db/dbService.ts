@@ -22,6 +22,14 @@ const normalizeDataStructure = (value: Data): Data => {
 
 export class SupabaseAgent {
 
+    getSupaBase() { return supabase; }
+
+    async createDataTable(name: TableType): Promise<Result<Data, string>> {
+        const { data, error } = await supabase.rpc('create_data_table', { name });
+        if (error) return err(error.message)
+        return ok(data)
+    }
+
     async executeSQL(sql: string): Promise<Result<Data, string>> {
         const t = firstWord(sql)?.toUpperCase();
         if (!t || !['SELECT', 'INSERT', 'UPDATE', 'DELETE'].includes(t)) {
@@ -30,10 +38,6 @@ export class SupabaseAgent {
         const { data, error } = await supabase.rpc('pg_execute', { query: sql, sql_type: t });
         if (error) return err(error.message);
         return ok(data);
-    }
-
-    getSupaBase() {
-        return supabase;
     }
 
     PgVer(): Promise<Result<Data, string>> {
