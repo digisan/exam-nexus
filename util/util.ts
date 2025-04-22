@@ -44,6 +44,27 @@ export const haveSameStructure = (a: object, b: object): boolean => {
     return true;
 }
 
+// 辅助类型判断是否是 Result 对象（鸭子类型）
+const isResult = <T, E>(value: unknown): value is Result<T, E> => {
+    return typeof value === 'object' && value !== null && 'isOk' in value && 'isErr' in value;
+}
+
+export const hasSome = <T, E>(input: Result<T, E> | T): boolean => {
+    // 如果是 Result 对象
+    if (isResult<T, E>(input)) {
+        if (input.isErr()) return false;
+        return hasSome(input.value);
+    }
+
+    const val = input;
+    if (val === null || val === undefined) return false;
+    if (typeof val === "number" && isNaN(val)) return false;
+    if (typeof val === "string" && val.trim() === "") return false;
+    if (Array.isArray(val) && val.length === 0) return false;
+    if (typeof val === "object" && !Array.isArray(val) && Object.keys(val).length === 0) return false;
+    return true;
+}
+
 export const fileExists = async (path: string): Promise<boolean> => {
     try {
         await Deno.stat(path);

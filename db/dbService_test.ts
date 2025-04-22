@@ -1,6 +1,6 @@
 import { SupabaseAgent } from "@db/dbService.ts";
-import type { JSONObject } from "@define/type.ts";
-import { T_CONFIG, T_REGISTER, T_TEST } from "@define/system.ts";
+import { isValidId, toExistId, type JSONObject } from "@define/type.ts";
+import { T_CONFIG, T_TEST } from "@define/system.ts";
 
 Deno.test(async function ListUserFunctions() {
     const sa = new SupabaseAgent();
@@ -74,15 +74,76 @@ Deno.test(async function TableList() {
 
 Deno.test(async function TableContent() {
     const sa = new SupabaseAgent();
-    const r = await sa.TableContent(T_REGISTER)
+    const r = await sa.TableContent(T_TEST)
     if (r.isOk()) {
         if (!r.value) {
             console.log(r.value)
             return
         }
-        console.log((r.value as JSONObject[])[0].data)
+        console.log(r.value as JSONObject[])
     } else {
         console.debug(r.error)
+    }
+});
+
+Deno.test(async function GetDataRow() {
+    const sa = new SupabaseAgent();
+    const id = "abcd"
+    if (!isValidId(id)) {
+        console.debug(`❌ Not valid ID (${id})`)
+        return
+    }
+    const r = await sa.getDataRow(T_TEST, id)
+    if (r.isOk()) {
+        console.log(r.value)
+    } else {
+        console.debug(`❌ ${r.error}`)
+    }
+});
+
+Deno.test(async function InsertDataRow() {
+    const sa = new SupabaseAgent();
+    const id = "abcd"
+    if (!isValidId(id)) {
+        console.debug(`❌ Not valid ID (${id})`)
+        return
+    }
+    const r = await sa.insertDataRow(T_TEST, id, { user: "abc", password: "asdfweradf" })
+    if (r.isOk()) {
+        console.log(r.value)
+    } else {
+        console.debug(`❌ ${r.error}`)
+    }
+});
+
+Deno.test(async function UpdateDataRow() {
+    const sa = new SupabaseAgent();
+    const id = "abcd"
+    const ID = await toExistId(T_TEST, id)
+    if (!ID) {
+        console.debug(`❌ Not existing ID '${id}'`)
+        return
+    }
+    const r = await sa.updateDataRow(T_TEST, ID, { user: "ABCE", password: "ASDFWERADF" })
+    if (r.isOk()) {
+        console.log(r.value)
+    } else {
+        console.debug(`❌ ${r.error}`)
+    }
+});
+
+Deno.test(async function DeleteDataRows() {
+    const sa = new SupabaseAgent();
+    const id = "abcd"
+    if (!isValidId(id)) {
+        console.debug(`❌ Not valid ID (${id})`)
+        return
+    }
+    const r = await sa.deleteDataRows(T_TEST, id)
+    if (r.isOk()) {
+        console.log(r.value)
+    } else {
+        console.debug(`❌ ${r.error}`)
     }
 });
 
@@ -107,26 +168,6 @@ Deno.test(async function TableContent() {
 //         console.debug(r.error)
 //     }
 // });
-
-Deno.test(async function GetDataRow() {
-    const sa = new SupabaseAgent();
-    const r = await sa.getDataRow(T_TEST, "abc")
-    if (r.isOk()) {
-        console.log(r.value)
-    } else {
-        console.debug(`❌ ${r.error}`)
-    }
-});
-
-Deno.test(async function InsertDataRow() {
-    const sa = new SupabaseAgent();
-    const r = await sa.insertDataRow(T_TEST, "abc", { user: "abc", password: "asdfweradf" })
-    if (r.isOk()) {
-        console.log(r.value)
-    } else {
-        console.debug(`❌ ${r.error}`)
-    }
-});
 
 // Deno.test(async function DeleteDataRow() {
 //     const sa = new SupabaseAgent();

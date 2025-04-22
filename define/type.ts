@@ -1,18 +1,13 @@
 import { SupabaseAgent } from "@db/dbService.ts";
 import type { LanguageType, RegionType } from "@define/config.ts";
 import { REGIONS, LANGUAGES } from "@define/config.ts";
-import { T_REGISTER } from "@define/system.ts";
+import { type TableType } from "@define/system.ts";
+import { hasSome } from "@util/util.ts";
 
 export type JSONObject = Record<string, any>;
 export type Data = JSONObject | JSONObject[] | null;
 
 type Brand<K, T> = K & { __brand: T };
-
-export type Email = Brand<string, 'Email'>;
-export const isEmail = (s: string | null): s is Email => {
-    const reg = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
-    return reg.test(s ?? "")
-}
 
 export type Password = Brand<string, 'Password'>;
 export const isAllowedPassword = (s: string | null): s is Password => {
@@ -26,29 +21,30 @@ export const isValidRegion = (s: string | null): s is Region => REGIONS.includes
 export type Language = Brand<LanguageType, 'Language'>;
 export const isValidLanguage = (s: string | null): s is Language => LANGUAGES.includes(s as LanguageType)
 
-export type EmailExist = Brand<string, 'EmailExist'>;
-// 异步校验函数（返回 Promise<boolean>）
-const isExist = async (s: string | null): Promise<boolean> => {
-    if (!isEmail(s)) return false;
+export type Id = Brand<string, 'Id'>;
+export const isValidId = (s: string | null): s is Id => !!s && s.length > 3
+
+export type IdExist = Brand<string, 'IdExist'>;
+const isIdExist = async (table: TableType, s: string | null): Promise<boolean> => {
+    if (!isValidId(s)) return false
     const sa = new SupabaseAgent();
-    const r = await sa.TableContent(T_REGISTER);
-    if (r.isOk()) {
-        if (!r.value) {
-            return false
-        }
-        const first_row = (r.value as JSONObject[])[0];
-        const users = first_row.data;
-        if (!users) {
-            return false
-        }
-        if (Array.isArray(users)) {
-            return users.some((u: { email: string }) => u.email === s);
-        }
-        return users.email === s
-    }
-    return false;
+    return hasSome(await sa.getDataRow(table, s))
 }
-// 异步转换函数（返回 Promise<EmailExist | null>）
-export const toExistEmail = async (s: string | null): Promise<EmailExist | null> => {
-    return (await isExist(s)) ? (s as EmailExist) : null;
+export const toExistId = async (table: TableType, s: string | null): Promise<IdExist | null> => {
+    return (await isIdExist(table, s)) ? (s as IdExist) : null;
+}
+
+export type Email = Brand<string, 'Email'>;
+export const isEmail = (s: string | null): s is Email => {
+    const reg = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+    return reg.test(s ?? "")
+}
+
+export type EmailExist = Brand<string, 'EmailExist'>;
+const isEmailExist = async (table: TableType, s: string | null): Promise<boolean> => {
+    if (!isEmail(s)) return false;
+    return await isIdExist(table, s)
+}
+export const toExistEmail = async (table: TableType, s: string | null): Promise<EmailExist | null> => {
+    return (await isEmailExist(table, s)) ? (s as EmailExist) : null;
 }

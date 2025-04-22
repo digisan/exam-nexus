@@ -1,7 +1,7 @@
 import { ok, err, Result } from "neverthrow"
-import { firstWord, haveSameStructure } from "@util/util.ts"
+import { firstWord, hasSome, haveSameStructure } from "@util/util.ts"
 import { createClient } from "@supabase/supabase-js"
-import type { Data, JSONObject } from "@define/type.ts"
+import type { Data, Id, IdExist, JSONObject } from "@define/type.ts"
 import { F_PG_EXECUTE, F_CREATE_DATA_TABLE, V_UDF, type TableType } from "@define/system.ts";
 await import('@define/env.ts')
 
@@ -173,19 +173,21 @@ export class SupabaseAgent {
 
     ////////////////////////////////////////////////////////////////////////////////////////
 
-    async getDataRow(table: TableType, id: string): Promise<Result<JSONObject, string>> {
+    async getDataRow(table: TableType, id: Id): Promise<Result<JSONObject, string>> {
         const { data, error } = await supabase
             .from(table)
             .select()
-            .eq('id', id)
-            .single();
+            .eq('id', id);
 
         if (error) return err(error.message);
         if (!data) return err('Fetch succeeded but no data returned');
+        if (hasSome(data) && Array.isArray(data) && data.length === 1) {
+            return ok(data[0])
+        }
         return ok(data);
     }
 
-    async insertDataRow(table: TableType, id: string, value: Data): Promise<Result<JSONObject, string>> {
+    async insertDataRow(table: TableType, id: Id, value: Data): Promise<Result<JSONObject, string>> {
         const { data, error } = await supabase
             .from(table)
             .insert({ id, data: value })
@@ -197,7 +199,7 @@ export class SupabaseAgent {
         return ok(data);
     }
 
-    async updateDataRow(table: TableType, id: string, value: Data): Promise<Result<JSONObject, string>> {
+    async updateDataRow(table: TableType, id: IdExist, value: Data): Promise<Result<JSONObject, string>> {
         const { data, error } = await supabase
             .from(table)
             .update({ data: value })
@@ -210,7 +212,7 @@ export class SupabaseAgent {
         return ok(data);
     }
 
-    async deleteDataRows(table: TableType, ...ids: string[]): Promise<Result<JSONObject[], string>> {
+    async deleteDataRows(table: TableType, ...ids: Id[]): Promise<Result<JSONObject[], string>> {
         if (ids.length === 0) return ok([]);
         const { data, error } = await supabase
             .from(table)
