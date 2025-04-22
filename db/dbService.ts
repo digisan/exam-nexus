@@ -2,6 +2,7 @@ import { ok, err, Result } from "neverthrow"
 import { firstWord, hasSome, haveSameStructure } from "@util/util.ts"
 import { createClient } from "@supabase/supabase-js"
 import type { Data, Id, IdExist, JSONObject } from "@define/type.ts"
+import { isValidId, toExistId } from "@define/type.ts"
 import { F_PG_EXECUTE, F_CREATE_DATA_TABLE, V_UDF, type TableType } from "@define/system.ts";
 await import('@define/env.ts')
 
@@ -12,14 +13,14 @@ if (!SUPABASE_URL || !SUPABASE_KEY) {
 }
 const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
 
-// const normalizeDataStructure = (value: Data): Data => {
-//     if (Array.isArray(value)) {
-//         if (value.length === 0) return null;
-//         if (value.length === 1) return value[0];
-//         return value;
-//     }
-//     return value;
-// }
+const normalizeDataStructure = (value: Data): Data => {
+    if (Array.isArray(value)) {
+        if (value.length === 0) return null;
+        if (value.length === 1) return value[0];
+        return value;
+    }
+    return value;
+}
 
 export class SupabaseAgent {
 
@@ -67,110 +68,6 @@ export class SupabaseAgent {
         return this.executeSQL(`SELECT json_agg(t) FROM (SELECT * FROM ${table}) AS t`); // group [{key: value; ...}] from multiple column
     }
 
-    // async getSingleRowData(table: TableType): Promise<Result<Data, string>> {
-    //     const { data, error } = await supabase.from(table).select().limit(2);
-    //     if (error) return err(error.message);
-    //     if (!data || data.length === 0) return ok(null);
-    //     if (data.length > 1) return err(`${table} is NOT a single row table`);
-    //     return ok(data[0].data);
-    // }
-
-    // async setSingleRowData(table: TableType, value: Data): Promise<Result<Data, string>> {
-    //     const { data, error } = await supabase.from(table).select().limit(2);
-    //     if (error) return err(error.message);
-
-    //     const newData = normalizeDataStructure(value);
-    //     if (!data || data.length === 0) {
-    //         return this.insertDataRow(table, newData);
-    //     }
-    //     if (data.length > 1) {
-    //         return err(`${table} is NOT a single row table`);
-    //     }
-    //     return this.updateDataRow(table, data[0].id, newData);
-    // }
-
-    // async upsertSingleRowDataObject(table: TableType, object_id_name: string, value: JSONObject): Promise<Result<Data, string>> {
-    //     if (!(object_id_name in value)) {
-    //         return err(`${table}'s data item value has no id name as ${object_id_name}`);
-    //     }
-    //     const result = await this.getSingleRowData(table)
-    //     if (result.isErr()) {
-    //         return result
-    //     }
-    //     if (!result.value) {
-    //         return this.appendSingleRowData(table, value)
-    //     }
-    //     // array data
-    //     if (Array.isArray(result.value)) {
-    //         const data = result.value as JSONObject[]
-    //         if (!haveSameStructure(value, data[0])) {
-    //             return err(`structure mismatch: expected ${JSON.stringify(data[0])}, got ${JSON.stringify(value)}`)
-    //         }
-    //         const i = data.findIndex(item => item[object_id_name] === value[object_id_name])
-    //         if (i !== -1) {
-    //             data[i] = value
-    //         } else {
-    //             data.push(value)
-    //         }
-    //         return this.setSingleRowData(table, data)
-    //     }
-    //     // single object data
-    //     const data = result.value as JSONObject
-    //     if (!haveSameStructure(value, data)) {
-    //         return err(`structure mismatch: expected ${JSON.stringify(data)}, got ${JSON.stringify(value)}`)
-    //     }
-    //     if (data[object_id_name] === value[object_id_name]) {
-    //         return this.setSingleRowData(table, value)
-    //     }
-    //     return this.appendSingleRowData(table, value)
-    // }
-
-    // async removeSingleRowDataObject(table: TableType, object_id_name: string, object_id_value: any): Promise<Result<Data, string>> {
-    //     const result = await this.getSingleRowData(table)
-    //     if (result.isErr()) {
-    //         return result
-    //     }
-    //     if (!result.value) {
-    //         return ok(null)
-    //     }
-    //     // array data
-    //     if (Array.isArray(result.value)) {
-    //         const data = result.value as JSONObject[]
-    //         if (!(object_id_name in data[0])) {
-    //             return err(`table [${table}] data has no id field as '${object_id_name}'`)
-    //         }
-    //         const i = data.findIndex(item => item[object_id_name] === object_id_value)
-    //         if (i !== -1) {
-    //             data.splice(i, 1)
-    //             return this.setSingleRowData(table, data)
-    //         }
-    //         return ok(null)
-    //     }
-    //     // single object data
-    //     const data = result.value as JSONObject
-    //     if (!(object_id_name in data)) {
-    //         return err(`table [${table}] data has no id field as '${object_id_name}'`)
-    //     }
-    //     if (data[object_id_name] === object_id_value) {
-    //         return this.setSingleRowData(table, null)
-    //     }
-    //     return ok(null)
-    // }
-
-    // async appendSingleRowData(table: TableType, value: JSONObject): Promise<Result<Data, string>> {
-    //     const current = await this.getSingleRowData(table);
-    //     if (current.isErr()) return err(current.error);
-
-    //     if (Array.isArray(current.value)) {
-    //         current.value.push(value);
-    //         return this.setSingleRowData(table, current.value);
-    //     }
-    //     if (current.value) {
-    //         return this.setSingleRowData(table, [current.value, value]);
-    //     }
-    //     return this.setSingleRowData(table, value);
-    // }
-
     ////////////////////////////////////////////////////////////////////////////////////////
 
     async getDataRow(table: TableType, id: Id): Promise<Result<JSONObject, string>> {
@@ -212,6 +109,11 @@ export class SupabaseAgent {
         return ok(data);
     }
 
+    async upsertDataRow(table: TableType, id: Id, value: Data): Promise<Result<JSONObject, string>> {
+        const ID = await toExistId(table, id)
+        return ID ? this.updateDataRow(table, ID, value) : this.insertDataRow(table, id, value)
+    }
+
     async deleteDataRows(table: TableType, ...ids: Id[]): Promise<Result<JSONObject[], string>> {
         if (ids.length === 0) return ok([]);
         const { data, error } = await supabase
@@ -223,6 +125,36 @@ export class SupabaseAgent {
         if (error) return err(error.message);
         if (!data) return err('Delete succeeded but no data returned');
         return ok(data);
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////////////
+
+    async getSingleRowData(table: TableType, id: IdExist): Promise<Result<Data, string>> {
+        if (!isValidId(id)) {
+            return err(`${id} is invalid format`);
+        }
+        const r = await this.getDataRow(table, id)
+        if (r.isErr()) return r
+        if (hasSome(r)) return ok(r.value.data)
+        return ok(null)
+    }
+
+    async setSingleRowData(table: TableType, id: Id, value: Data): Promise<Result<Data, string>> {
+        // try to fetch previous value under id
+        const ID = await toExistId(table, id)
+        const prevData = ID ? await this.getSingleRowData(table, ID) : null
+
+        const r = await this.upsertDataRow(table, id, normalizeDataStructure(value))
+        if (r.isErr()) return r
+        if (hasSome(value)) {
+            return ok(r.value.data) // if there are some new data, return new data
+        }
+        return ok(prevData?.isOk() ? prevData.value : null) // delete action, return previous data
+    }
+
+    // remove whole row: return deleted row; remove row data: return null
+    async deleteRowData(table: TableType, id: Id, delWholeRow: boolean = false): Promise<Result<Data, string>> {
+        return delWholeRow ? await this.deleteDataRows(table, id) : await this.setSingleRowData(table, id, null)
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////

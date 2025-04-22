@@ -149,36 +149,6 @@ Deno.test(async function DeleteDataRows() {
 
 //////////////////////////////////////////////////
 
-// Deno.test(async function UpsertDataObject() {
-//     const sa = new SupabaseAgent();
-//     const r = await sa.upsertSingleRowDataObject(T_REGISTER, "email", { email: "test1@test.com", password: "abcdefg", registered_at: "adfe" })
-//     if (r.isOk()) {
-//         console.log(r.value)
-//     } else {
-//         console.debug(r.error)
-//     }
-// });
-
-// Deno.test(async function RemoveDataObject() {
-//     const sa = new SupabaseAgent();
-//     const r = await sa.removeSingleRowDataObject(T_REGISTER, "email", "test1@test.com")
-//     if (r.isOk()) {
-//         console.log(r.value)
-//     } else {
-//         console.debug(r.error)
-//     }
-// });
-
-// Deno.test(async function DeleteDataRow() {
-//     const sa = new SupabaseAgent();
-//     const r = await sa.deleteDataRows(T_REGISTER, 41, 42, 43)
-//     if (r.isOk()) {
-//         console.log(r.value)
-//     } else {
-//         console.debug(r.error)
-//     }
-// });
-
 // Deno.test(async function SupaBase() {
 //     const sa = new SupabaseAgent();
 //     const sb = sa.getSupaBase();
@@ -191,9 +161,43 @@ Deno.test(async function DeleteDataRows() {
 //     data && console.log(data)
 // });
 
-// Deno.test(async function InsertTextRow() {
-//     const sa = new SupabaseAgent();
-//     const r = await sa.insertTextRow(T_TEST, "hello")
-//     console.log(typeof r)
-//     console.log(r.isOk() ? r.value.content : r.error)
-// });
+Deno.test(async function GetSingleRowData() {
+    const id = "abcd"
+    const ID = await toExistId(T_TEST, id)
+    if (!ID) {
+        console.debug(`'${id}' is NOT existing or invalid format`)
+        return
+    }
+    const sa = new SupabaseAgent();
+    const r = await sa.getSingleRowData(T_TEST, ID)
+    if (r.isErr()) {
+        return
+    }
+    console.log(r.value)
+});
+
+Deno.test(async function SetSingleRowData() {
+    const id = "abcd"
+    if (!isValidId(id)) {
+        return
+    }
+    const sa = new SupabaseAgent();
+    const r = await sa.setSingleRowData(T_TEST, id, { user: "ZZ", password: "ZZZZZZZ" })
+    if (r.isErr()) {
+        return
+    }
+    console.log(r.value)
+});
+
+Deno.test(async function DeleteRowData() {
+    const id = "abcd"
+    if (!isValidId(id)) {
+        return
+    }
+    const sa = new SupabaseAgent();
+    const r = await sa.deleteRowData(T_TEST, id)
+    if (r.isErr()) {
+        return
+    }
+    console.log(r.value)
+});
