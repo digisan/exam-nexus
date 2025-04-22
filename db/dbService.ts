@@ -1,8 +1,8 @@
 import { ok, err, Result } from "neverthrow"
 import { firstWord, hasSome, haveSameStructure } from "@util/util.ts"
 import { createClient } from "@supabase/supabase-js"
-import type { Data, Id, IdExist, JSONObject } from "@define/type.ts"
-import { isValidId, toExistId } from "@define/type.ts"
+import type { Data, Id, IdKey, JSONObject } from "@define/type.ts"
+import { isValidId, toIdKey } from "@define/type.ts"
 import { F_PG_EXECUTE, F_CREATE_DATA_TABLE, V_UDF, type TableType } from "@define/system.ts";
 await import('@define/env.ts')
 
@@ -96,7 +96,7 @@ export class SupabaseAgent {
         return ok(data);
     }
 
-    async updateDataRow(table: TableType, id: IdExist, value: Data): Promise<Result<JSONObject, string>> {
+    async updateDataRow(table: TableType, id: IdKey, value: Data): Promise<Result<JSONObject, string>> {
         const { data, error } = await supabase
             .from(table)
             .update({ data: value })
@@ -110,7 +110,7 @@ export class SupabaseAgent {
     }
 
     async upsertDataRow(table: TableType, id: Id, value: Data): Promise<Result<JSONObject, string>> {
-        const ID = await toExistId(table, id)
+        const ID = await toIdKey(id, table)
         return ID ? this.updateDataRow(table, ID, value) : this.insertDataRow(table, id, value)
     }
 
@@ -129,7 +129,7 @@ export class SupabaseAgent {
 
     ////////////////////////////////////////////////////////////////////////////////////////
 
-    async getSingleRowData(table: TableType, id: IdExist): Promise<Result<Data, string>> {
+    async getSingleRowData(table: TableType, id: IdKey): Promise<Result<Data, string>> {
         if (!isValidId(id)) {
             return err(`${id} is invalid format`);
         }
@@ -141,7 +141,7 @@ export class SupabaseAgent {
 
     async setSingleRowData(table: TableType, id: Id, value: Data): Promise<Result<Data, string>> {
         // try to fetch previous value under id
-        const ID = await toExistId(table, id)
+        const ID = await toIdKey(id, table)
         const prevData = ID ? await this.getSingleRowData(table, ID) : null
 
         const r = await this.upsertDataRow(table, id, normalizeDataStructure(value))

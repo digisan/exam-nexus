@@ -1,5 +1,5 @@
 import { SupabaseAgent } from "@db/dbService.ts";
-import { isValidId, toExistId, type JSONObject } from "@define/type.ts";
+import { isValidId, toIdKey, type JSONObject } from "@define/type.ts";
 import { T_CONFIG, T_TEST } from "@define/system.ts";
 
 Deno.test(async function ListUserFunctions() {
@@ -119,7 +119,7 @@ Deno.test(async function InsertDataRow() {
 Deno.test(async function UpdateDataRow() {
     const sa = new SupabaseAgent();
     const id = "abcd"
-    const ID = await toExistId(T_TEST, id)
+    const ID = await toIdKey(id, T_TEST)
     if (!ID) {
         console.debug(`❌ Not existing ID '${id}'`)
         return
@@ -163,7 +163,7 @@ Deno.test(async function DeleteDataRows() {
 
 Deno.test(async function GetSingleRowData() {
     const id = "abcd"
-    const ID = await toExistId(T_TEST, id)
+    const ID = await toIdKey(id, T_TEST)
     if (!ID) {
         console.debug(`'${id}' is NOT existing or invalid format`)
         return
