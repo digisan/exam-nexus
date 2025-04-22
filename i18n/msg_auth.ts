@@ -10,6 +10,7 @@ export const msg_auth = {
                 _: "Service is temporarily unavailable. Please try again later"
             },
             fail: {
+                invalid_id: "invalid id format",
                 invalid_email: "invalid email format",
                 weak_password: "weak password format",
                 existing: "already registered",
@@ -54,6 +55,7 @@ export const msg_auth = {
                 _: "服务暂时不可用，请稍后再试"
             },
             fail: {
+                invalid_id: "无效ID格式",
                 invalid_email: "无效Email格式",
                 weak_password: "密码不符合强度要求",
                 existing: "已注册",

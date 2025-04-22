@@ -3,6 +3,7 @@ const keys = [
     "captcha.fail",
     "register.err.fmt_json",
     "register.err._",
+    "register.fail.invalid_id",
     "register.fail.invalid_email",
     "register.fail.weak_password",
     "register.fail.existing",
@@ -24,3 +25,5 @@ const keys = [
 export type TranslationKey = typeof keys[number];
 
 export type SafeT = (key: TranslationKey, params?: Record<string, unknown>) => string;
+
+export const createSaferT = (f?: SafeT) => (args: TranslationKey) => (f ? f(args) : args);

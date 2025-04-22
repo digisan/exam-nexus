@@ -1,11 +1,11 @@
 import { ok, err, Result } from "neverthrow";
 import { sign } from "hono/jwt";
 import { hash, compare } from "npm:bcrypt-ts";
-import { createSaferT } from "@i18n/util.ts";
-import type { SafeT } from "@i18n/msg_auth_t.ts";
+import { type SafeT, createSaferT } from "@i18n/msg_auth_t.ts";
 import { SupabaseAgent } from "@db/dbService.ts";
 import { T_REGISTER, T_TEST } from "@define/system.ts";
 import type { Data, JSONObject, Email, Password } from "@define/type.ts";
+import { toEmailKey, isValidId } from "@define/type.ts";
 
 const SIGNATURE_KEY = Deno.env.get("SIGNATURE_KEY");
 const tokenBlacklist = new Set();
@@ -21,40 +21,32 @@ export class AuthController {
     SignatureKey(): string { return SIGNATURE_KEY ?? "" }
 
     async register(credentials: { email: Email; password: Password }, ct?: SafeT): Promise<Result<string, string>> {
+
         const t = createSaferT(ct);
 
         try {
-            // Step 1: 拉取用户注册内容
-            const rg = await this.agent.getSingleRowData(T_REGISTER);
-            if (rg.isErr()) {
-                return err(rg.error)
+
+            const emailKey = await toEmailKey(credentials.email, T_REGISTER)
+            if (emailKey) {
+                return err(t('register.fail.existing'))
             }
 
-            // Step 2: 判断邮箱是否已存在
-            if (Array.isArray(rg.value)) {
-                if (rg.value.some((u) => u.email === credentials.email)) {
-                    return err(t('register.fail.existing'))
-                }
-            } else {
-                if (rg.value?.email === credentials.email) {
-                    return err(t('register.fail.existing'))
-                }
-            }
+            const id = credentials.email
+            if (!isValidId(id)) return err(t('register.fail.invalid_id'))
 
-            const ra = await this.agent.appendSingleRowData(T_REGISTER, {
+            const r = await this.agent.setSingleRowData(T_REGISTER, id, {
                 email: credentials.email,
                 password: await hash(credentials.password, 10),
                 registered_at: new Date().toISOString(),
             })
-            if (ra.isErr()) {
-                return err(ra.error)
-            }
+
+            if (r.isErr()) return err(r.error)
 
             return ok(t('register.ok.to_route'))
 
         } catch (e) {
             // log here ...
-            await this.agent.insertTextRow(T_TEST, `catch - ${e}`)
+            // await this.agent.insertTextRow(T_TEST, `catch - ${e}`)
             // 
             return err(`fatal: registering failed: ${e}`)
         }

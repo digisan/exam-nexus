@@ -109,3 +109,7 @@ export const verifyHCaptcha = async (token: string): Promise<Result<boolean, str
         return err(`fatal: HCaptcha server error: ${e}`)
     }
 }
+
+export const isFatalErr = (r: Result<any, string>) => r.isErr() && r.error.toLowerCase().includes('fatal');
+
+export const isNotFatal = (r: Result<any, string>) => !isFatalErr(r);

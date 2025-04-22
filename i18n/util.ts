@@ -1,10 +1,3 @@
-import { Result } from "neverthrow"
-import type { SafeT } from "@i18n/msg_auth_t.ts";
-
-export const isFatalErr = (r: Result<any, string>) => r.isErr() && r.error.toLowerCase().includes('fatal');
-export const isNotFatal = (r: Result<any, string>) => !isFatalErr(r);
-export const createSaferT = (f?: SafeT) => (args: any) => (f ? f(args) : args);
-
 /////////////////////////////////////////////////////////////////////////////////////
 
 // import { flatten } from 'flat'
@@ -19,8 +12,9 @@ export const createSaferT = (f?: SafeT) => (args: any) => (f ? f(args) : args);
 //     const keys = Array.from(map.keys());
 //     const content1 = `const keys = ${JSON.stringify(keys, null, 4)} as const;\n\n`;
 //     const content2 = `export type TranslationKey = typeof keys[number];\n\n`;
-//     const content3 = `export type SafeT = (key: TranslationKey, params?: Record<string, unknown>) => string;`;
-//     Deno.writeTextFileSync(filename, content1 + content2 + content3);
+//     const content3 = `export type SafeT = (key: TranslationKey, params?: Record<string, unknown>) => string;\n\n`;
+//     const content4 = `export const createSaferT = (f?: SafeT) => (args: TranslationKey) => (f ? f(args) : args);`;
+//     Deno.writeTextFileSync(filename, content1 + content2 + content3 + content4);
 //     console.log(`Keys written to ${filename}`);
 // }
 
