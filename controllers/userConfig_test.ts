@@ -1,5 +1,6 @@
 import { UserConfigController } from "@controllers/userConfig.ts";
-import { toExistEmail, isValidLanguage, isValidRegion } from "@define/type.ts";
+import { toEmailKey, isValidLanguage, isValidRegion } from "@define/type.ts";
+import { T_REGISTER } from "@define/system.ts";
 
 Deno.test(async function SetUserCfg() {
 
@@ -18,7 +19,7 @@ Deno.test(async function SetUserCfg() {
     }
 
     const s = "123470@qq.com";
-    const email = await toExistEmail(s);
+    const email = await toEmailKey(s, T_REGISTER);
     if (!email) {
         console.debug(`${s} is NOT valid email or NOT registered`);
         return;

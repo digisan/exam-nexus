@@ -26,15 +26,11 @@ export const V_UDF: ViewType = 'user_defined_functions'
 // self defined in advance by 'create_data_table'
 //
 const TABLES_SB = [
-    "test",
-    "register",
-    "user_config",
+    "t_test",
+    "t_register",
+    "t_user_config",
 ] as const;
 export type TableType = typeof TABLES_SB[number];
-
-export const T_TEST: TableType = 'test'
-export const T_REGISTER: TableType = 'register'
-export const T_CONFIG: TableType = 'user_config'
 
 //
 // ****************** Validate SupaBaseDB tables ****************** //

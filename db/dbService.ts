@@ -1,7 +1,7 @@
 import { ok, err, Result } from "neverthrow"
 import { firstWord, hasSome } from "@util/util.ts"
 import { createClient } from "@supabase/supabase-js"
-import type { Data, Email, EmailKey, Id, IdKey, JSONObject } from "@define/type.ts"
+import type { Data, JSONObject, Email, EmailKey, EmailKeyOnAll, Id, IdKey, IdKeyOnAll } from "@define/type.ts"
 import { isValidId, toIdKey } from "@define/type.ts"
 import { F_PG_EXECUTE, F_CREATE_DATA_TABLE, V_UDF, type TableType } from "@define/system.ts";
 await import('@define/env.ts')
@@ -96,7 +96,7 @@ export class SupabaseAgent {
         return ok(data);
     }
 
-    async updateDataRow(table: TableType, id: IdKey, value: Data): Promise<Result<JSONObject, string>> {
+    async updateDataRow(table: TableType, id: IdKey<TableType>, value: Data): Promise<Result<JSONObject, string>> {
         const { data, error } = await supabase
             .from(table)
             .update({ data: value })
@@ -129,10 +129,8 @@ export class SupabaseAgent {
 
     ////////////////////////////////////////////////////////////////////////////////////////
 
-    async getSingleRowData(table: TableType, id: IdKey | EmailKey): Promise<Result<Data, string>> {
-        if (!isValidId(id)) {
-            return err(`${id} is invalid format`);
-        }
+    async getSingleRowData(table: TableType, id: IdKey<TableType> | EmailKey<TableType> | IdKeyOnAll<TableType> | EmailKeyOnAll<TableType>): Promise<Result<Data, string>> {
+        if (!isValidId(id)) return err(`${id} is invalid format`);
         const r = await this.getDataRow(table, id)
         if (r.isErr()) return r
         if (hasSome(r)) return ok(r.value.data)
@@ -140,7 +138,7 @@ export class SupabaseAgent {
     }
 
     async setSingleRowData(table: TableType, id: Id | Email, value: Data): Promise<Result<Data, string>> {
-        // try to fetch previous value under id
+        // fetch previous value under id
         const ID = await toIdKey(id, table)
         const prevData = ID ? await this.getSingleRowData(table, ID) : null
 
@@ -162,5 +160,4 @@ export class SupabaseAgent {
         }
         return delWholeRow ? await this.deleteDataRows(table, id) : await this.setSingleRowData(table, id, null)
     }
-
 }

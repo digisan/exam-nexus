@@ -3,7 +3,7 @@ import { sign } from "hono/jwt";
 import { hash, compare } from "npm:bcrypt-ts";
 import { type SafeT, createSaferT } from "@i18n/msg_auth_t.ts";
 import { SupabaseAgent } from "@db/dbService.ts";
-import { T_REGISTER, T_TEST } from "@define/system.ts";
+import { T_REGISTER, T_TEST, type TableType } from "@define/system.ts";
 import type { Email, Password, EmailKey } from "@define/type.ts";
 import { toEmailKey, isValidId } from "@define/type.ts";
 import { hasSome } from "@util/util.ts";
@@ -26,15 +26,13 @@ export class AuthController {
         const t = createSaferT(ct);
 
         try {
-            const emailKey = await toEmailKey(credentials.email, T_REGISTER)
-            if (emailKey) return err(t('register.fail.existing'))
+            if (await toEmailKey(credentials.email, T_REGISTER)) return err(t('register.fail.existing'))
 
             const r = await this.agent.setSingleRowData(T_REGISTER, credentials.email, {
                 email: credentials.email,
                 password: await hash(credentials.password, 10),
                 registered_at: new Date().toISOString(),
             })
-
             if (r.isErr()) return err(r.error)
 
             return ok(t('register.ok.__'))
@@ -46,25 +44,19 @@ export class AuthController {
             if (!isValidId(id)) return err(`fatal: registering failed: ${e} and cannot log error`)
             await this.agent.setSingleRowData(T_TEST, id, { msg: `${e}` })
 
-            // 
             return err(`fatal: registering failed: ${e}`)
         }
     }
 
-    private async genToken(email: EmailKey): Promise<Result<string, string>> {
-
+    private async genToken(email: EmailKey<TableType>): Promise<Result<string, string>> {
         const expiresInSeconds = 60 * 100; // 100 minutes
         const exp = Math.floor(Date.now() / 1000) + expiresInSeconds;
-
         const payload = {
             sub: email,
             role: "user",
             exp,
         };
-        if (!SIGNATURE_KEY) {
-            return err(`fatal: SIGNATURE_KEY must be provided!`)
-        }
-
+        if (!SIGNATURE_KEY) return err(`fatal: SIGNATURE_KEY must be provided!`)
         try {
             const token = await sign(payload, SIGNATURE_KEY);
             setTimeout(() => { tokenBlacklist.delete(token); }, (expiresInSeconds + 60) * 1000); // remove unnecessary blacklisted token if real
@@ -74,7 +66,7 @@ export class AuthController {
         }
     }
 
-    async login(credentials: { email: EmailKey; password: Password }, ct?: SafeT): Promise<Result<string, string>> {
+    async login(credentials: { email: EmailKey<TableType>; password: Password }, ct?: SafeT): Promise<Result<string, string>> {
 
         const t = createSaferT(ct);
 
@@ -82,11 +74,9 @@ export class AuthController {
             const r = await this.agent.getSingleRowData(T_REGISTER, credentials.email)
             if (r.isErr()) return err(r.error)
             if (!hasSome(r.value)) return err(t(`register.err.missing_content`))
-
-            if (!await compare(credentials.password, "r.value.password")) {
+            if (!await compare(credentials.password, (r.value as any).password)) {
                 return err(t('login.fail.verification'));
             }
-
             return this.genToken(credentials.email);
 
         } catch (e) {
@@ -96,7 +86,6 @@ export class AuthController {
             if (!isValidId(id)) return err(`fatal: login failed: ${e} and cannot log error`)
             await this.agent.setSingleRowData(T_TEST, id, { msg: `${e}` })
 
-            // 
             return err(`fatal: login failed: ${e}`)
         }
     }
