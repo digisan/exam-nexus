@@ -1,7 +1,7 @@
 import { ok, err, Result } from "neverthrow"
-import { firstWord, hasSome, haveSameStructure } from "@util/util.ts"
+import { firstWord, hasSome } from "@util/util.ts"
 import { createClient } from "@supabase/supabase-js"
-import type { Data, Id, IdKey, JSONObject } from "@define/type.ts"
+import type { Data, Email, EmailKey, Id, IdKey, JSONObject } from "@define/type.ts"
 import { isValidId, toIdKey } from "@define/type.ts"
 import { F_PG_EXECUTE, F_CREATE_DATA_TABLE, V_UDF, type TableType } from "@define/system.ts";
 await import('@define/env.ts')
@@ -129,7 +129,7 @@ export class SupabaseAgent {
 
     ////////////////////////////////////////////////////////////////////////////////////////
 
-    async getSingleRowData(table: TableType, id: IdKey): Promise<Result<Data, string>> {
+    async getSingleRowData(table: TableType, id: IdKey | EmailKey): Promise<Result<Data, string>> {
         if (!isValidId(id)) {
             return err(`${id} is invalid format`);
         }
@@ -139,11 +139,14 @@ export class SupabaseAgent {
         return ok(null)
     }
 
-    async setSingleRowData(table: TableType, id: Id, value: Data): Promise<Result<Data, string>> {
+    async setSingleRowData(table: TableType, id: Id | Email, value: Data): Promise<Result<Data, string>> {
         // try to fetch previous value under id
         const ID = await toIdKey(id, table)
         const prevData = ID ? await this.getSingleRowData(table, ID) : null
 
+        if (!isValidId(id)) {
+            return err(`${id} is invalid format`);
+        }
         const r = await this.upsertDataRow(table, id, normalizeDataStructure(value))
         if (r.isErr()) return r
         if (hasSome(value)) {
@@ -153,21 +156,11 @@ export class SupabaseAgent {
     }
 
     // remove whole row: return deleted row; remove row data: return null
-    async deleteRowData(table: TableType, id: Id, delWholeRow: boolean = false): Promise<Result<Data, string>> {
+    async deleteRowData(table: TableType, id: Id | Email, delWholeRow: boolean = false): Promise<Result<Data, string>> {
+        if (!isValidId(id)) {
+            return err(`${id} is invalid format`);
+        }
         return delWholeRow ? await this.deleteDataRows(table, id) : await this.setSingleRowData(table, id, null)
     }
 
-    ////////////////////////////////////////////////////////////////////////////////////////
-
-    // async insertTextRow(table: TableType, value: string): Promise<Result<JSONObject, string>> {
-    //     const { data, error } = await supabase
-    //         .from(table)
-    //         .insert({ content: value })
-    //         .select()
-    //         .single();
-
-    //     if (error) return err(error.message);
-    //     if (!data) return err('Insert succeeded but no data returned');
-    //     return ok(data);
-    // }
 }

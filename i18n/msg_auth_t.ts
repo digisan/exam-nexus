@@ -2,6 +2,7 @@ const keys = [
     "captcha.err",
     "captcha.fail",
     "register.err.fmt_json",
+    "register.err.missing_content",
     "register.err._",
     "register.fail.invalid_id",
     "register.fail.invalid_email",

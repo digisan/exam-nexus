@@ -7,6 +7,7 @@ export const msg_auth = {
         register: {
             err: {
                 fmt_json: "format error on internal storage as json",
+                missing_content: "missing register content",
                 _: "Service is temporarily unavailable. Please try again later"
             },
             fail: {
@@ -52,6 +53,7 @@ export const msg_auth = {
         register: {
             err: {
                 fmt_json: "内部存储格式错误（JSON）",
+                missing_content: "注册信息丢失",
                 _: "服务暂时不可用，请稍后再试"
             },
             fail: {

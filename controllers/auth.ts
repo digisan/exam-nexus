@@ -4,8 +4,9 @@ import { hash, compare } from "npm:bcrypt-ts";
 import { type SafeT, createSaferT } from "@i18n/msg_auth_t.ts";
 import { SupabaseAgent } from "@db/dbService.ts";
 import { T_REGISTER, T_TEST } from "@define/system.ts";
-import type { Data, JSONObject, Email, Password } from "@define/type.ts";
+import type { Email, Password, EmailKey } from "@define/type.ts";
 import { toEmailKey, isValidId } from "@define/type.ts";
+import { hasSome } from "@util/util.ts";
 
 const SIGNATURE_KEY = Deno.env.get("SIGNATURE_KEY");
 const tokenBlacklist = new Set();
@@ -25,16 +26,10 @@ export class AuthController {
         const t = createSaferT(ct);
 
         try {
-
             const emailKey = await toEmailKey(credentials.email, T_REGISTER)
-            if (emailKey) {
-                return err(t('register.fail.existing'))
-            }
+            if (emailKey) return err(t('register.fail.existing'))
 
-            const id = credentials.email
-            if (!isValidId(id)) return err(t('register.fail.invalid_id'))
-
-            const r = await this.agent.setSingleRowData(T_REGISTER, id, {
+            const r = await this.agent.setSingleRowData(T_REGISTER, credentials.email, {
                 email: credentials.email,
                 password: await hash(credentials.password, 10),
                 registered_at: new Date().toISOString(),
@@ -42,17 +37,21 @@ export class AuthController {
 
             if (r.isErr()) return err(r.error)
 
-            return ok(t('register.ok.to_route'))
+            return ok(t('register.ok.__'))
 
         } catch (e) {
-            // log here ...
-            // await this.agent.insertTextRow(T_TEST, `catch - ${e}`)
+
+            // log error to db here ...
+            const id = new Date().toISOString();
+            if (!isValidId(id)) return err(`fatal: registering failed: ${e} and cannot log error`)
+            await this.agent.setSingleRowData(T_TEST, id, { msg: `${e}` })
+
             // 
             return err(`fatal: registering failed: ${e}`)
         }
     }
 
-    private async genToken(email: Email): Promise<Result<string, string>> {
+    private async genToken(email: EmailKey): Promise<Result<string, string>> {
 
         const expiresInSeconds = 60 * 100; // 100 minutes
         const exp = Math.floor(Date.now() / 1000) + expiresInSeconds;
@@ -75,38 +74,29 @@ export class AuthController {
         }
     }
 
-    private findUserByEmail(data: Data, email: Email): JSONObject | null {
-        if (Array.isArray(data)) {
-            return data.find((u) => u.email === email) ?? null;
-        }
-        return data?.email === email ? data : null;
-    }
-
-    async login(credentials: { email: Email; password: Password }, ct?: SafeT): Promise<Result<string, string>> {
+    async login(credentials: { email: EmailKey; password: Password }, ct?: SafeT): Promise<Result<string, string>> {
 
         const t = createSaferT(ct);
 
         try {
-            const rg = await this.agent.getSingleRowData(T_REGISTER);
-            if (rg.isErr()) {
-                return err(rg.error);
-            }
+            const r = await this.agent.getSingleRowData(T_REGISTER, credentials.email)
+            if (r.isErr()) return err(r.error)
+            if (!hasSome(r.value)) return err(t(`register.err.missing_content`))
 
-            const user = this.findUserByEmail(rg.value, credentials.email);
-            if (!user) {
-                // return err(t('login.fail.not_existing'))
-                return err(t('login.fail.verification'));
-            }
-
-            const passwordMatch = await compare(credentials.password, user.password);
-            if (!passwordMatch) {
+            if (!await compare(credentials.password, "r.value.password")) {
                 return err(t('login.fail.verification'));
             }
 
             return this.genToken(credentials.email);
 
         } catch (e) {
-            // log here ...
+
+            // log error to db here ...
+            const id = new Date().toISOString();
+            if (!isValidId(id)) return err(`fatal: login failed: ${e} and cannot log error`)
+            await this.agent.setSingleRowData(T_TEST, id, { msg: `${e}` })
+
+            // 
             return err(`fatal: login failed: ${e}`)
         }
     }
