@@ -1,7 +1,7 @@
 import { ok, err, Result } from "neverthrow"
 import { firstWord, hasSome } from "@util/util.ts"
 import { createClient } from "@supabase/supabase-js"
-import type { Data, JSONObject, Email, EmailKey, EmailKeyOnAll, Id, IdKey, IdKeyOnAll } from "@define/type.ts"
+import type { Data, JSONObject, Email, EmailKey, Id, IdKey } from "@define/type.ts"
 import { isValidId, toIdKey } from "@define/type.ts"
 import { F_PG_EXECUTE, F_CREATE_DATA_TABLE, V_UDF, type TableType } from "@define/system.ts";
 await import('@define/env.ts')
@@ -48,29 +48,48 @@ export class SupabaseAgent {
         return ok(data);
     }
 
-    PgVer(): Promise<Result<Data, string>> {
-        return this.executeSQL(`SELECT json_build_object('version', version())`); // make one returning object
+    async PgVer(): Promise<Result<Data, string>> {
+        return await this.executeSQL(`SELECT json_build_object('version', version())`); // make one returning object
     }
 
-    DbInfo(): Promise<Result<Data, string>> {
-        return this.executeSQL(`SELECT json_build_object('dbname', current_database(), 'user', session_user)`);
+    async DbInfo(): Promise<Result<Data, string>> {
+        return await this.executeSQL(`SELECT json_build_object('dbname', current_database(), 'user', session_user)`);
     }
 
-    TableCount(): Promise<Result<Data, string>> {
-        return this.executeSQL(`SELECT COUNT(*) FROM pg_tables WHERE schemaname = 'public'`);
+    async TableCount(): Promise<Result<Data, string>> {
+        return await this.executeSQL(`SELECT COUNT(*) FROM pg_tables WHERE schemaname = 'public'`);
     }
 
-    TableList(): Promise<Result<Data, string>> {
-        return this.executeSQL(`SELECT json_agg(tablename) FROM pg_tables WHERE schemaname = 'public'`); // group [value] from single column
+    async TableList(): Promise<Result<Data, string>> {
+        return await this.executeSQL(`SELECT json_agg(tablename) FROM pg_tables WHERE schemaname = 'public'`); // group [value] from single column
     }
 
-    TableContent(table: TableType): Promise<Result<Data, string>> {
-        return this.executeSQL(`SELECT json_agg(t) FROM (SELECT * FROM ${table}) AS t`); // group [{key: value; ...}] from multiple column
+    async TableContent(table: TableType): Promise<Result<Data, string>> {
+        return await this.executeSQL(`SELECT json_agg(t) FROM (SELECT * FROM ${table}) AS t`); // group [{key: value; ...}] from multiple column
+    }
+
+    async TableTopRows(table: TableType, n: number): Promise<Result<Data, string>> {
+        return await this.executeSQL(`SELECT json_agg(t) FROM (SELECT * FROM ${table} LIMIT ${n}) AS t`);
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////
 
-    async getDataRow(table: TableType, id: Id): Promise<Result<JSONObject, string>> {
+    async searchFirstDataRow(table: TableType, field: string, value: unknown): Promise<Result<JSONObject[] | null, string>> {
+        // 假设你要查找 data 字段中 username = 'alice' 的记录
+        const { data, error } = await supabase
+            .from(table)
+            .select('*')
+            .filter(`data->>${field}`, 'eq', value)
+            .limit(1) // 如果你只想取第一条
+
+        if (error) return err(error.message);
+        if (!data) return err('Fetch succeeded but no data returned');
+        if (!hasSome(data)) return ok(null)
+        if (Array.isArray(data) && data.length === 1) return ok(data[0])
+        return ok(data);
+    }
+
+    async getDataRow(table: TableType, id: Id): Promise<Result<JSONObject | null, string>> {
         const { data, error } = await supabase
             .from(table)
             .select()
@@ -78,9 +97,8 @@ export class SupabaseAgent {
 
         if (error) return err(error.message);
         if (!data) return err('Fetch succeeded but no data returned');
-        if (hasSome(data) && Array.isArray(data) && data.length === 1) {
-            return ok(data[0])
-        }
+        if (!hasSome(data)) return ok(null)
+        if (Array.isArray(data) && data.length === 1) return ok(data[0])
         return ok(data);
     }
 
@@ -129,11 +147,11 @@ export class SupabaseAgent {
 
     ////////////////////////////////////////////////////////////////////////////////////////
 
-    async getSingleRowData(table: TableType, id: IdKey<TableType> | EmailKey<TableType> | IdKeyOnAll<TableType> | EmailKeyOnAll<TableType>): Promise<Result<Data, string>> {
+    async getSingleRowData(table: TableType, id: IdKey<TableType> | EmailKey<TableType>): Promise<Result<Data | null, string>> {
         if (!isValidId(id)) return err(`${id} is invalid format`);
         const r = await this.getDataRow(table, id)
         if (r.isErr()) return r
-        if (hasSome(r)) return ok(r.value.data)
+        if (hasSome(r)) return ok(r.value?.data)
         return ok(null)
     }
 
@@ -142,22 +160,16 @@ export class SupabaseAgent {
         const ID = await toIdKey(id, table)
         const prevData = ID ? await this.getSingleRowData(table, ID) : null
 
-        if (!isValidId(id)) {
-            return err(`${id} is invalid format`);
-        }
+        if (!isValidId(id)) return err(`${id} is invalid format`);
         const r = await this.upsertDataRow(table, id, normalizeDataStructure(value))
         if (r.isErr()) return r
-        if (hasSome(value)) {
-            return ok(r.value.data) // if there are some new data, return new data
-        }
+        if (hasSome(value)) return ok(r.value.data) // if there are some new data, return new data
         return ok(prevData?.isOk() ? prevData.value : null) // delete action, return previous data
     }
 
     // remove whole row: return deleted row; remove row data: return null
     async deleteRowData(table: TableType, id: Id | Email, delWholeRow: boolean = false): Promise<Result<Data, string>> {
-        if (!isValidId(id)) {
-            return err(`${id} is invalid format`);
-        }
+        if (!isValidId(id)) return err(`${id} is invalid format`);
         return delWholeRow ? await this.deleteDataRows(table, id) : await this.setSingleRowData(table, id, null)
     }
 }

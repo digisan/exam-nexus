@@ -26,9 +26,9 @@ export const V_UDF: ViewType = 'user_defined_functions'
 // self defined in advance by 'create_data_table'
 //
 const TABLES_SB = [
-    "t_test",
-    "t_register",
-    "t_user_config",
+    "test",
+    "register",
+    "user_config",
 ] as const;
 export type TableType = typeof TABLES_SB[number];
 

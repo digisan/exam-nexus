@@ -27,7 +27,7 @@ export type Id = Brand<string, 'Id'>;
 export const isValidId = (s: string | null): s is Id => !!s && s.length > 3
 
 export type IdKey<T extends TableType> = Brand<string, `IdKey<${T}>`>
-export const toIdKey = async <T extends TableType>(s: string, table: T): Promise<IdKey<T> | null> => {
+export const toIdKey = async <T extends TableType>(s: string | Id, table: T): Promise<IdKey<T> | null> => {
     if (!isValidId(s)) return null;
     const sa = new SupabaseAgent();
     if (!hasSome(await sa.getDataRow(table, s))) return null;
@@ -43,7 +43,7 @@ export const isEmail = (s: string | null): s is Email => {
 }
 
 export type EmailKey<T extends TableType> = Brand<string, `EmailKey<${T}>`>
-export const toEmailKey = async <T extends TableType>(s: string, table: T): Promise<EmailKey<T> | null> => {
+export const toEmailKey = async <T extends TableType>(s: string | Email, table: T): Promise<EmailKey<T> | null> => {
     if (!isValidId(s) || !isEmail(s)) return null;
     const sa = new SupabaseAgent();
     if (!hasSome(await sa.getDataRow(table, s))) return null;
@@ -52,12 +52,27 @@ export const toEmailKey = async <T extends TableType>(s: string, table: T): Prom
 
 ////////////////////////////////////////////////
 
-// export type IdRef = Brand<string, 'IdRef'>;
+
+// export type IdRef<T1 extends TableType, F extends string, T2 extends TableType> = Brand<string, `IdRef<${T1}_${F}_${T2}>`>
+// export const toIdRef = async <T1 extends TableType, F extends string, T2 extends TableType>(s: string | Id | IdKey<T2>, table: T1, field: F, ref_table: T2): Promise<IdRef<T1, F, T2> | null> => {
+
+//     if (!await toIdKey(s, ref_table)) return null
+
+//     const sa = new SupabaseAgent();
+//     sa.TableContent(table)
+
+//     return s as unknown as IdRef<T1, F, T2>
+// }
+
+
+
+
 // const valid_id_ref = async (s: string, table: TableType, id: string, field: string, ref_table: TableType): Promise<boolean> => {
 //     if (!await exist_id(s, ref_table)) return false;
 //     const ID = await toIdKey(id, table)
 //     if (!ID) return false
 //     const sa = new SupabaseAgent();
+
 //     const r = await sa.getSingleRowData(table, ID) as JSONObject
 //     if (r.isErr() || !hasSome(r.value) || !Object.hasOwn(r.value, field)) return false
 //     return r.value?.field === s
