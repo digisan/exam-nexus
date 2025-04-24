@@ -4,6 +4,9 @@ await import('@define/env.ts')
 const HCAPTCHA_SECRET = Deno.env.get("HCAPTCHA_SECRET");
 const HCAPTCHA_VERIFY_URL = Deno.env.get("HCAPTCHA_VERIFY_URL");
 
+export const RE_PWD = /^\S*(?=\S{6,})(?=\S*\d)(?=\S*[A-Z])(?=\S*[a-z])(?=\S*[!@#$%^&*? ])\S*$/
+export const RE_EMAIL = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+
 export const len = <T>(arr: T[] | null | undefined): number => arr?.length ?? 0;
 
 export const lastElem = <T>(arr: T[] | null | undefined): T | undefined => arr?.[arr.length - 1];

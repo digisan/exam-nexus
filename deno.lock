@@ -2,10 +2,8 @@
   "version": "4",
   "specifiers": {
     "jsr:@hono/hono@4.7.7": "4.7.7",
-    "jsr:@std/assert@1.0.12": "1.0.12",
     "jsr:@std/cli@*": "1.0.13",
     "jsr:@std/fs@*": "1.0.16",
-    "jsr:@std/internal@^1.0.6": "1.0.6",
     "jsr:@std/path@^1.0.8": "1.0.8",
     "jsr:@supabase/supabase-js@2.49.4": "2.49.4",
     "npm:@hono/swagger-ui@0.5.1": "0.5.1_hono@4.7.7",
@@ -31,12 +29,6 @@
     "@hono/hono@4.7.7": {
       "integrity": "74ea9985cb405fada079a922538f6baa06fa1ee150ce409c5bdae2c89ac05cba"
     },
-    "@std/assert@1.0.12": {
-      "integrity": "08009f0926dda9cbd8bef3a35d3b6a4b964b0ab5c3e140a4e0351fbf34af5b9a",
-      "dependencies": [
-        "jsr:@std/internal"
-      ]
-    },
     "@std/cli@1.0.13": {
       "integrity": "5db2d95ab2dca3bca9fb6ad3c19908c314e93d6391c8b026725e4892d4615a69"
     },
@@ -45,9 +37,6 @@
       "dependencies": [
         "jsr:@std/path"
       ]
-    },
-    "@std/internal@1.0.6": {
-      "integrity": "9533b128f230f73bd209408bb07a4b12f8d4255ab2a4d22a1fd6d87304aca9a4"
     },
     "@std/path@1.0.8": {
       "integrity": "548fa456bb6a04d3c1a1e7477986b6cffbce95102d0bb447c67c4ee70e0364be"
@@ -327,8 +316,8 @@
   "workspace": {
     "dependencies": [
       "jsr:@hono/hono@4.7.7",
-      "jsr:@std/assert@1.0.12",
-      "jsr:@std/fs@1.0.16",
+      "jsr:@std/assert@1.0.13",
+      "jsr:@std/fs@1.0.17",
       "jsr:@supabase/supabase-js@2.49.4",
       "npm:@hono/swagger-ui@0.5.1",
       "npm:@hono/zod-openapi@0.19.5",

@@ -13,7 +13,7 @@ const ppp = (u: EmailKey<T_TEST> & EmailKey<T_REGISTER> & EmailKey<'test'>) => {
     console.log(u)
 }
 
-const pppp = (u: EmailKey<'test' & 'register' & 'test1'>) => { // test1 应该提示错误！！！
+const pppp = (u: EmailKey<'register' & 'test1'>) => { // test1 应该提示错误！！！
     console.log(u)
 }
 
