@@ -1,6 +1,6 @@
-import { T_REGISTER, type TableType } from "@define/system.ts";
+import { T_REGISTER } from "@define/system.ts";
 import { AuthController } from "./auth.ts";
-import { isEmail, isAllowedPassword, toEmailKeyOn } from "@define/type.ts";
+import { isEmail, isAllowedPassword, toEmailKey } from "@define/type.ts";
 
 Deno.test(async function AuthCtrlReg() {
     const ac = new AuthController();
@@ -19,7 +19,7 @@ Deno.test(async function AuthCtrlReg() {
 });
 
 Deno.test(async function AuthCtrlLogin() {
-    const email = await toEmailKeyOn<TableType>("12347000@qq.com", T_REGISTER);
+    const email = await toEmailKey("12347000@qq.com", T_REGISTER);
     if (!email) return;
 
     const password = "12345";

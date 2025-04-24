@@ -3,7 +3,7 @@ import { sign } from "hono/jwt";
 import { hash, compare } from "npm:bcrypt-ts";
 import { type SafeT, createSaferT } from "@i18n/msg_auth_t.ts";
 import { SupabaseAgent } from "@db/dbService.ts";
-import { T_REGISTER, T_TEST, type TableType } from "@define/system.ts";
+import { T_REGISTER, T_TEST } from "@define/system.ts";
 import type { Email, Password, EmailKey } from "@define/type.ts";
 import { toEmailKey, isValidId } from "@define/type.ts";
 import { hasSome } from "@util/util.ts";
@@ -48,7 +48,7 @@ export class AuthController {
         }
     }
 
-    private async genToken(email: EmailKey<TableType>): Promise<Result<string, string>> {
+    private async genToken(email: EmailKey<T_REGISTER>): Promise<Result<string, string>> {
         const expiresInSeconds = 60 * 100; // 100 minutes
         const exp = Math.floor(Date.now() / 1000) + expiresInSeconds;
         const payload = {
@@ -66,7 +66,7 @@ export class AuthController {
         }
     }
 
-    async login(credentials: { email: EmailKey<TableType>; password: Password }, ct?: SafeT): Promise<Result<string, string>> {
+    async login(credentials: { email: EmailKey<T_REGISTER>; password: Password }, ct?: SafeT): Promise<Result<string, string>> {
 
         const t = createSaferT(ct);
 

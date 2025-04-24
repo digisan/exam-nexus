@@ -8,9 +8,7 @@ await import('@define/env.ts')
 
 const SUPABASE_URL = Deno.env.get("SUPABASE_URL");
 const SUPABASE_KEY = Deno.env.get("SUPABASE_KEY");
-if (!SUPABASE_URL || !SUPABASE_KEY) {
-    throw new Error("SUPABASE_URL and SUPABASE_KEY must be provided");
-}
+if (!SUPABASE_URL || !SUPABASE_KEY) throw new Error("SUPABASE_URL and SUPABASE_KEY must be provided");
 const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
 
 const normalizeDataStructure = (value: Data): Data => {
@@ -74,21 +72,6 @@ export class SupabaseAgent {
 
     ////////////////////////////////////////////////////////////////////////////////////////
 
-    async searchFirstDataRow(table: TableType, field: string, value: unknown): Promise<Result<JSONObject[] | null, string>> {
-        // 假设你要查找 data 字段中 username = 'alice' 的记录
-        const { data, error } = await supabase
-            .from(table)
-            .select('*')
-            .filter(`data->>${field}`, 'eq', value)
-            .limit(1) // 如果你只想取第一条
-
-        if (error) return err(error.message);
-        if (!data) return err('Fetch succeeded but no data returned');
-        if (!hasSome(data)) return ok(null)
-        if (Array.isArray(data) && data.length === 1) return ok(data[0])
-        return ok(data);
-    }
-
     async getDataRow(table: TableType, id: Id): Promise<Result<JSONObject | null, string>> {
         const { data, error } = await supabase
             .from(table)
@@ -145,9 +128,32 @@ export class SupabaseAgent {
         return ok(data);
     }
 
+    async searchFirstDataRow(table: TableType, field: string, value: unknown): Promise<Result<JSONObject | null, string>> {
+        const { data, error } = await supabase
+            .from(table)
+            .select('*')
+            .filter(`data->>${field}`, 'eq', value)
+            .limit(1)
+
+        if (error) return err(error.message);
+        if (!data) return err('Fetch succeeded but no data returned');
+        if (!hasSome(data)) return ok(null)
+        if (Array.isArray(data) && data.length === 1) return ok(data[0])
+        return ok(data);
+    }
+
+    async searchFirstDataRows(table: TableType, field: string, value: unknown, n?: number): Promise<Result<JSONObject[], string>> {
+        const all = supabase.from(table).select('*').filter(`data->>${field}`, 'eq', value)
+        const { data, error } = await (n === undefined ? all : all.limit(n))
+
+        if (error) return err(error.message);
+        if (!data) return err('Fetch succeeded but no data returned');
+        return ok(data);
+    }
+
     ////////////////////////////////////////////////////////////////////////////////////////
 
-    async getSingleRowData(table: TableType, id: IdKey<TableType> | EmailKey<TableType>): Promise<Result<Data | null, string>> {
+    async getSingleRowData(table: TableType, id: IdKey<TableType> | EmailKey<TableType>): Promise<Result<Data, string>> {
         if (!isValidId(id)) return err(`${id} is invalid format`);
         const r = await this.getDataRow(table, id)
         if (r.isErr()) return r
@@ -170,6 +176,6 @@ export class SupabaseAgent {
     // remove whole row: return deleted row; remove row data: return null
     async deleteRowData(table: TableType, id: Id | Email, delWholeRow: boolean = false): Promise<Result<Data, string>> {
         if (!isValidId(id)) return err(`${id} is invalid format`);
-        return delWholeRow ? await this.deleteDataRows(table, id) : await this.setSingleRowData(table, id, null)
+        return await (delWholeRow ? this.deleteDataRows(table, id) : this.setSingleRowData(table, id, null))
     }
 }

@@ -34,6 +34,9 @@ export const toIdKey = async <T extends TableType>(s: string | Id, table: T): Pr
     return s as unknown as IdKey<T>
 }
 
+// export const toIdKeyOnAll = async <T extends TableType>(s: string | Id, ...tables: T[]): Promise<IdKey<T[]> | null> => {    
+// }
+
 ////////////////////////////////////////////////
 
 export type Email = Brand<string, 'Email'>;
@@ -52,31 +55,11 @@ export const toEmailKey = async <T extends TableType>(s: string | Email, table: 
 
 ////////////////////////////////////////////////
 
-
-// export type IdRef<T1 extends TableType, F extends string, T2 extends TableType> = Brand<string, `IdRef<${T1}_${F}_${T2}>`>
-// export const toIdRef = async <T1 extends TableType, F extends string, T2 extends TableType>(s: string | Id | IdKey<T2>, table: T1, field: F, ref_table: T2): Promise<IdRef<T1, F, T2> | null> => {
-
-//     if (!await toIdKey(s, ref_table)) return null
-
-//     const sa = new SupabaseAgent();
-//     sa.TableContent(table)
-
-//     return s as unknown as IdRef<T1, F, T2>
-// }
-
-
-
-
-// const valid_id_ref = async (s: string, table: TableType, id: string, field: string, ref_table: TableType): Promise<boolean> => {
-//     if (!await exist_id(s, ref_table)) return false;
-//     const ID = await toIdKey(id, table)
-//     if (!ID) return false
-//     const sa = new SupabaseAgent();
-
-//     const r = await sa.getSingleRowData(table, ID) as JSONObject
-//     if (r.isErr() || !hasSome(r.value) || !Object.hasOwn(r.value, field)) return false
-//     return r.value?.field === s
-// }
-// export const toIdRef = async (s: string, table: TableType, id: string, field: string, ref_table: TableType): Promise<IdRef | null> => {
-//     return (await valid_id_ref(s, table, id, field, ref_table)) ? (s as IdRef) : null;
-// }
+export type IdRef<T1 extends TableType, F extends string, T2 extends TableType> = Brand<string, `IdRef<${T1}_${F}_${T2}>`>
+export const toIdRef = async <T1 extends TableType, F extends string, T2 extends TableType>(s: string | Id | IdKey<T2>, table: T1, field: F, ref_table: T2): Promise<IdRef<T1, F, T2> | null> => {
+    if (!await toIdKey(s, ref_table)) return null
+    const sa = new SupabaseAgent();
+    const r = await sa.searchFirstDataRow(table, field, s)
+    if (r.isErr() || !hasSome(r.value)) return null
+    return s as unknown as IdRef<T1, F, T2>
+}
