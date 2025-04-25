@@ -7,7 +7,7 @@ import { hasSome, RE_EMAIL, RE_PWD } from "@util/util.ts";
 export type JSONObject = Record<string, any>;
 export type Data = JSONObject | JSONObject[] | null;
 
-type Brand<T, B> = T & { __brand: B };
+type Brand<T, B> = T & { readonly __brand: B; readonly __exact: T; readonly __types: T };
 
 export type Password = Brand<string, 'Password'>;
 export const isAllowedPassword = (s: string | null): s is Password => RE_PWD.test(s ?? "")
@@ -31,9 +31,6 @@ export const toIdKey = async <T extends TableType>(s: string | Id, table: T): Pr
     return s as unknown as IdKey<T>
 }
 
-// export const toIdKeyOnAll = async <T extends TableType>(s: string | Id, ...tables: T[]): Promise<IdKey<T[]> | null> => {    
-// }
-
 ////////////////////////////////////////////////
 
 export type Email = Brand<string, 'Email'>;
@@ -45,6 +42,14 @@ export const toEmailKey = async <T extends TableType>(s: string | Email, table: 
     const sa = new SupabaseAgent();
     if (!hasSome(await sa.getDataRow(table, s))) return null;
     return s as unknown as EmailKey<T>
+}
+
+export type EmailKeyOnAll<T extends readonly TableType[]> = Brand<string, `EmailKeyOnAll<${T & string}>`>;
+export const toEmailKeyOnAll = async<T extends readonly TableType[]>(s: string | Email, ...tables: T): Promise<EmailKeyOnAll<T> | null> => {
+    for (const table of tables) {
+        if (!await toEmailKey(s, table)) return null
+    }
+    return s as unknown as EmailKeyOnAll<T>
 }
 
 ////////////////////////////////////////////////

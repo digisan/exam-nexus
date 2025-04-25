@@ -1,4 +1,4 @@
-import { type EmailKey, toEmailKey } from "@define/type.ts";
+import { type EmailKey, type EmailKeyOnAll, toEmailKey, toEmailKeyOnAll } from "@define/type.ts";
 import { T_REGISTER, T_TEST } from "@define/system.ts";
 
 const p = (u: EmailKey<T_REGISTER>) => {
@@ -9,11 +9,7 @@ const pp = (u: EmailKey<'test'>) => {
     console.log(u)
 }
 
-const ppp = (u: EmailKey<T_TEST> & EmailKey<T_REGISTER> & EmailKey<'test'>) => {
-    console.log(u)
-}
-
-const pppp = (u: EmailKey<'register' & 'test1'>) => { // test1 应该提示错误！！！
+const ppp = (u: EmailKeyOnAll<[T_REGISTER, T_TEST]>) => {
     console.log(u)
 }
 
@@ -29,10 +25,8 @@ Deno.test(async function Test() {
     if (!email2) return;
     pp(email2);
 
-    // const emailBoth = s // as EmailKey<T_REGISTER> & EmailKey<T_TEST>;
-    // ppp(emailBoth);
-    // pppp(emailBoth);
-
-    // const emailBoth1 = s as EmailKey<T_REGISTER & T_TEST>;
-    // pppp(emailBoth1);
+    const emailBoth = await toEmailKeyOnAll(s, T_REGISTER, T_TEST)
+    // const emailBoth = await toEmailKeyOnAll(s, T_TEST, T_REGISTER) // 最好忽略顺序时候，也不报错
+    if (!emailBoth) return;
+    ppp(emailBoth);
 });

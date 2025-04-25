@@ -33,12 +33,6 @@ const TABLES_SB = [
 
 export type TableType = typeof TABLES_SB[number];
 
-///////////////////////////////////////
-
-// 
-
-///////////////////////////////////////
-
 const defineTable = <T extends TableType>(value: T): T => value
 
 const T = {
