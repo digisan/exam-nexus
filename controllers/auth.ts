@@ -1,7 +1,7 @@
 import { ok, err, Result } from "neverthrow";
 import { sign } from "hono/jwt";
 import { hash, compare } from "npm:bcrypt-ts";
-import { type StrictT, createSaferT } from "@i18n/lang_t.ts";
+import { type TransFnType, createSaferT } from "@i18n/lang_t.ts";
 import { SupabaseAgent } from "@db/dbService.ts";
 import { T_REGISTER, T_TEST } from "@define/system.ts";
 import type { Email, Password, EmailKey } from "@define/type.ts";
@@ -21,7 +21,7 @@ export class AuthController {
 
     SignatureKey(): string { return SIGNATURE_KEY ?? "" }
 
-    async register(credentials: { email: Email; password: Password }, ct?: StrictT): Promise<Result<string, string>> {
+    async register(credentials: { email: Email; password: Password }, ct?: TransFnType): Promise<Result<string, string>> {
 
         const t = createSaferT(ct);
 
@@ -66,7 +66,7 @@ export class AuthController {
         }
     }
 
-    async login(credentials: { email: EmailKey<T_REGISTER>; password: Password }, ct?: StrictT): Promise<Result<string, string>> {
+    async login(credentials: { email: EmailKey<T_REGISTER>; password: Password }, ct?: TransFnType): Promise<Result<string, string>> {
 
         const t = createSaferT(ct);
 

@@ -83,7 +83,7 @@ async function main() {
         exts: [".ts", ".tsx", ".js", ".jsx"],
         skip: [/node_modules/, /\.git/],
     })) {
-        await checkFile(entry.path, 'StrictT', 'JSONObject');
+        await checkFile(entry.path, 'TransFnType', 'JSONObject');
     }
     console.log("✅ No branded type assertion found.");
 }

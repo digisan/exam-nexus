@@ -3,13 +3,13 @@ import { createRoute, OpenAPIHono, z } from "@hono/zod-openapi";
 import { verifyHCaptcha, len, lastElem, true2err, false2err } from "@util/util.ts";
 import { isEmail, isAllowedPassword, toEmailKey } from "@define/type.ts";
 import { AuthController } from "@controllers/auth.ts";
-import type { TranslationKey, StrictT } from "@i18n/lang_t.ts";
+import type { TransKeyType, TransFnType } from "@i18n/lang_t.ts";
 import { withSafeT } from "@i18n/lang_t.ts";
 import { isFatalErr } from "@util/util.ts";
 import { StatusCode } from "http-status-code";
 import { T_REGISTER } from "@define/system.ts";
 
-const getMsgCode = (listMsgCode: [Result<any, string>, TranslationKey, StatusCode][], t: StrictT): [string, StatusCode] => {
+const getMsgCode = (listMsgCode: [Result<any, string>, TransKeyType, StatusCode][], t: TransFnType): [string, StatusCode] => {
     if (len(listMsgCode) === 0) {
         return ['listMsgCode is empty', 500]
     }
@@ -116,7 +116,7 @@ app.openapi(
 
         const result = cVerifyResult.isOk() ? await authCtrl.register({ email, password }, t) : err(`NOT trigger - 'register'`);
         const isFatalResult = true2err(isFatalErr(result), 'fatal at register');
-        const listMsgCode: [Result<string | boolean, string>, TranslationKey, StatusCode][] = [
+        const listMsgCode: [Result<string | boolean, string>, TransKeyType, StatusCode][] = [
             [cAccessResult, 'register.err._', 500],
             [cVerifyResult, 'captcha.fail', 400],
             [isFatalResult, 'register.err._', 500],
@@ -204,7 +204,7 @@ app.openapi(
 
         const result = cVerifyResult.isOk() ? await authCtrl.login({ email: emailKey, password }, t) : err(`NOT trigger - 'login'`);
         const isFatalResult = true2err(isFatalErr(result), 'fatal at register');
-        const listMsgCode: [Result<string | boolean, string>, TranslationKey, StatusCode][] = [
+        const listMsgCode: [Result<string | boolean, string>, TransKeyType, StatusCode][] = [
             [cAccessResult, 'login.err._', 500],
             [cVerifyResult, 'captcha.fail', 400],
             [isFatalResult, 'login.err._', 500],

@@ -67,11 +67,11 @@
 //         getLocale: (c) => getCookie(c, "locale-cookie"),
 //     })
 
-//     export type TranslationKey = typeof keys[number];
-//     export type StrictT = (key: TranslationKey, params?: Record<string, unknown>) => string;  
+//     export type TransKeyType = typeof keys[number];
+//     export type TransFnType = (key: TransKeyType, params?: Record<string, unknown>) => string;
 //     export type CtxType = Parameters<typeof getI18n>[0]
 
-//     export const withSafeT = (c: CtxType): StrictT => getI18n(c) as StrictT
+//     export const withSafeT = (c: CtxType): TransFnType => getI18n(c) as TransFnType
 //     `;
 //     Deno.writeTextFileSync(out_lang, content, { append: true });
 // };
