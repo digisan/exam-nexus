@@ -72,7 +72,7 @@ export class SupabaseAgent {
 
     ////////////////////////////////////////////////////////////////////////////////////////
 
-    async getDataRow(table: TableType, id: Id): Promise<Result<JSONObject | null, string>> {
+    async getDataRow(table: TableType, id: Id): Promise<Result<Data, string>> {
         const { data, error } = await supabase
             .from(table)
             .select()
@@ -128,7 +128,7 @@ export class SupabaseAgent {
         return ok(data);
     }
 
-    async searchFirstDataRow(table: TableType, field: string, value: unknown): Promise<Result<JSONObject | null, string>> {
+    async firstDataRow(table: TableType, field: string, value: unknown): Promise<Result<Data, string>> {
         const { data, error } = await supabase
             .from(table)
             .select('*')
@@ -142,7 +142,7 @@ export class SupabaseAgent {
         return ok(data);
     }
 
-    async searchFirstDataRows(table: TableType, field: string, value: unknown, n?: number): Promise<Result<JSONObject[], string>> {
+    async searchDataRows(table: TableType, field: string, value: unknown, n?: number): Promise<Result<JSONObject[], string>> {
         const all = supabase.from(table).select('*').filter(`data->>${field}`, 'eq', value)
         const { data, error } = await (n === undefined ? all : all.limit(n))
 
@@ -157,7 +157,7 @@ export class SupabaseAgent {
         if (!isValidId(id)) return err(`${id} is invalid format`);
         const r = await this.getDataRow(table, id)
         if (r.isErr()) return r
-        if (hasSome(r)) return ok(r.value?.data)
+        if (hasSome(r) && 'data' in r.value!) return ok(r.value.data as Data)
         return ok(null)
     }
 
@@ -169,7 +169,7 @@ export class SupabaseAgent {
         if (!isValidId(id)) return err(`${id} is invalid format`);
         const r = await this.upsertDataRow(table, id, normalizeDataStructure(value))
         if (r.isErr()) return r
-        if (hasSome(value)) return ok(r.value.data) // if there are some new data, return new data
+        if (hasSome(value)) return ok(r.value.data as Data) // if there are some new data, return new data
         return ok(prevData?.isOk() ? prevData.value : null) // delete action, return previous data
     }
 

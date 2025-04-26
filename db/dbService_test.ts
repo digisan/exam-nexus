@@ -85,9 +85,9 @@ Deno.test(async function TableContent() {
     }
 });
 
-Deno.test(async function SearchFirstDataRown() {
+Deno.test(async function FirstDataRow() {
     const sa = new SupabaseAgent();
-    const r = await sa.searchFirstDataRow('test', 'user', 'abc')
+    const r = await sa.firstDataRow('test', 'user', 'abc')
     if (r.isOk()) {
         if (!r.value) {
             console.log(r.value)

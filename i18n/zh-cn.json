@@ -1,0 +1,46 @@
+{
+    "captcha": {
+        "err": "验证码无法验证，因第三方访问错误",
+        "fail": "验证码验证失败"
+    },
+    "register": {
+        "err": {
+            "fmt_json": "内部存储格式错误（JSON）",
+            "missing_content": "注册信息丢失",
+            "_": "服务暂时不可用，请稍后再试"
+        },
+        "fail": {
+            "invalid_id": "无效ID格式",
+            "invalid_email": "无效Email格式",
+            "weak_password": "密码不符合强度要求",
+            "existing": "已注册",
+            "_": "无效的注册信息"
+        },
+        "ok": {
+            "__": "注册成功",
+            "_": "欢迎！你已加入 EXAM-NEXUS"
+        }
+    },
+    "login": {
+        "err": {
+            "fmt_json": "内部存储格式错误（JSON）",
+            "_": "服务暂时不可用，请稍后再试"
+        },
+        "fail": {
+            "invalid_email": "无效Email格式",
+            "weak_password": "密码不符合强度要求",
+            "not_existing": "尚未注册",
+            "verification": "邮箱或密码错误",
+            "_": "登录信息无效"
+        },
+        "ok": {
+            "__": "登录成功，令牌已发送",
+            "_": "登录成功，令牌已发送"
+        }
+    },
+    "token": {
+        "fail": {
+            "_": "令牌无效或失效"
+        }
+    }
+}

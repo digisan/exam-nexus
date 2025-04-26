@@ -1,6 +1,6 @@
 import { UserConfigController } from "@controllers/userConfig.ts";
-import { toEmailKey, isValidLanguage, isValidRegion } from "@define/type.ts";
-import { T_REGISTER } from "@define/system.ts";
+import { toEmailKey, isValidLanguage, isValidRegion, toEmailKeyOnAll } from "@define/type.ts";
+import { T_REGISTER, T_USER_CONFIG } from "@define/system.ts";
 
 Deno.test(async function SetUserCfg() {
 
@@ -19,12 +19,18 @@ Deno.test(async function SetUserCfg() {
     }
 
     const s = "123470@qq.com";
+
     const email = await toEmailKey(s, T_REGISTER);
     if (!email) {
         console.debug(`${s} is NOT valid email or NOT registered`);
         return;
     }
 
-    const result = await ucc.setUserCfg({ email, region, language })
+    const emailBoth = await toEmailKeyOnAll(s, T_REGISTER, T_USER_CONFIG)
+    if (!emailBoth) {
+        console.debug(`${s} is NOT both valid key for '${T_REGISTER}' & '${T_USER_CONFIG}'`);
+        return
+    }
+    const result = await ucc.getUserCfg(emailBoth)
     console.log(result)
 });

@@ -4,7 +4,7 @@ import { REGIONS, LANGUAGES } from "@define/config.ts";
 import type { TableType } from "@define/system.ts";
 import { hasSome, RE_EMAIL, RE_PWD } from "@util/util.ts";
 
-export type JSONObject = Record<string, any>;
+export type JSONObject = Record<string, unknown>;
 export type Data = JSONObject | JSONObject[] | null;
 
 type Brand<T, B> = T & { readonly __brand: B; readonly __exact: T; readonly __types: T };
@@ -58,7 +58,7 @@ export type IdRef<T1 extends TableType, F extends string, T2 extends TableType> 
 export const toIdRef = async <T1 extends TableType, F extends string, T2 extends TableType>(s: string | Id | IdKey<T2>, table: T1, field: F, ref_table: T2): Promise<IdRef<T1, F, T2> | null> => {
     if (!await toIdKey(s, ref_table)) return null
     const sa = new SupabaseAgent();
-    const r = await sa.searchFirstDataRow(table, field, s)
+    const r = await sa.firstDataRow(table, field, s)
     if (r.isErr() || !hasSome(r.value)) return null
     return s as unknown as IdRef<T1, F, T2>
 }

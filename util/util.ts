@@ -73,9 +73,7 @@ export const fileExists = async (path: string): Promise<boolean> => {
         await Deno.stat(path);
         return true;
     } catch (err) {
-        if (err instanceof Deno.errors.NotFound) {
-            return false;
-        }
+        if (err instanceof Deno.errors.NotFound) return false;
         throw err;
     }
 }

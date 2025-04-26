@@ -1,30 +1,27 @@
 import { OpenAPIHono } from "@hono/zod-openapi";
 import { jwt } from "hono/jwt";
 import { cors } from "hono/cors";
-import { createI18n } from "hono-i18n";
-import { getCookie } from "hono/cookie";
-import { msg_auth } from "@i18n/msg_auth.ts";
+import { i18nMiddleware, getI18n, type CtxType } from "@i18n/lang_t.ts";
 import { AuthController } from "@controllers/auth.ts";
 import { rateLimitMiddleware } from "@middleware/rateLimit.ts";
 
 export const applyMiddleWare = (app: OpenAPIHono) => {
 
+    // CORS
     app.use(cors({
         origin: "*", // 允许所有来源
         allowMethods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
         allowHeaders: ["Content-Type", "Authorization"],
     }));
 
-    const { i18nMiddleware, getI18n } = createI18n({
-        messages: msg_auth,
-        defaultLocale: "en-AU",
-        getLocale: (c) => getCookie(c, "locale-cookie"),
-    })
-    app.use(i18nMiddleware)
+    // Locale Language
+    app.use(i18nMiddleware);
 
+    // Rate Control
     const mwRATE = rateLimitMiddleware(10, 1000, 10000);
     app.use("*", mwRATE);
 
+    // JWT
     const authCtrl = new AuthController();
     const mwJWT = jwt({ secret: authCtrl.SignatureKey() });
 
@@ -34,9 +31,7 @@ export const applyMiddleWare = (app: OpenAPIHono) => {
         "/api/auth/validate-token",
     ];
 
-    type c_type = Parameters<typeof getI18n>[0]
-
-    const extractToken = (c: c_type): string | null => {
+    const extractToken = (c: CtxType): string | null => {
         const auth = c.req.header("Authorization");
         if (!auth || !auth.startsWith("Bearer ")) return null;
         return auth.split(" ")[1];
@@ -47,7 +42,7 @@ export const applyMiddleWare = (app: OpenAPIHono) => {
         app.use(path, mwJWT);
 
         // manual logout blacklist check
-        app.use(path, async (c: c_type, next) => {
+        app.use(path, async (c: CtxType, next) => {
             const token = extractToken(c);
             if (!token || authCtrl.alreadyLogout(token)) {
                 const t = getI18n(c) // 获取翻译函数

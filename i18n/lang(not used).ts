@@ -1,4 +1,4 @@
-export const msg_auth = {
+const lang = {
     "en-AU": {
         captcha: {
             err: "captcha CANNOT be verified as 3rd access error",

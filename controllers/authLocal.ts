@@ -2,8 +2,7 @@ import { ok, err, Result } from "neverthrow";
 import { sign } from "hono/jwt";
 import { hash, compare } from "npm:bcrypt-ts";
 import { fileExists } from "@util/util.ts";
-import { createSaferT } from "@i18n/msg_auth_t.ts";
-import type { SafeT } from "@i18n/msg_auth_t.ts";
+import { type StrictT, createSaferT } from "@i18n/lang_t.ts";
 import type { Email, Password } from "@define/type.ts";
 
 const SIGNATURE_KEY = Deno.env.get("SIGNATURE_KEY");
@@ -16,7 +15,7 @@ export class AuthControllerLocal {
         return SIGNATURE_KEY
     }
 
-    async register(credentials: { email: Email; password: Password }, ct?: SafeT) {
+    async register(credentials: { email: Email; password: Password }, ct?: StrictT) {
         try {
             const t = createSaferT(ct);
             if (await fileExists(localFilePath)) {
@@ -74,7 +73,7 @@ export class AuthControllerLocal {
         }
     }
 
-    async login(credentials: { email: Email; password: Password }, ct?: SafeT) {
+    async login(credentials: { email: Email; password: Password }, ct?: StrictT) {
         try {
             const t = createSaferT(ct);
             if (!await fileExists(localFilePath)) return err(t('login.fail.not_existing'));

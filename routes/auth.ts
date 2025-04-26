@@ -1,28 +1,19 @@
 import { ok, err, Result } from "neverthrow";
 import { createRoute, OpenAPIHono, z } from "@hono/zod-openapi";
 import { verifyHCaptcha, len, lastElem, true2err, false2err } from "@util/util.ts";
-import { isEmail, isAllowedPassword } from "@define/type.ts";
+import { isEmail, isAllowedPassword, toEmailKey } from "@define/type.ts";
 import { AuthController } from "@controllers/auth.ts";
-import { createI18n } from "hono-i18n";
-import { getCookie } from "hono/cookie";
-import { msg_auth } from "@i18n/msg_auth.ts";
-import type { TranslationKey, SafeT } from "@i18n/msg_auth_t.ts";
-import { isFatalErr } from "@i18n/util.ts";
+import type { TranslationKey, StrictT } from "@i18n/lang_t.ts";
+import { withSafeT } from "@i18n/lang_t.ts";
+import { isFatalErr } from "@util/util.ts";
 import { StatusCode } from "http-status-code";
+import { T_REGISTER } from "@define/system.ts";
 
-const { i18nMiddleware, getI18n } = createI18n({
-    messages: msg_auth,
-    defaultLocale: "en-AU",
-    getLocale: (c) => getCookie(c, "locale-cookie"),
-})
-
-const withSafeT = (c: Parameters<typeof getI18n>[0]): SafeT => getI18n(c) as SafeT // 获取翻译函数
-
-const getMsgCode = (listMsgCode: [Result<any, string>, TranslationKey, StatusCode][], t: SafeT): [string, StatusCode] => {
+const getMsgCode = (listMsgCode: [Result<any, string>, TranslationKey, StatusCode][], t: StrictT): [string, StatusCode] => {
     if (len(listMsgCode) === 0) {
         return ['listMsgCode is empty', 500]
     }
-    for (const [_i, mc] of listMsgCode.entries()) {
+    for (const [_, mc] of listMsgCode.entries()) {
         if (mc[0].isErr()) {
             return [t(mc[1]), mc[2]]
         }
@@ -35,7 +26,6 @@ const getMsgCode = (listMsgCode: [Result<any, string>, TranslationKey, StatusCod
 }
 
 const app = new OpenAPIHono();
-app.use(i18nMiddleware)
 
 const authCtrl = new AuthController();
 
@@ -191,12 +181,11 @@ app.openapi(
         const t = withSafeT(c)
 
         const { email, password, captchaToken } = c.req.valid("json");
-        if (!isEmail(email)) {
-            return c.json({ success: false, message: t('login.fail.invalid_email') }, 400)
-        }
-        if (!isAllowedPassword(password)) {
-            return c.json({ success: false, message: t('login.fail.weak_password') }, 400)
-        }
+
+        const emailKey = await toEmailKey(email, T_REGISTER)
+        if (!emailKey) return c.json({ success: false, message: t('login.fail.invalid_email') }, 400)
+
+        if (!isAllowedPassword(password)) return c.json({ success: false, message: t('login.fail.weak_password') }, 400)
 
         let cAccessResult: Result<boolean, string>;
         let cVerifyResult: Result<boolean, string>;
@@ -213,7 +202,7 @@ app.openapi(
             }
         }
 
-        const result = cVerifyResult.isOk() ? await authCtrl.login({ email, password }, t) : err(`NOT trigger - 'login'`);
+        const result = cVerifyResult.isOk() ? await authCtrl.login({ email: emailKey, password }, t) : err(`NOT trigger - 'login'`);
         const isFatalResult = true2err(isFatalErr(result), 'fatal at register');
         const listMsgCode: [Result<string | boolean, string>, TranslationKey, StatusCode][] = [
             [cAccessResult, 'login.err._', 500],

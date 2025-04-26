@@ -1,0 +1,46 @@
+{
+    "captcha": {
+        "err": "captcha CANNOT be verified as 3rd access error",
+        "fail": "captcha verification failed"
+    },
+    "register": {
+        "err": {
+            "fmt_json": "format error on internal storage as json",
+            "missing_content": "missing register content",
+            "_": "Service is temporarily unavailable. Please try again later"
+        },
+        "fail": {
+            "invalid_id": "invalid id format",
+            "invalid_email": "invalid email format",
+            "weak_password": "weak password format",
+            "existing": "already registered",
+            "_": "Invalid register information."
+        },
+        "ok": {
+            "__": "registered successfully",
+            "_": "Welcome! now you joined EXAM-NEXUS"
+        }
+    },
+    "login": {
+        "err": {
+            "fmt_json": "format error on internal storage as json",
+            "_": "Service is temporarily unavailable. Please try again later"
+        },
+        "fail": {
+            "invalid_email": "invalid email format",
+            "weak_password": "weak password format",
+            "not_existing": "not registered yet",
+            "verification": "incorrect email or password",
+            "_": "Incorrect login information"
+        },
+        "ok": {
+            "__": "login successfully, token sent",
+            "_": "Login successfully, token sent"
+        }
+    },
+    "token": {
+        "fail": {
+            "_": "Token is invalid"
+        }
+    }
+}
