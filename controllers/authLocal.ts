@@ -2,7 +2,7 @@ import { ok, err, Result } from "neverthrow";
 import { sign } from "hono/jwt";
 import { hash, compare } from "npm:bcrypt-ts";
 import { fileExists } from "@util/util.ts";
-import { type TransFnType, createSaferT } from "@i18n/lang_t.ts";
+import { type TransFnType, wrapOptT } from "@i18n/lang_t.ts";
 import type { Email, Password } from "@define/type.ts";
 
 const SIGNATURE_KEY = Deno.env.get("SIGNATURE_KEY");
@@ -16,8 +16,10 @@ export class AuthControllerLocal {
     }
 
     async register(credentials: { email: Email; password: Password }, ct?: TransFnType) {
+
+        const t = wrapOptT(ct);
+
         try {
-            const t = createSaferT(ct);
             if (await fileExists(localFilePath)) {
                 const content = await Deno.readTextFile(localFilePath);
                 const data = JSON.parse(content);
@@ -74,8 +76,10 @@ export class AuthControllerLocal {
     }
 
     async login(credentials: { email: Email; password: Password }, ct?: TransFnType) {
+
+        const t = wrapOptT(ct);
+
         try {
-            const t = createSaferT(ct);
             if (!await fileExists(localFilePath)) return err(t('login.fail.not_existing'));
 
             const content = await Deno.readTextFile(localFilePath);

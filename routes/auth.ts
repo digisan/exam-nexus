@@ -4,7 +4,7 @@ import { verifyHCaptcha, len, lastElem, true2err, false2err } from "@util/util.t
 import { isEmail, isAllowedPassword, toEmailKey } from "@define/type.ts";
 import { AuthController } from "@controllers/auth.ts";
 import type { TransKeyType, TransFnType } from "@i18n/lang_t.ts";
-import { withSafeT } from "@i18n/lang_t.ts";
+import { createStrictT } from "@i18n/lang_t.ts";
 import { isFatalErr } from "@util/util.ts";
 import { StatusCode } from "http-status-code";
 import { T_REGISTER } from "@define/system.ts";
@@ -89,7 +89,7 @@ app.openapi(
     ),
     async (c) => {
 
-        const t = withSafeT(c)
+        const t = createStrictT(c)
 
         const { email, password, captchaToken } = c.req.valid("json");
         if (!isEmail(email)) {
@@ -178,7 +178,7 @@ app.openapi(
     ),
     async (c) => {
 
-        const t = withSafeT(c)
+        const t = createStrictT(c)
 
         const { email, password, captchaToken } = c.req.valid("json");
 

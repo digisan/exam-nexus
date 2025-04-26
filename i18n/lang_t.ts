@@ -133,4 +133,5 @@ export type TransKeyType = typeof keys[number];
 export type TransFnType = (key: TransKeyType, params?: Record<string, unknown>) => string;
 export type CtxType = Parameters<typeof getI18n>[0];
 
-export const withSafeT = (c: CtxType): TransFnType => getI18n(c) as TransFnType;
+export const createStrictT = (c: CtxType): TransFnType => getI18n(c) as TransFnType;
+export const wrapOptT = (t?: TransFnType): (s: TransKeyType) => string => t ?? ((s: TransKeyType) => s + "*");
