@@ -114,3 +114,17 @@ export const verifyHCaptcha = async (token: string): Promise<Result<boolean, str
 export const isFatalErr = (r: Result<any, string>) => r.isErr() && r.error.toLowerCase().includes('fatal');
 
 export const isNotFatal = (r: Result<any, string>) => !isFatalErr(r);
+
+export const singleton = <T extends object>(ClassType: new (...args: any[]) => T): new (...args: any[]) => T => {
+    let instance: T;
+    const proxy = new Proxy(ClassType, {
+        construct(target: new (...args: any[]) => T, argArray: any[], newTarget: Function): T {
+            if (!instance) {
+                instance = Reflect.construct(target, argArray, newTarget);
+            }
+            return instance;
+        }
+    });
+    proxy.prototype.constructor = proxy;
+    return proxy;
+};

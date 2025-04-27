@@ -1,8 +1,8 @@
 import { ok, err, Result } from "neverthrow"
-import { firstWord, hasSome } from "@util/util.ts"
+import { firstWord, hasSome, singleton } from "@util/util.ts"
 import { createClient } from "@supabase/supabase-js"
 import type { Data, JSONObject, Email, EmailKey, Id, IdKey } from "@define/type.ts"
-import { isValidId, toIdKey } from "@define/type.ts"
+import { isValidId, toIdKey, normalizeData } from "@define/type.ts"
 import { F_PG_EXECUTE, F_CREATE_DATA_TABLE, V_UDF, type TableType } from "@define/system.ts";
 await import('@define/env.ts')
 
@@ -11,16 +11,7 @@ const SUPABASE_KEY = Deno.env.get("SUPABASE_KEY");
 if (!SUPABASE_URL || !SUPABASE_KEY) throw new Error("SUPABASE_URL and SUPABASE_KEY must be provided");
 const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
 
-const normalizeDataStructure = (value: Data): Data => {
-    if (Array.isArray(value)) {
-        if (value.length === 0) return null;
-        if (value.length === 1) return value[0];
-        return value;
-    }
-    return value;
-}
-
-export class SupabaseAgent {
+class SupabaseAgent {
 
     getSupaBase() { return supabase; }
 
@@ -167,7 +158,7 @@ export class SupabaseAgent {
         const prevData = ID ? await this.getSingleRowData(table, ID) : null
 
         if (!isValidId(id)) return err(`${id} is invalid format`);
-        const r = await this.upsertDataRow(table, id, normalizeDataStructure(value))
+        const r = await this.upsertDataRow(table, id, normalizeData(value))
         if (r.isErr()) return r
         if (hasSome(value)) return ok(r.value.data as Data) // if there are some new data, return new data
         return ok(prevData?.isOk() ? prevData.value : null) // delete action, return previous data
@@ -179,3 +170,5 @@ export class SupabaseAgent {
         return await (delWholeRow ? this.deleteDataRows(table, id) : this.setSingleRowData(table, id, null))
     }
 }
+
+export const dbAgent = new (singleton(SupabaseAgent))();

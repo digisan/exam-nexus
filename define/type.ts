@@ -1,4 +1,4 @@
-import { SupabaseAgent } from "@db/dbService.ts";
+import { dbAgent as agent } from "@db/dbService.ts";
 import type { LanguageType, RegionType } from "@define/config.ts";
 import { REGIONS, LANGUAGES } from "@define/config.ts";
 import type { TableType } from "@define/system.ts";
@@ -6,6 +6,14 @@ import { hasSome, RE_EMAIL, RE_PWD } from "@util/util.ts";
 
 export type JSONObject = Record<string, unknown>;
 export type Data = JSONObject | JSONObject[] | null;
+export const normalizeData = (value: Data): Data => {
+    if (Array.isArray(value)) {
+        if (value.length === 0) return null;
+        if (value.length === 1) return value[0];
+        return value;
+    }
+    return value;
+}
 
 type Brand<T, B> = T & { readonly __brand: B; readonly __exact: T; readonly __types: T };
 
@@ -26,8 +34,7 @@ export const isValidId = (s: string | null): s is Id => !!s && s.length > 3
 export type IdKey<T extends TableType> = Brand<string, `IdKey<${T}>`>
 export const toIdKey = async <T extends TableType>(s: string | Id, table: T): Promise<IdKey<T> | null> => {
     if (!isValidId(s)) return null;
-    const sa = new SupabaseAgent();
-    if (!hasSome(await sa.getDataRow(table, s))) return null;
+    if (!hasSome(await agent.getDataRow(table, s))) return null;
     return s as unknown as IdKey<T>
 }
 
@@ -39,8 +46,7 @@ export const isEmail = (s: string | null): s is Email => RE_EMAIL.test(s ?? "")
 export type EmailKey<T extends TableType> = Brand<string, `EmailKey<${T}>`>
 export const toEmailKey = async <T extends TableType>(s: string | Email, table: T): Promise<EmailKey<T> | null> => {
     if (!isValidId(s) || !isEmail(s)) return null;
-    const sa = new SupabaseAgent();
-    if (!hasSome(await sa.getDataRow(table, s))) return null;
+    if (!hasSome(await agent.getDataRow(table, s))) return null;
     return s as unknown as EmailKey<T>
 }
 
@@ -57,8 +63,7 @@ export const toEmailKeyOnAll = async<T extends readonly TableType[]>(s: string |
 export type IdRef<T1 extends TableType, F extends string, T2 extends TableType> = Brand<string, `IdRef<${T1}_${F}_${T2}>`>
 export const toIdRef = async <T1 extends TableType, F extends string, T2 extends TableType>(s: string | Id | IdKey<T2>, table: T1, field: F, ref_table: T2): Promise<IdRef<T1, F, T2> | null> => {
     if (!await toIdKey(s, ref_table)) return null
-    const sa = new SupabaseAgent();
-    const r = await sa.firstDataRow(table, field, s)
+    const r = await agent.firstDataRow(table, field, s)
     if (r.isErr() || !hasSome(r.value)) return null
     return s as unknown as IdRef<T1, F, T2>
 }

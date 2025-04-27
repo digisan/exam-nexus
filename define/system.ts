@@ -54,15 +54,12 @@ export type T_USER_CONFIG = typeof T.USER_CONFIG
 //
 
 // import { unorderedSetsEqual } from "@util/util.ts";
-// import { SupabaseAgent } from "@db/dbService.ts";
+// import { dbAgent as agent } from "@db/dbService.ts";
 
 // await (async () => {
-//     const sa = new SupabaseAgent();
-//     const r = await sa.TableList()
-//     if (r.isErr()) {
-//         throw new Error(`❌ SupaBase Tables are not ready`)
-//     }
-//     const tables = r.value as TableType[]
+//     const r = await agent.TableList()
+//     if (r.isErr()) throw new Error(`❌ SupaBase Tables are not ready`)
+//     const tables = r.value as unknown as TableType[]
 //     if (!unorderedSetsEqual([...TABLES_SB], tables)) {
 //         console.debug(tables)
 //         console.debug(TABLES_SB)

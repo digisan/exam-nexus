@@ -2,7 +2,7 @@ import { ok, err, Result } from "neverthrow";
 import { sign } from "hono/jwt";
 import { hash, compare } from "npm:bcrypt-ts";
 import { type TransFnType, wrapOptT } from "@i18n/lang_t.ts";
-import { SupabaseAgent } from "@db/dbService.ts";
+import { dbAgent as agent } from "@db/dbService.ts";
 import { T_REGISTER, T_TEST } from "@define/system.ts";
 import type { Email, Password, EmailKey } from "@define/type.ts";
 import { toEmailKey, isValidId } from "@define/type.ts";
@@ -13,12 +13,6 @@ const tokenBlacklist = new Set();
 
 export class AuthController {
 
-    private agent: SupabaseAgent;
-
-    constructor(agent?: SupabaseAgent) {
-        this.agent = agent ?? new SupabaseAgent();
-    }
-
     SignatureKey(): string { return SIGNATURE_KEY ?? "" }
 
     async register(credentials: { email: Email; password: Password }, ct?: TransFnType): Promise<Result<string, string>> {
@@ -28,7 +22,7 @@ export class AuthController {
         try {
             if (await toEmailKey(credentials.email, T_REGISTER)) return err(t('register.fail.existing'))
 
-            const r = await this.agent.setSingleRowData(T_REGISTER, credentials.email, {
+            const r = await agent.setSingleRowData(T_REGISTER, credentials.email, {
                 email: credentials.email,
                 password: await hash(credentials.password, 10),
                 registered_at: new Date().toISOString(),
@@ -42,7 +36,7 @@ export class AuthController {
             // log error to db here ...
             const id = new Date().toISOString();
             if (!isValidId(id)) return err(`fatal: registering failed: ${e} and cannot log error`)
-            await this.agent.setSingleRowData(T_TEST, id, { msg: `${e}` })
+            await agent.setSingleRowData(T_TEST, id, { msg: `${e}` })
 
             return err(`fatal: registering failed: ${e}`)
         }
@@ -71,7 +65,7 @@ export class AuthController {
         const t = wrapOptT(ct);
 
         try {
-            const r = await this.agent.getSingleRowData(T_REGISTER, credentials.email)
+            const r = await agent.getSingleRowData(T_REGISTER, credentials.email)
             if (r.isErr()) return err(r.error)
             if (!hasSome(r.value)) return err(t(`register.err.missing_content`))
             if (!await compare(credentials.password, (r.value as any).password)) {
@@ -84,7 +78,7 @@ export class AuthController {
             // log error to db here ...
             const id = new Date().toISOString();
             if (!isValidId(id)) return err(`fatal: login failed: ${e} and cannot log error`)
-            await this.agent.setSingleRowData(T_TEST, id, { msg: `${e}` })
+            await agent.setSingleRowData(T_TEST, id, { msg: `${e}` })
 
             return err(`fatal: login failed: ${e}`)
         }

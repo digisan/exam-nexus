@@ -1,12 +1,11 @@
 import { createRoute, OpenAPIHono, z } from "@hono/zod-openapi";
 import { getConnInfo } from 'hono/deno'
-import { SupabaseAgent } from "@db/dbService.ts";
+import { dbAgent as agent } from "@db/dbService.ts";
 import { getPublicIP } from "@util/util.ts";
 import { T_TEST } from "@define/system.ts";
 import { isValidId } from "@define/type.ts";
 
 const app = new OpenAPIHono();
-const sb_agent = new SupabaseAgent();
 
 app.openapi(
     createRoute(
@@ -67,7 +66,7 @@ app.openapi(
     async (c) => {
         const id = "test_id"
         if (!isValidId(id)) return c.text(`${id} error`, 400)
-        await sb_agent.insertDataRow(T_TEST, id, { msg: "my test message" });
+        await agent.insertDataRow(T_TEST, id, { msg: "my test message" });
         return c.text("insert test message to supabase table success");
     },
 );

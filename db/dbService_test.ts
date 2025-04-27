@@ -1,9 +1,8 @@
-import { SupabaseAgent } from "@db/dbService.ts";
+import { dbAgent as agent } from "@db/dbService.ts";
 import { isValidId, toIdKey, type JSONObject } from "@define/type.ts";
 
-Deno.test(async function ListUserFunctions() {
-    const sa = new SupabaseAgent();
-    const r = await sa.listUserFunctions()
+Deno.test(async function ListUserFunctions() {    
+    const r = await agent.listUserFunctions()
     if (r.isOk()) {
         console.log(r.value)
     } else {
@@ -11,9 +10,8 @@ Deno.test(async function ListUserFunctions() {
     }
 });
 
-Deno.test(async function CreateDataTable() {
-    const sa = new SupabaseAgent();
-    const r = await sa.createDataTable('user_config')
+Deno.test(async function CreateDataTable() {    
+    const r = await agent.createDataTable('user_config')
     if (r.isOk()) {
         console.log(r.value)
     } else {
@@ -21,9 +19,8 @@ Deno.test(async function CreateDataTable() {
     }
 });
 
-Deno.test(async function ExecuteSQL() {
-    const sa = new SupabaseAgent();
-    const r = await sa.executeSQL(`SELECT COUNT(*) FROM pg_tables WHERE schemaname = 'public'`);
+Deno.test(async function ExecuteSQL() {    
+    const r = await agent.executeSQL(`SELECT COUNT(*) FROM pg_tables WHERE schemaname = 'public'`);
     if (r.isOk()) {
         console.log(r.value)
     } else {
@@ -31,9 +28,8 @@ Deno.test(async function ExecuteSQL() {
     }
 });
 
-Deno.test(async function PgVer() {
-    const sa = new SupabaseAgent();
-    const r = await sa.PgVer()
+Deno.test(async function PgVer() {    
+    const r = await agent.PgVer()
     if (r.isOk()) {
         console.log(r.value)
     } else {
@@ -41,9 +37,8 @@ Deno.test(async function PgVer() {
     }
 });
 
-Deno.test(async function DbInfo() {
-    const sa = new SupabaseAgent();
-    const r = await sa.DbInfo()
+Deno.test(async function DbInfo() {    
+    const r = await agent.DbInfo()
     if (r.isOk()) {
         console.log(r.value)
     } else {
@@ -51,9 +46,8 @@ Deno.test(async function DbInfo() {
     }
 });
 
-Deno.test(async function TableCount() {
-    const sa = new SupabaseAgent();
-    const r = await sa.TableCount()
+Deno.test(async function TableCount() {    
+    const r = await agent.TableCount()
     if (r.isOk()) {
         console.log(r.value)
     } else {
@@ -61,9 +55,8 @@ Deno.test(async function TableCount() {
     }
 });
 
-Deno.test(async function TableList() {
-    const sa = new SupabaseAgent();
-    const r = await sa.TableList()
+Deno.test(async function TableList() {    
+    const r = await agent.TableList()
     if (r.isOk()) {
         console.log(r.value)
     } else {
@@ -71,9 +64,8 @@ Deno.test(async function TableList() {
     }
 });
 
-Deno.test(async function TableContent() {
-    const sa = new SupabaseAgent();
-    const r = await sa.TableContent('test')
+Deno.test(async function TableContent() {    
+    const r = await agent.TableContent('test')
     if (r.isOk()) {
         if (!r.value) {
             console.log(r.value)
@@ -85,9 +77,8 @@ Deno.test(async function TableContent() {
     }
 });
 
-Deno.test(async function FirstDataRow() {
-    const sa = new SupabaseAgent();
-    const r = await sa.firstDataRow('test', 'user', 'abc')
+Deno.test(async function FirstDataRow() {    
+    const r = await agent.firstDataRow('test', 'user', 'abc')
     if (r.isOk()) {
         if (!r.value) {
             console.log(r.value)
@@ -99,14 +90,13 @@ Deno.test(async function FirstDataRow() {
     }
 });
 
-Deno.test(async function GetDataRow() {
-    const sa = new SupabaseAgent();
+Deno.test(async function GetDataRow() {    
     const id = "abcd1"
     if (!isValidId(id)) {
         console.debug(`❌ Not valid ID (${id})`)
         return
     }
-    const r = await sa.getDataRow('test', id)
+    const r = await agent.getDataRow('test', id)
     if (r.isOk()) {
         console.log(r.value)
     } else {
@@ -114,14 +104,13 @@ Deno.test(async function GetDataRow() {
     }
 });
 
-Deno.test(async function InsertDataRow() {
-    const sa = new SupabaseAgent();
+Deno.test(async function InsertDataRow() {    
     const id = "abcd1"
     if (!isValidId(id)) {
         console.debug(`❌ Not valid ID (${id})`)
         return
     }
-    const r = await sa.insertDataRow('test', id, { user: "abc", password: "asdfweradf" })
+    const r = await agent.insertDataRow('test', id, { user: "abc", password: "asdfweradf" })
     if (r.isOk()) {
         console.log(r.value)
     } else {
@@ -129,15 +118,14 @@ Deno.test(async function InsertDataRow() {
     }
 });
 
-Deno.test(async function UpdateDataRow() {
-    const sa = new SupabaseAgent();
+Deno.test(async function UpdateDataRow() {    
     const id = "abcd"
     const ID = await toIdKey(id, 'test')
     if (!ID) {
         console.debug(`❌ Not existing ID '${id}'`)
         return
     }
-    const r = await sa.updateDataRow('test', ID, { user: "ABCE", password: "ASDFWERADF" })
+    const r = await agent.updateDataRow('test', ID, { user: "ABCE", password: "ASDFWERADF" })
     if (r.isOk()) {
         console.log(r.value)
     } else {
@@ -145,14 +133,13 @@ Deno.test(async function UpdateDataRow() {
     }
 });
 
-Deno.test(async function DeleteDataRows() {
-    const sa = new SupabaseAgent();
+Deno.test(async function DeleteDataRows() {    
     const id = "abcd"
     if (!isValidId(id)) {
         console.debug(`❌ Not valid ID (${id})`)
         return
     }
-    const r = await sa.deleteDataRows('test', id)
+    const r = await agent.deleteDataRows('test', id)
     if (r.isOk()) {
         console.log(r.value)
     } else {
@@ -162,8 +149,7 @@ Deno.test(async function DeleteDataRows() {
 
 //////////////////////////////////////////////////
 
-// Deno.test(async function SupaBase() {
-//     const sa = new SupabaseAgent();
+// Deno.test(async function SupaBase() {     
 //     const sb = sa.getSupaBase();
 //     const { data, error } = await sb
 //         .from(T_G)
@@ -180,9 +166,8 @@ Deno.test(async function GetSingleRowData() {
     if (!ID) {
         console.debug(`'${id}' is NOT existing or invalid format`)
         return
-    }
-    const sa = new SupabaseAgent();
-    const r = await sa.getSingleRowData('test', ID)
+    }    
+    const r = await agent.getSingleRowData('test', ID)
     if (r.isErr()) {
         return
     }
@@ -193,9 +178,8 @@ Deno.test(async function SetSingleRowData() {
     const id = "abcd"
     if (!isValidId(id)) {
         return
-    }
-    const sa = new SupabaseAgent();
-    const r = await sa.setSingleRowData('test', id, { user: "ZZ", password: "ZZZZZZZ" })
+    }    
+    const r = await agent.setSingleRowData('test', id, { user: "ZZ", password: "ZZZZZZZ" })
     if (r.isErr()) {
         return
     }
@@ -206,9 +190,8 @@ Deno.test(async function DeleteRowData() {
     const id = "abcd"
     if (!isValidId(id)) {
         return
-    }
-    const sa = new SupabaseAgent();
-    const r = await sa.deleteRowData('test', id)
+    }    
+    const r = await agent.deleteRowData('test', id)
     if (r.isErr()) {
         return
     }
