@@ -1,6 +1,7 @@
 import { createRoute, z } from "@hono/zod-openapi";
 import { swaggerUI } from "@hono/swagger-ui";
 import { app } from "@app/app.ts";
+
 await import("@define/env.ts");
 await import("@app/routes/auth.ts");
 await import("@app/routes/test.ts");

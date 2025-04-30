@@ -1,4 +1,5 @@
 import { ok, err, Result } from "neverthrow"
+import { fromFileUrl, basename, extname } from "jsr:@std/path";
 
 const TYPES = ['string', 'number', 'boolean', 'undefined', 'object', 'function', 'symbol', 'bigint'] as const;
 export type Typable = typeof TYPES[number];
@@ -110,3 +111,14 @@ export const singleton = <T extends object>(ClassType: new (...args: any[]) => T
     proxy.prototype.constructor = proxy;
     return proxy;
 };
+
+/**
+ * 获取当前 TypeScript 源文件的文件名
+ * @param url 当前模块的 `import.meta.url`
+ * @param withExt 是否包含文件扩展名，默认 `true`
+ * @returns 文件名（如 `index.ts` 或 `index`）
+ */
+export const currentFilename = (url: string, withExt: boolean = true): string => {
+    const fullPath = fromFileUrl(url); // 处理 file:// URL
+    return withExt ? basename(fullPath) : basename(fullPath, extname(fullPath));
+}

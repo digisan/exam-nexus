@@ -1,10 +1,10 @@
 import { createRoute, OpenAPIHono, z } from "@hono/zod-openapi";
-import { fromFileUrl } from "jsr:@std/path";
 import { createStrictT } from "@i18n/lang_t.ts";
 import { app } from "@app/app.ts";
 import { isAllowedPassword, isEmail, toValidCredential } from "@define/type.ts";
 import { auth } from "@app/controllers/auth.ts";
 import { verifyHCaptcha } from "@util/captcha.ts";
+import { currentFilename } from "@util/util.ts";
 
 const route_app = new OpenAPIHono();
 
@@ -200,9 +200,4 @@ route_app.openapi(
 
 // /////////////////////////////////////////////////////////////////////////////////////
 
-const fullPath = fromFileUrl(import.meta.url);
-const parts = fullPath.split(/[\\/]/); // 兼容 Windows 和 Unix
-const filenameWithExt = parts.pop();
-const filename = filenameWithExt?.replace(/\.[^/.]+$/, '');
-
-app.route(`/api/${filename}`, route_app);
+app.route(`/api/${currentFilename(import.meta.url, false)}`, route_app);

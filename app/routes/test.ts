@@ -1,6 +1,6 @@
 import { createRoute, OpenAPIHono, z } from "@hono/zod-openapi";
 import { getConnInfo } from 'hono/deno'
-import { fromFileUrl } from "jsr:@std/path";
+import { currentFilename } from "@util/util.ts";
 import { dbAgent as agent } from "@db/dbService.ts";
 import { getPublicIP } from "@util/net.ts";
 import { T_TEST } from "@define/system.ts";
@@ -143,9 +143,4 @@ route_app.openapi(
 
 // ///////////////////////////////////////////////////////////////////////////////////
 
-const fullPath = fromFileUrl(import.meta.url);
-const parts = fullPath.split(/[\\/]/); // 兼容 Windows 和 Unix
-const filenameWithExt = parts.pop();
-const filename = filenameWithExt?.replace(/\.[^/.]+$/, '');
-
-app.route(`/api/${filename}`, route_app);
+app.route(`/api/${currentFilename(import.meta.url, false)}`, route_app);
