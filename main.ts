@@ -1,38 +1,12 @@
-// import { createRoute, z } from "@hono/zod-openapi";
 import { app } from "@app/app.ts";
 
 await import("@define/env.ts");
 await import("@app/middleware/apply.ts");
-await import("@app/routes/auth.ts"); // import 'routes' MUST AFTER middleware
+await import("@app/routes/home.ts"); // import 'routes' MUST AFTER middleware
+await import("@app/routes/auth.ts");
 await import("@app/routes/test.ts");
 await import("@app/routes/user.ts");
 await import("@app/doc/openapi.ts"); // import 'doc' at the last
-
-// Example for api with doc
-//
-// app.openapi(
-//     createRoute(
-//         {
-//             method: "get",
-//             path: "/",
-//             summary: "Root API",
-//             description: "hello exam-nexus",
-//             tags: ["Root"],
-//             security: [], // without swagger UI jwt security
-//             responses: {
-//                 200: {
-//                     description: "return 'hello exam-nexus'",
-//                     content: {
-//                         "text/plain": {
-//                             schema: z.string(),
-//                         },
-//                     },
-//                 },
-//             },
-//         } as const,
-//     ),
-//     (c) => c.text("hello exam-nexus"),
-// );
 
 // 监听终止信号
 const shutdown = async () => {

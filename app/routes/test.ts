@@ -7,6 +7,7 @@ import { T_TEST } from "@define/system.ts";
 import { isValidId } from "@define/type.ts";
 import { app } from "@app/app.ts";
 import { env_get } from "@define/env.ts";
+import { createStrictT } from "@i18n/lang_t.ts";
 
 const route_app = new OpenAPIHono();
 
@@ -138,6 +139,35 @@ route_app.openapi(
     (c) => {
         const info = getConnInfo(c)
         return c.json({ ip: info.remote.address ?? "" });
+    },
+);
+
+// ---------------------------------- //
+
+route_app.openapi(
+    createRoute(
+        {
+            method: "get",
+            path: "/translate",
+            tags: ["_Test"],
+            security: [], // without swagger UI jwt security
+            summary: "translate template",
+            description: "translate template test",
+            responses: {
+                200: {
+                    description: "translate template test",
+                    content: {
+                        "text/plain": {
+                            schema: z.string(),
+                        },
+                    },
+                },
+            },
+        } as const,
+    ),
+    (c) => {
+        const t = createStrictT(c)
+        return c.text(t(`test`, { message: `this is my test message` }))
     },
 );
 

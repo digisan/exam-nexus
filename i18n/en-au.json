@@ -1,7 +1,7 @@
 {
-    "test": "test: '{{message}}'",
-    "catch": "catch: '{{err}}'",
-    "fatal": "fatal: '{{message}}'",
+    "test": "test: {message}",
+    "catch": "catch: {error}",
+    "fatal": "fatal: {message}",
     "id": {
         "invalid": "invalid id"
     },

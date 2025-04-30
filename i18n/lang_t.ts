@@ -2,9 +2,9 @@
 
 export const lang = {
     "en-AU": {
-        test: "test: '{{message}}'",
-        catch: "catch: '{{err}}'",
-        fatal: "fatal: '{{message}}'",
+        test: "test: {message}",
+        catch: "catch: {error}",
+        fatal: "fatal: {message}",
         id: {
             invalid: "invalid id",
         },
@@ -57,9 +57,9 @@ export const lang = {
         },
     } as const,
     "zh-CN": {
-        test: "测试消息: '{{message}}'",
-        catch: "异常错误: '{{err}}'",
-        fatal: "严重错误: '{{message}}'",
+        test: "测试消息: {message}",
+        catch: "异常错误: {error}",
+        fatal: "严重错误: {message}",
         id: {
             invalid: "非法ID",
         },
