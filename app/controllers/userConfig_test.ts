@@ -1,11 +1,8 @@
-import { UserConfigController } from "@controllers/userConfig.ts";
 import { toEmailKey, isValidLanguage, isValidRegion, toEmailKeyOnAll } from "@define/type.ts";
 import { T_REGISTER, T_USER_CONFIG } from "@define/system.ts";
+import { ucc } from "@app/controllers/userConfig.ts";
 
 Deno.test(async function SetUserCfg() {
-
-    const ucc = new UserConfigController();
-
     const region = "au";
     if (!isValidRegion(region)) {
         console.debug(`${region} is NOT valid RegionType`);

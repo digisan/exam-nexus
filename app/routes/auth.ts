@@ -1,44 +1,23 @@
-import { ok, err, Result } from "neverthrow";
 import { createRoute, OpenAPIHono, z } from "@hono/zod-openapi";
-import { verifyHCaptcha, len, lastElem, true2err, false2err } from "@util/util.ts";
-import { isEmail, isAllowedPassword, toEmailKey } from "@define/type.ts";
-import { AuthController } from "@controllers/auth.ts";
-import type { TransKeyType, TransFnType } from "@i18n/lang_t.ts";
 import { createStrictT } from "@i18n/lang_t.ts";
-import { isFatalErr } from "@util/util.ts";
-import { StatusCode } from "http-status-code";
-import { T_REGISTER } from "@define/system.ts";
+import { app } from "@app/app.ts";
+import { isAllowedPassword, isEmail, toValidCredential } from "@define/type.ts";
+import { auth } from "@app/controllers/auth.ts";
+import { verifyHCaptcha } from "@util/captcha.ts";
 
-const getMsgCode = (listMsgCode: [Result<any, string>, TransKeyType, StatusCode][], t: TransFnType): [string, StatusCode] => {
-    if (len(listMsgCode) === 0) {
-        return ['listMsgCode is empty', 500]
-    }
-    for (const [_, mc] of listMsgCode.entries()) {
-        if (mc[0].isErr()) {
-            return [t(mc[1]), mc[2]]
-        }
-    }
-    const last = lastElem(listMsgCode)
-    if (last && last[0].isOk()) {
-        return [t(last[1]), last[2]]
-    }
-    return ['missing last OK status from listMsgCode', 500]
-}
-
-const app = new OpenAPIHono();
-
-const authCtrl = new AuthController();
+const route_app = new OpenAPIHono();
+app.route("/api/auth", route_app);
 
 // /////////////////////////////////////////////////////////////////////////////////////
 
-const RegisterRequestBody = z.object({
+const RegisterReqBody = z.object({
     email: z.string().email("Invalid email address"),
     password: z.string().min(8, "Password must be at least 8 characters"),
     captchaToken: z.string().min(1, "Captcha token is required"),
 });
 
 // 创建 OpenAPI 路由
-app.openapi(
+route_app.openapi(
     createRoute(
         {
             method: "post",
@@ -50,7 +29,7 @@ app.openapi(
                     description: "Register request body",
                     content: {
                         "application/json": {
-                            schema: RegisterRequestBody,
+                            schema: RegisterReqBody,
                             example: { // 添加测试参数输入
                                 email: "john.doe@example.com",
                                 password: "secure-password-123",
@@ -88,55 +67,31 @@ app.openapi(
         } as const,
     ),
     async (c) => {
-
         const t = createStrictT(c)
-
         const { email, password, captchaToken } = c.req.valid("json");
-        if (!isEmail(email)) {
-            return c.json({ success: false, message: t('register.fail.invalid_email') }, 400)
-        }
-        if (!isAllowedPassword(password)) {
-            return c.json({ success: false, message: t('register.fail.weak_password') }, 400)
-        }
 
-        let cAccessResult: Result<boolean, string>;
-        let cVerifyResult: Result<boolean, string>;
+        if (!isEmail(email)) return c.json({ success: false, message: t('register.fail.invalid_email') }, 400)
+        if (!isAllowedPassword(password)) return c.json({ success: false, message: t('register.fail.weak_password') }, 400)
 
-        if (email.startsWith(`c`)) {
-            cAccessResult = ok(true)
-            cVerifyResult = ok(true)  // only for swagger debug !!! in prod, only keep ... in 'else {...}'
-        } else {
-            cAccessResult = await verifyHCaptcha(captchaToken);
-            if (cAccessResult.isOk()) {
-                cVerifyResult = false2err(cAccessResult.value, "captcha failed"); // only this line in prod
-            } else {
-                cVerifyResult = err(cAccessResult.error); // 原始错误
-            }
-        }
+        const rCaptcha = await verifyHCaptcha(captchaToken);
+        if (rCaptcha.isErr()) return c.json({ success: false, message: t('captcha.err') }, 500)
+        if (!rCaptcha.value) return c.json({ success: false, message: t('captcha.fail') }, 400)
 
-        const result = cVerifyResult.isOk() ? await authCtrl.register({ email, password }, t) : err(`NOT trigger - 'register'`);
-        const isFatalResult = true2err(isFatalErr(result), 'fatal at register');
-        const listMsgCode: [Result<string | boolean, string>, TransKeyType, StatusCode][] = [
-            [cAccessResult, 'register.err._', 500],
-            [cVerifyResult, 'captcha.fail', 400],
-            [isFatalResult, 'register.err._', 500],
-            [result, 'register.fail._', 500],
-            [result, 'register.ok._', 201],
-        ]
-        const mc = getMsgCode(listMsgCode, t);
-        return c.json({ success: result.isOk(), message: mc[0] }, mc[1])
+        const result = await auth.register({ email, password }, t);
+        if (result.isErr()) return c.json({ success: false, message: t('register.fail._') }, 500)
+        return c.json({ success: true, message: t(`register.ok._`) }, 200)
     }
 );
 
 // /////////////////////////////////////////////////////////////////////////////////////
 
-const LoginRequestBody = z.object({
+const LoginReqBody = z.object({
     email: z.string().email("Invalid email address"),
     password: z.string().min(8, "Password must be at least 8 characters"),
     captchaToken: z.string().min(1, "Captcha token is required"),
 });
 
-app.openapi(
+route_app.openapi(
     createRoute(
         {
             method: "post",
@@ -148,7 +103,7 @@ app.openapi(
                     description: "Login request body",
                     content: {
                         "application/json": {
-                            schema: LoginRequestBody,
+                            schema: LoginReqBody,
                             example: { // 添加测试参数输入
                                 email: "john.doe@example.com",
                                 password: "password123",
@@ -177,48 +132,25 @@ app.openapi(
         } as const,
     ),
     async (c) => {
-
         const t = createStrictT(c)
-
         const { email, password, captchaToken } = c.req.valid("json");
 
-        const emailKey = await toEmailKey(email, T_REGISTER)
-        if (!emailKey) return c.json({ success: false, message: t('login.fail.invalid_email') }, 400)
+        const cred = await toValidCredential({ email, password })
+        if (!cred) return c.json({ success: false, message: t('login.fail.invalid_credential') }, 400)
 
-        if (!isAllowedPassword(password)) return c.json({ success: false, message: t('login.fail.weak_password') }, 400)
+        const rCaptcha = await verifyHCaptcha(captchaToken);
+        if (rCaptcha.isErr()) return c.json({ success: false, message: t('captcha.err') }, 500)
+        if (!rCaptcha.value) return c.json({ success: false, message: t('captcha.fail') }, 400)
 
-        let cAccessResult: Result<boolean, string>;
-        let cVerifyResult: Result<boolean, string>;
-
-        if (email.startsWith(`c`)) {
-            cAccessResult = ok(true)
-            cVerifyResult = ok(true)  // only for debug !!!
-        } else {
-            cAccessResult = await verifyHCaptcha(captchaToken);
-            if (cAccessResult.isOk()) {
-                cVerifyResult = false2err(cAccessResult.value, "captcha failed"); // only this line in prod
-            } else {
-                cVerifyResult = err(cAccessResult.error); // 原始错误
-            }
-        }
-
-        const result = cVerifyResult.isOk() ? await authCtrl.login({ email: emailKey, password }, t) : err(`NOT trigger - 'login'`);
-        const isFatalResult = true2err(isFatalErr(result), 'fatal at register');
-        const listMsgCode: [Result<string | boolean, string>, TransKeyType, StatusCode][] = [
-            [cAccessResult, 'login.err._', 500],
-            [cVerifyResult, 'captcha.fail', 400],
-            [isFatalResult, 'login.err._', 500],
-            [result, 'login.fail._', 401],
-            [result, 'login.ok._', 200],
-        ]
-        const mc = getMsgCode(listMsgCode, t);
-        return c.json({ token: result.isOk() ? result.value : "", message: mc[0] }, mc[1])
+        const result = await auth.login(cred, t);
+        if (result.isErr()) return c.json({ success: false, message: t('login.fail._') }, 500)
+        return c.json({ success: true, token: result.value, message: t(`login.ok._`) }, 200)
     }
 );
 
 // /////////////////////////////////////////////////////////////////////////////////////
 
-app.openapi(
+route_app.openapi(
     createRoute(
         {
             method: "post",
@@ -242,7 +174,7 @@ app.openapi(
     (c) => {
         const { Authorization } = c.req.valid('header') // ✅ 自动校验，不再 undefined
         const token = Authorization.split(' ')[1]
-        authCtrl.logout(token)
+        auth.logout(token)
         return new Response(null, { status: 204 })
     },
 );
@@ -250,7 +182,7 @@ app.openapi(
 // /////////////////////////////////////////////////////////////////////////////////////
 
 // for front-end checking token when it's page routing
-app.openapi(
+route_app.openapi(
     createRoute(
         {
             method: "get",
@@ -265,5 +197,3 @@ app.openapi(
     ),
     (_c) => new Response(null, { status: 200 }),
 );
-
-export default app;

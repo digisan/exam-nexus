@@ -1,8 +1,7 @@
 import { ok, err, Result } from "neverthrow"
-await import('@define/env.ts')
 
-const HCAPTCHA_SECRET = Deno.env.get("HCAPTCHA_SECRET");
-const HCAPTCHA_VERIFY_URL = Deno.env.get("HCAPTCHA_VERIFY_URL");
+const TYPES = ['string', 'number', 'boolean', 'undefined', 'object', 'function', 'symbol', 'bigint'] as const;
+export type Typable = typeof TYPES[number];
 
 export const RE_PWD = /^\S*(?=\S{6,})(?=\S*\d)(?=\S*[A-Z])(?=\S*[a-z])(?=\S*[!@#$%^&*? ])\S*$/
 export const RE_EMAIL = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
@@ -40,8 +39,8 @@ export const haveSameStructure = (a: object, b: object): boolean => {
     const aKeySet = new Set(aKeys);
     for (const key of bKeys) {
         if (!aKeySet.has(key)) return false;
-        const aType = typeof (a as any)[key];
-        const bType = typeof (b as any)[key];
+        const aType = typeof (a as Record<string, unknown>)[key];
+        const bType = typeof (b as Record<string, unknown>)[key];
         if (aType !== bType) return false;
     }
     return true;
@@ -68,6 +67,26 @@ export const hasSome = <T, E>(input: Result<T, E> | T): boolean => {
     return true;
 }
 
+export const hasAllProperties = (obj: object | null, property: string, ...properties: string[]): boolean => {
+    if (!obj) return false
+    for (const p of [property, ...properties]) {
+        if (!Object.hasOwn(obj, p)) return false
+    }
+    return true
+}
+
+export function hasCertainProperty<T extends object>(obj: T, path: string, typeName: Typable): obj is T & Record<string, unknown> {
+    if (obj === null || typeof obj !== 'object') return false;
+    const keys = path.split('.');
+    let current: unknown = obj;
+    for (const key of keys) {
+        if (typeof current !== 'object' || current === null || !(key in current)) return false;
+        current = (current as Record<string, unknown>)[key];
+    }
+    const t = typeof current;
+    return t == typeName
+}
+
 export const fileExists = async (path: string): Promise<boolean> => {
     try {
         await Deno.stat(path);
@@ -77,43 +96,6 @@ export const fileExists = async (path: string): Promise<boolean> => {
         throw err;
     }
 }
-
-export const getPublicIP = async () => {
-    const response = await fetch("https://api.ipify.org");
-    if (!response.ok) {
-        console.log(`getPublicIP error! status: ${response.status}`);
-        return ""
-    }
-    return await response.text();
-}
-
-export const verifyHCaptcha = async (token: string): Promise<Result<boolean, string>> => {
-    if (!HCAPTCHA_SECRET || !HCAPTCHA_VERIFY_URL) {
-        return err(`fatal: HCAPTCHA_SECRET and HCAPTCHA_VERIFY_URL must be provided!`)
-    }
-    try {
-        const captchaVerifyRes = await fetch(HCAPTCHA_VERIFY_URL, {
-            method: "POST",
-            headers: { "Content-Type": "application/x-www-form-urlencoded" },
-            body: new URLSearchParams({
-                secret: HCAPTCHA_SECRET,
-                response: token,
-            }),
-        });
-        const captchaVerifyData = await captchaVerifyRes.json();
-        if ('success' in captchaVerifyData && typeof captchaVerifyData.success === 'boolean') {
-            return ok(captchaVerifyData.success as boolean)
-        }
-        return err(`fatal: HCaptcha verification returned result missing boolean 'success'`)
-
-    } catch (e) {
-        return err(`fatal: HCaptcha server error: ${e}`)
-    }
-}
-
-export const isFatalErr = (r: Result<any, string>) => r.isErr() && r.error.toLowerCase().includes('fatal');
-
-export const isNotFatal = (r: Result<any, string>) => !isFatalErr(r);
 
 export const singleton = <T extends object>(ClassType: new (...args: any[]) => T): new (...args: any[]) => T => {
     let instance: T;

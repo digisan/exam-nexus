@@ -1,7 +1,7 @@
 import type { Email } from "@define/type.ts";
-import { fileExists } from "@util/util.ts";
+import { fileExists, singleton } from "@util/util.ts";
 
-export class UserController {
+class UserController {
     async getUserList() {
         const filePath = "./data/users.json";
         if (await fileExists(filePath)) {
@@ -28,3 +28,5 @@ export class UserController {
         return null
     }
 }
+
+export const uc = new (singleton(UserController))();

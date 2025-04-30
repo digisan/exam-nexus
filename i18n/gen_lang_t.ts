@@ -72,7 +72,7 @@
 //     export type CtxType = Parameters<typeof getI18n>[0]
 
 //     export const createStrictT = (c: CtxType): TransFnType => getI18n(c) as TransFnType
-//     export const wrapOptT = (t?: TransFnType): (s: TransKeyType) => string => t ?? ((s: TransKeyType) => s + '*')
+//     export const wrapOptT = (t?: TransFnType): (s: TransKeyType, params?: Record<string, unknown>) => string => t ?? ((s: TransKeyType) => s + "*");
 //     `;
 //     Deno.writeTextFileSync(out_lang, content, { append: true });
 // };

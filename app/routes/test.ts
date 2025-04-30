@@ -1,13 +1,18 @@
 import { createRoute, OpenAPIHono, z } from "@hono/zod-openapi";
 import { getConnInfo } from 'hono/deno'
 import { dbAgent as agent } from "@db/dbService.ts";
-import { getPublicIP } from "@util/util.ts";
+import { getPublicIP } from "@util/net.ts";
 import { T_TEST } from "@define/system.ts";
 import { isValidId } from "@define/type.ts";
+import { app } from "@app/app.ts";
+import { env_get } from "@define/env.ts";
 
-const app = new OpenAPIHono();
+const route_app = new OpenAPIHono();
+app.route("/api/test", route_app);
 
-app.openapi(
+// /////////////////////////////////////////////////////////////////////////////////////
+
+route_app.openapi(
     createRoute(
         {
             method: "get",
@@ -30,13 +35,13 @@ app.openapi(
         } as const,
     ),
     (c) => {
-        const SUPABASE_URL = Deno.env.get("SUPABASE_URL") ?? "";
-        const SUPABASE_KEY = Deno.env.get("SUPABASE_KEY") ?? "";
+        const SUPABASE_URL = env_get("SUPABASE_URL") ?? "";
+        const SUPABASE_KEY = env_get("SUPABASE_KEY") ?? "";
         return c.json({ sb_url: SUPABASE_URL, sb_key: SUPABASE_KEY });
     },
 );
 
-app.openapi(
+route_app.openapi(
     createRoute(
         {
             method: "post",
@@ -71,7 +76,7 @@ app.openapi(
     },
 );
 
-app.openapi(
+route_app.openapi(
     createRoute(
         {
             method: "get",
@@ -100,7 +105,7 @@ app.openapi(
     },
 );
 
-app.openapi(
+route_app.openapi(
     createRoute(
         {
             method: "get",
@@ -129,5 +134,3 @@ app.openapi(
         return c.json({ ip: info.remote.address ?? "" });
     },
 );
-
-export default app;

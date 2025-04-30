@@ -1,4 +1,10 @@
 {
+    "test": "test: '{{message}}'",
+    "catch": "catch: '{{err}}'",
+    "fatal": "fatal: '{{message}}'",
+    "id": {
+        "invalid": "invalid id"
+    },
     "captcha": {
         "err": "captcha CANNOT be verified as 3rd access error",
         "fail": "captcha verification failed"
@@ -7,12 +13,14 @@
         "err": {
             "fmt_json": "format error on internal storage as json",
             "missing_content": "missing register content",
+            "invalid_credential_data": "invalid data format/content in db",
             "_": "Service is temporarily unavailable. Please try again later"
         },
         "fail": {
             "invalid_id": "invalid id format",
             "invalid_email": "invalid email format",
             "weak_password": "weak password format",
+            "invalid_credential": "invalid credential content",
             "existing": "already registered",
             "_": "Invalid register information."
         },
@@ -29,6 +37,7 @@
         "fail": {
             "invalid_email": "invalid email format",
             "weak_password": "weak password format",
+            "invalid_credential": "invalid credential content",
             "not_existing": "not registered yet",
             "verification": "incorrect email or password",
             "_": "Incorrect login information"

@@ -2,8 +2,9 @@ import { Result } from "neverthrow";
 import { dbAgent as agent } from "@db/dbService.ts";
 import { T_REGISTER, T_USER_CONFIG } from "@define/system.ts";
 import type { Data, EmailKey, Region, Language, EmailKeyOnAll, Email } from "@define/type.ts";
+import { singleton } from "@util/util.ts";
 
-export class UserConfigController {
+class UserConfigController {
 
     async getUserCfg(email: EmailKeyOnAll<[T_REGISTER, T_USER_CONFIG]>): Promise<Result<Data, string>> {
         return await agent.getSingleRowData(T_USER_CONFIG, email as unknown as EmailKey<T_USER_CONFIG>)
@@ -17,3 +18,5 @@ export class UserConfigController {
         return await agent.deleteRowData(T_USER_CONFIG, email as unknown as Email, true)
     }
 }
+
+export const ucc = new (singleton(UserConfigController))();

@@ -1,9 +1,9 @@
 import { getConnInfo } from 'hono/deno'
 import { type Next } from "hono";
 
-const rateLimitMap = new Map()
+const mRateLimit = new Map()
 
-export const rateLimitMiddleware = (limit = 5, duration = 2 * 1000, blockTime = 5 * 1000) => {
+export const mwRateControl = (limit = 5, duration = 2 * 1000, blockTime = 5 * 1000) => {
     type c_type = Parameters<typeof getConnInfo>[0]
     return async (c: c_type, next: Next) => {
 
@@ -16,11 +16,11 @@ export const rateLimitMiddleware = (limit = 5, duration = 2 * 1000, blockTime = 
         // console.log(key)
 
         const now = Date.now()
-        let record = rateLimitMap.get(key)
+        let record = mRateLimit.get(key)
 
         if (!record) {
             record = { count: 0, startTime: now, blockedUntil: 0 }
-            rateLimitMap.set(key, record)
+            mRateLimit.set(key, record)
         }
 
         if (record.blockedUntil > now) {

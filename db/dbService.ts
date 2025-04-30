@@ -4,10 +4,11 @@ import { createClient } from "@supabase/supabase-js"
 import type { Data, JSONObject, Email, EmailKey, Id, IdKey } from "@define/type.ts"
 import { isValidId, toIdKey, normalizeData } from "@define/type.ts"
 import { F_PG_EXECUTE, F_CREATE_DATA_TABLE, V_UDF, type TableType } from "@define/system.ts";
+import { env_get } from "@define/env.ts"
 await import('@define/env.ts')
 
-const SUPABASE_URL = Deno.env.get("SUPABASE_URL");
-const SUPABASE_KEY = Deno.env.get("SUPABASE_KEY");
+const SUPABASE_URL = env_get("SUPABASE_URL");
+const SUPABASE_KEY = env_get("SUPABASE_KEY");
 if (!SUPABASE_URL || !SUPABASE_KEY) throw new Error("SUPABASE_URL and SUPABASE_KEY must be provided");
 const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
 
@@ -144,15 +145,15 @@ class SupabaseAgent {
 
     ////////////////////////////////////////////////////////////////////////////////////////
 
-    async getSingleRowData(table: TableType, id: IdKey<TableType> | EmailKey<TableType>): Promise<Result<Data, string>> {
+    async getSingleRowData(table: TableType, id: IdKey<TableType> | EmailKey<TableType>): Promise<Result<JSONObject | null, string>> {
         if (!isValidId(id)) return err(`${id} is invalid format`);
         const r = await this.getDataRow(table, id)
-        if (r.isErr()) return r
-        if (hasSome(r) && 'data' in r.value!) return ok(r.value.data as Data)
+        if (r.isErr()) return err(r.error)
+        if (hasSome(r) && 'data' in r.value!) return ok(r.value.data as JSONObject)
         return ok(null)
     }
 
-    async setSingleRowData(table: TableType, id: Id | Email, value: Data): Promise<Result<Data, string>> {
+    async setSingleRowData(table: TableType, id: Id | Email, value: Data): Promise<Result<JSONObject | null, string>> {
         // fetch previous value under id
         const ID = await toIdKey(id, table)
         const prevData = ID ? await this.getSingleRowData(table, ID) : null
@@ -160,7 +161,7 @@ class SupabaseAgent {
         if (!isValidId(id)) return err(`${id} is invalid format`);
         const r = await this.upsertDataRow(table, id, normalizeData(value))
         if (r.isErr()) return r
-        if (hasSome(value)) return ok(r.value.data as Data) // if there are some new data, return new data
+        if (hasSome(value)) return ok(r.value.data as JSONObject) // if there are some new data, return new data
         return ok(prevData?.isOk() ? prevData.value : null) // delete action, return previous data
     }
 

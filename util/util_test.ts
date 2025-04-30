@@ -1,5 +1,7 @@
 import { assertEquals } from "jsr:@std/assert"
-import { getPublicIP, verifyHCaptcha, bools2idx, len, lastElem } from "@util/util.ts"
+import { bools2idx, len, lastElem, hasCertainProperty } from "@util/util.ts"
+import { getPublicIP } from "@util/net.ts";
+import { verifyHCaptcha } from "@util/captcha.ts";
 
 Deno.test(async function getPubIP() {
     const ip = await getPublicIP();
@@ -33,4 +35,17 @@ Deno.test(function GetLastElement() {
     console.log(lastElem(undefined))
     console.log(lastElem([]))
     console.log(lastElem([123]))
+});
+
+Deno.test(function HasCertainProperty() {
+    const o = {
+        a: 123,
+        b: 'str',
+        next: {
+            c: true
+        }
+    }
+    console.log(hasCertainProperty(o, 'a', 'number'))
+    console.log(hasCertainProperty(o, 'next.c', 'boolean'))
+    console.log(hasCertainProperty(o, 'next.d', 'boolean'))
 });

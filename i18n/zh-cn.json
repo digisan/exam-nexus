@@ -1,18 +1,26 @@
 {
+    "test": "测试消息: '{{message}}'",
+    "catch": "异常错误: '{{err}}'",
+    "fatal": "严重错误: '{{message}}'",
+    "id": {
+        "invalid": "非法ID"
+    },
     "captcha": {
         "err": "验证码无法验证，因第三方访问错误",
         "fail": "验证码验证失败"
     },
     "register": {
         "err": {
-            "fmt_json": "内部存储格式错误（JSON）",
+            "fmt_json": "内部存储格式错误(JSON)",
             "missing_content": "注册信息丢失",
+            "invalid_credential_data": "数据库data字段格式或内容错误",
             "_": "服务暂时不可用，请稍后再试"
         },
         "fail": {
             "invalid_id": "无效ID格式",
             "invalid_email": "无效Email格式",
             "weak_password": "密码不符合强度要求",
+            "invalid_credential": "无效的身份验证信息",
             "existing": "已注册",
             "_": "无效的注册信息"
         },
@@ -23,12 +31,13 @@
     },
     "login": {
         "err": {
-            "fmt_json": "内部存储格式错误（JSON）",
+            "fmt_json": "内部存储格式错误(JSON)",
             "_": "服务暂时不可用，请稍后再试"
         },
         "fail": {
             "invalid_email": "无效Email格式",
             "weak_password": "密码不符合强度要求",
+            "invalid_credential": "无效的身份验证信息",
             "not_existing": "尚未注册",
             "verification": "邮箱或密码错误",
             "_": "登录信息无效"

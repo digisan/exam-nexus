@@ -1,9 +1,7 @@
-import { createRoute, OpenAPIHono, z } from "@hono/zod-openapi";
-import { UserController } from "@controllers/userLocal.ts";
+import { createRoute, z } from "@hono/zod-openapi";
 import { isEmail } from "@define/type.ts";
-
-const app = new OpenAPIHono();
-const userCtrl = new UserController();
+import { app } from "@app/app.ts";
+import { uc } from "@controllers/userLocal.ts";
 
 // const UserIdListSchema = z.object({
 //     userIds: z.array(z.string()).openapi({ example: ['123', '456'] }),
@@ -36,7 +34,7 @@ app.openapi(
         } as const,
     ),
     async (c) => {
-        return c.json(await userCtrl.getUserList());
+        return c.json(await uc.getUserList());
     },
 );
 
@@ -75,9 +73,7 @@ app.openapi(
         if (!isEmail(email)) {
             return c.text("Email format error", 400)
         }
-        const user = await userCtrl.getUserInfo(email);
+        const user = await uc.getUserInfo(email);
         return user ? c.json(user) : c.text("User not found", 404);
     },
 );
-
-export default app;

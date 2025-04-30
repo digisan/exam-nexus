@@ -1,15 +1,15 @@
 {
   "imports": {
-    "@hono/hono": "jsr:@hono/hono@4.7.7",
+    "@hono/hono": "jsr:@hono/hono@4.7.8",
     "@hono/swagger-ui": "npm:@hono/swagger-ui@0.5.1",
-    "@hono/zod-openapi": "npm:@hono/zod-openapi@0.19.5",
+    "@hono/zod-openapi": "npm:@hono/zod-openapi@0.19.6",
     "@std/assert": "jsr:@std/assert@1.0.13",
     "@std/fs": "jsr:@std/fs@1.0.17",
     "@std/path": "jsr:@std/path@1.0.9",
     "@supabase/supabase-js": "jsr:@supabase/supabase-js@2.49.4",
     "bcrypt-ts": "npm:bcrypt-ts@6.0.0",
     "flat": "npm:flat@6.0.1",
-    "hono": "npm:hono@4.7.7",
+    "hono": "npm:hono@4.7.8",
     "hono-i18n": "npm:hono-i18n@1.1.1",
     "http-status-code": "npm:http-status-code@2.1.0",
     "neverthrow": "npm:neverthrow@8.2.0",
@@ -21,7 +21,8 @@
     "@middleware/": "./middleware/",
     "@db/": "./db/",
     "@i18n/": "./i18n/",
-    "@define/": "./define/"
+    "@define/": "./define/",
+    "@app/": "./app/"
   },
   "tasks": {
     "start": "deno run --allow-net main.ts"

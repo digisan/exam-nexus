@@ -1,17 +1,8 @@
-// ************************ AUTO GENERATED ************************ //
-import authRouter from "@routes/auth.ts";
-import postRouter from "@routes/post.ts";
-import testRouter from "@routes/test.ts";
-import userRouter from "@routes/user.ts";
-// **************************************************************** //
-import { createRoute, OpenAPIHono, z } from "@hono/zod-openapi";
+import { createRoute, z } from "@hono/zod-openapi";
 import { swaggerUI } from "@hono/swagger-ui";
-import { applyMiddleWare } from "@middleware/appUse.ts";
+import { app } from "@app/app.ts";
 await import("@define/env.ts");
-
-const app = new OpenAPIHono();
-
-applyMiddleWare(app);
+await import("@app/middleware/apply.ts");
 
 app.openapi(
     createRoute(
@@ -61,10 +52,9 @@ app.doc31("/openapi.json", {
 app.get("/docs", swaggerUI({ url: "/openapi.json" }));
 
 // ************************ AUTO GENERATED ************************ //
-app.route("/api/auth", authRouter);
-app.route("/api/post", postRouter);
-app.route("/api/test", testRouter);
-app.route("/api/user", userRouter);
+// app.route("/api/auth", authRouter);
+// app.route("/api/test", testRouter);
+// app.route("/api/user", userRouter);
 // **************************************************************** //
 
 // 监听终止信号

@@ -1,8 +1,7 @@
 import { dbAgent as agent } from "@db/dbService.ts";
-import type { LanguageType, RegionType } from "@define/config.ts";
-import { REGIONS, LANGUAGES } from "@define/config.ts";
-import type { TableType } from "@define/system.ts";
-import { hasSome, RE_EMAIL, RE_PWD } from "@util/util.ts";
+import { REGIONS, LANGUAGES, type LanguageType, type RegionType } from "@define/config.ts";
+import { T_REGISTER, type TableType } from "@define/system.ts";
+import { hasCertainProperty, hasSome, RE_EMAIL, RE_PWD } from "@util/util.ts";
 
 export type JSONObject = Record<string, unknown>;
 export type Data = JSONObject | JSONObject[] | null;
@@ -14,6 +13,8 @@ export const normalizeData = (value: Data): Data => {
     }
     return value;
 }
+
+////////////////////////////////////////////////
 
 type Brand<T, B> = T & { readonly __brand: B; readonly __exact: T; readonly __types: T };
 
@@ -66,4 +67,20 @@ export const toIdRef = async <T1 extends TableType, F extends string, T2 extends
     const r = await agent.firstDataRow(table, field, s)
     if (r.isErr() || !hasSome(r.value)) return null
     return s as unknown as IdRef<T1, F, T2>
+}
+
+////////////////////////////////////////////////
+
+export type Credential = Brand<{ email: Email, password: Password }, `Credential`>
+export const toValidCredential = async (c: object | null): Promise<Credential | null> => {
+    if (!hasSome(c)) return null
+
+    if (!hasCertainProperty(c!, 'email', 'string')) return null
+    if (!isEmail(c.email as string)) return null
+    if (!await toEmailKey(c.email as string, T_REGISTER)) return null
+
+    if (!hasCertainProperty(c!, 'password', 'string')) return null
+    if (!isAllowedPassword(c.password as string)) return null
+
+    return c as unknown as Credential
 }

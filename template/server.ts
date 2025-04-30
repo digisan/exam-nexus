@@ -1,11 +1,10 @@
-import { createRoute, OpenAPIHono, z } from "@hono/zod-openapi"
+import { createRoute, z } from "@hono/zod-openapi"
 import { swaggerUI } from "@hono/swagger-ui"
 import { applyMiddleWare } from "@middleware/appUse.ts"
+import { app } from "@app/app.ts";
 await import('@define/env.ts')
 
-const app = new OpenAPIHono();
-
-applyMiddleWare(app);
+applyMiddleWare();
 
 app.openapi(
     createRoute(
