@@ -2,8 +2,13 @@ import { createRoute, z } from "@hono/zod-openapi";
 import { swaggerUI } from "@hono/swagger-ui";
 import { app } from "@app/app.ts";
 await import("@define/env.ts");
+await import("@app/routes/auth.ts");
+await import("@app/routes/test.ts");
+await import("@app/routes/user.ts");
 await import("@app/middleware/apply.ts");
 
+// Example for api with doc
+//
 app.openapi(
     createRoute(
         {
@@ -50,12 +55,6 @@ app.doc31("/openapi.json", {
 
 // Host OPENAPI Spec File on /docs
 app.get("/docs", swaggerUI({ url: "/openapi.json" }));
-
-// ************************ AUTO GENERATED ************************ //
-// app.route("/api/auth", authRouter);
-// app.route("/api/test", testRouter);
-// app.route("/api/user", userRouter);
-// **************************************************************** //
 
 // 监听终止信号
 const shutdown = async () => {

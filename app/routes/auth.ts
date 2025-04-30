@@ -1,4 +1,5 @@
 import { createRoute, OpenAPIHono, z } from "@hono/zod-openapi";
+import { fromFileUrl } from "jsr:@std/path";
 import { createStrictT } from "@i18n/lang_t.ts";
 import { app } from "@app/app.ts";
 import { isAllowedPassword, isEmail, toValidCredential } from "@define/type.ts";
@@ -6,7 +7,6 @@ import { auth } from "@app/controllers/auth.ts";
 import { verifyHCaptcha } from "@util/captcha.ts";
 
 const route_app = new OpenAPIHono();
-app.route("/api/auth", route_app);
 
 // /////////////////////////////////////////////////////////////////////////////////////
 
@@ -83,7 +83,7 @@ route_app.openapi(
     }
 );
 
-// /////////////////////////////////////////////////////////////////////////////////////
+// ---------------------------------- //
 
 const LoginReqBody = z.object({
     email: z.string().email("Invalid email address"),
@@ -148,7 +148,7 @@ route_app.openapi(
     }
 );
 
-// /////////////////////////////////////////////////////////////////////////////////////
+// ---------------------------------- //
 
 route_app.openapi(
     createRoute(
@@ -179,7 +179,7 @@ route_app.openapi(
     },
 );
 
-// /////////////////////////////////////////////////////////////////////////////////////
+// ---------------------------------- //
 
 // for front-end checking token when it's page routing
 route_app.openapi(
@@ -197,3 +197,12 @@ route_app.openapi(
     ),
     (_c) => new Response(null, { status: 200 }),
 );
+
+// /////////////////////////////////////////////////////////////////////////////////////
+
+const fullPath = fromFileUrl(import.meta.url);
+const parts = fullPath.split(/[\\/]/); // 兼容 Windows 和 Unix
+const filenameWithExt = parts.pop();
+const filename = filenameWithExt?.replace(/\.[^/.]+$/, '');
+
+app.route(`/api/${filename}`, route_app);

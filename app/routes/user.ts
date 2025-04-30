@@ -1,18 +1,23 @@
-import { createRoute, z } from "@hono/zod-openapi";
+import { createRoute, OpenAPIHono, z } from "@hono/zod-openapi";
+import { fromFileUrl } from "jsr:@std/path";
 import { isEmail } from "@define/type.ts";
 import { app } from "@app/app.ts";
-import { uc } from "@controllers/userLocal.ts";
+import { uc } from "@app/controllers/userLocal.ts";
 
-// const UserIdListSchema = z.object({
+const route_app = new OpenAPIHono();
+
+// /////////////////////////////////////////////////////////////////////////////////////
+
+// const UserlistResp = z.object({
 //     userIds: z.array(z.string()).openapi({ example: ['123', '456'] }),
 // })
 
-const UserIdListSchema = z.array(z.string()).openapi({
+const UserlistResp = z.array(z.string()).openapi({
     example: ["email_1", "email_2"],
 });
 
 // 定义 API 路由，并关联 OpenAPI 规范
-app.openapi(
+route_app.openapi(
     createRoute(
         {
             method: "get",
@@ -24,7 +29,7 @@ app.openapi(
                     description: "返回所有用户的 ID 列表",
                     content: {
                         "application/json": {
-                            schema: UserIdListSchema,
+                            schema: UserlistResp,
                         },
                     },
                 },
@@ -38,12 +43,14 @@ app.openapi(
     },
 );
 
-const UserSchema = z.object({
+// ---------------------------------- //
+
+const UserResp = z.object({
     email: z.string().email().openapi({ example: "张三@EMAIL.COM" }),
     password: z.string().openapi({ example: "bcrypted...password..." }),
 });
 
-app.openapi(
+route_app.openapi(
     createRoute(
         {
             method: "get",
@@ -58,7 +65,7 @@ app.openapi(
                     description: "返回所有用户的 ID 列表",
                     content: {
                         "application/json": {
-                            schema: UserSchema,
+                            schema: UserResp,
                         },
                     },
                 },
@@ -77,3 +84,12 @@ app.openapi(
         return user ? c.json(user) : c.text("User not found", 404);
     },
 );
+
+// /////////////////////////////////////////////////////////////////////////////////////
+
+const fullPath = fromFileUrl(import.meta.url);
+const parts = fullPath.split(/[\\/]/); // 兼容 Windows 和 Unix
+const filenameWithExt = parts.pop();
+const filename = filenameWithExt?.replace(/\.[^/.]+$/, '');
+
+app.route(`/api/${filename}`, route_app);
