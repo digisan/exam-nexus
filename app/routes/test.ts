@@ -153,6 +153,11 @@ route_app.openapi(
             security: [], // without swagger UI jwt security
             summary: "translate template",
             description: "translate template test",
+            request: {
+                query: z.object({ lang: z.string().optional() }),
+                headers: z.object({ 'x-lang': z.string().optional() }),
+                cookies: z.object({ lang: z.string().optional() }),
+            },
             responses: {
                 200: {
                     description: "translate template test",

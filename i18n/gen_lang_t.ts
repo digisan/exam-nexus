@@ -64,7 +64,7 @@
 //     export const { i18nMiddleware, getI18n } = createI18n({
 //         messages: ${messages},
 //         defaultLocale: "${defaultLocale}",
-//         getLocale: (c) => getCookie(c, "locale-cookie"),
+//         getLocale: (c) => c.req.query('lang') ?? c.req.header('x-lang') ?? getCookie(c, 'lang') ?? 'en-AU',
 //     })
 
 //     export type TransKeyType = typeof keys[number]
