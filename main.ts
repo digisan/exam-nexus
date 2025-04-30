@@ -1,61 +1,38 @@
-import { createRoute, z } from "@hono/zod-openapi";
-import { swaggerUI } from "@hono/swagger-ui";
+// import { createRoute, z } from "@hono/zod-openapi";
 import { app } from "@app/app.ts";
 
 await import("@define/env.ts");
-await import("@app/routes/auth.ts");
+await import("@app/middleware/apply.ts");
+await import("@app/routes/auth.ts"); // import 'routes' MUST AFTER middleware
 await import("@app/routes/test.ts");
 await import("@app/routes/user.ts");
-await import("@app/middleware/apply.ts");
+await import("@app/doc/openapi.ts"); // import 'doc' at the last
 
 // Example for api with doc
 //
-app.openapi(
-    createRoute(
-        {
-            method: "get",
-            path: "/",
-            summary: "Root API",
-            description: "hello exam-nexus",
-            tags: ["Root"],
-            security: [], // without swagger UI jwt security
-            responses: {
-                200: {
-                    description: "return 'hello exam-nexus'",
-                    content: {
-                        "text/plain": {
-                            schema: z.string(),
-                        },
-                    },
-                },
-            },
-        } as const,
-    ),
-    (c) => c.text("hello exam-nexus"),
-);
-
-// Swagger UI [Authorize] Button
-app.openAPIRegistry.registerComponent("securitySchemes", "BearerAuth", {
-    type: "http",
-    name: "Authorization",
-    scheme: "bearer",
-    in: "header",
-    description: "Bearer token",
-    bearerFormat: "JWT",
-});
-
-// Create OPENAPI Spec File
-app.doc31("/openapi.json", {
-    openapi: "3.1.0",
-    info: {
-        title: "Hono API 文档",
-        version: "1.0.0",
-    },
-    security: [{ BearerAuth: [] }], // lock each API by default in swagger UI
-});
-
-// Host OPENAPI Spec File on /docs
-app.get("/docs", swaggerUI({ url: "/openapi.json" }));
+// app.openapi(
+//     createRoute(
+//         {
+//             method: "get",
+//             path: "/",
+//             summary: "Root API",
+//             description: "hello exam-nexus",
+//             tags: ["Root"],
+//             security: [], // without swagger UI jwt security
+//             responses: {
+//                 200: {
+//                     description: "return 'hello exam-nexus'",
+//                     content: {
+//                         "text/plain": {
+//                             schema: z.string(),
+//                         },
+//                     },
+//                 },
+//             },
+//         } as const,
+//     ),
+//     (c) => c.text("hello exam-nexus"),
+// );
 
 // 监听终止信号
 const shutdown = async () => {
