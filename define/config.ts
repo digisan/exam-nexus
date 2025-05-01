@@ -9,7 +9,7 @@ export const REGIONS = [
 export type RegionType = typeof REGIONS[number];
 
 export const LANGUAGES = [
-    "en",
-    "zh"
+    "en-AU",
+    "zh-CN"
 ] as const;
 export type LanguageType = typeof LANGUAGES[number];
