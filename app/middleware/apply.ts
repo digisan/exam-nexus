@@ -10,13 +10,14 @@ app.use(cors({
     origin: "*", // 允许所有来源
     allowMethods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allowHeaders: ["Content-Type", "Authorization"],
+    credentials: true
 }));
 
 // Locale Language
 app.use(i18nMiddleware);
 
 // Rate Control
-app.use("*", rateControl(1, 1000, 10000));
+app.use("*", rateControl(10, 1000, 5000));
 
 // JWT
 const mw_jwt = jwt({ secret: env_get("SIGNATURE_KEY") ?? "" });
