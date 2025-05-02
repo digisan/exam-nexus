@@ -19,7 +19,7 @@ route_app.openapi(
     createRoute(
         {
             method: "post",
-            path: "/user-update",
+            path: "/update",
             tags: ["Config"],
             // security: [], // without swagger UI jwt security
             request: {
