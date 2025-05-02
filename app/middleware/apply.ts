@@ -27,6 +27,7 @@ const authPaths = [
     "/api/user/*",
     "/api/auth/logout",
     "/api/auth/validate-token",
+    "/api/config/*",
 ];
 
 const getToken = (c: CtxType): string | null => {

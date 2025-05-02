@@ -21,7 +21,7 @@ route_app.openapi(
             method: "post",
             path: "/update",
             tags: ["Config"],
-            // security: [], // without swagger UI jwt security
+            // security: [], // with swagger UI jwt security
             request: {
                 body: {
                     description: "Update Config Request Body",
@@ -38,28 +38,9 @@ route_app.openapi(
                 },
             },
             responses: {
-                201: {
-                    description: "Update Config Successful",
-                    content: {
-                        "application/json": {
-                            schema: z.object({
-                                success: z.boolean().openapi({ example: true }),
-                                message: z.string().openapi({ example: "config updated" }),
-                            }),
-                        },
-                    },
-                },
-                400: {
-                    description: "Bad Request",
-                    content: {
-                        "application/json": {
-                            schema: z.object({
-                                success: z.boolean().openapi({ example: false }),
-                                message: z.string().openapi({ example: "config update failed" }),
-                            }),
-                        },
-                    },
-                },
+                200: { description: "Update Config Successful" },
+                400: { description: "Bad Request" },
+                401: { description: "Unauthorized" },
                 500: { description: "Internal Server Error" }, // 数据库异常, 邮件服务崩溃 等
             },
         } as const,
@@ -72,7 +53,7 @@ route_app.openapi(
 
         const result = await cc.setUserCfg(cfg);
         if (result.isErr()) return c.json({ success: false, message: t('set.config.err') }, 500)
-        return c.json({ success: true, token: result.value, message: t('set.config.ok') }, 200)
+        return c.json({ success: true, message: t('set.config.ok') }, 200)
     },
 );
 

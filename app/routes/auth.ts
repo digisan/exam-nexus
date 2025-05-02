@@ -166,7 +166,7 @@ route_app.openapi(
             },
             responses: {
                 204: { description: "Disable Token" },
-                401: { description: "Invalid Token" }, // 未登录或 token 失效
+                401: { description: "Unauthorized" }, // 未登录或 token 失效
                 500: { description: "Internal Server Error" }
             },
         } as const,
@@ -190,7 +190,7 @@ route_app.openapi(
             tags: ["Auth"],
             responses: {
                 200: { description: "Valid Token" },
-                401: { description: "Invalid Token" },
+                401: { description: "Unauthorized" },
                 500: { description: "Internal Server Error" }
             },
         } as const,

@@ -6,6 +6,7 @@ await import("@app/routes/home.ts"); // import 'routes' MUST AFTER middleware
 await import("@app/routes/auth.ts");
 await import("@app/routes/test.ts");
 await import("@app/routes/user.ts");
+await import("@app/routes/config.ts");
 await import("@app/doc/openapi.ts"); // import 'doc' at the last
 
 // 监听终止信号
