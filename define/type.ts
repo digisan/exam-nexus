@@ -76,11 +76,26 @@ export const toValidCredential = async (c: object | null): Promise<Credential | 
     if (!hasSome(c)) return null
 
     if (!hasCertainProperty(c!, 'email', 'string')) return null
-    if (!isEmail(c.email as string)) return null
     if (!await toEmailKey(c.email as string, T_REGISTER)) return null
 
     if (!hasCertainProperty(c!, 'password', 'string')) return null
     if (!isAllowedPassword(c.password as string)) return null
 
     return c as unknown as Credential
+}
+
+export type Config = Brand<{ email: Email, region: Region, lang: Language }, `Config`>
+export const toValidConfig = async (c: object | null): Promise<Config | null> => {
+    if (!hasSome(c)) return null
+
+    if (!hasCertainProperty(c!, 'email', 'string')) return null
+    if (!await toEmailKey(c.email as string, T_REGISTER)) return null
+
+    if (!hasCertainProperty(c!, 'region', 'string')) return null
+    if (!isValidRegion(c.region as string)) return null
+
+    if (!hasCertainProperty(c!, 'lang', 'string')) return null
+    if (!isValidLanguage(c.lang as string)) return null
+
+    return c as unknown as Config
 }

@@ -51,5 +51,12 @@
         "fail": {
             "_": "Token is invalid"
         }
+    },
+    "set": {
+        "config": {
+            "err": "an error occur when setting config",
+            "fail": "set config failed",
+            "ok": "set config successfully"
+        }
     }
 }

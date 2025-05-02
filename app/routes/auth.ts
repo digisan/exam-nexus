@@ -62,7 +62,7 @@ route_app.openapi(
                         },
                     },
                 },
-                500: { description: "Internal Deno Server Error" } // 数据库异常, 邮件服务崩溃 等
+                500: { description: "Internal Server Error" } // 数据库异常, 邮件服务崩溃 等
             },
         } as const,
     ),
@@ -127,7 +127,7 @@ route_app.openapi(
                 },
                 400: { description: "Bad Request" }, // 参数缺失
                 401: { description: "Unauthorized" }, // 账号或密码错误
-                500: { description: "Internal Deno Server Error" }
+                500: { description: "Internal Server Error" }
             },
         } as const,
     ),
@@ -167,7 +167,7 @@ route_app.openapi(
             responses: {
                 204: { description: "Disable Token" },
                 401: { description: "Invalid Token" }, // 未登录或 token 失效
-                500: { description: "Internal Deno Server Error" }
+                500: { description: "Internal Server Error" }
             },
         } as const,
     ),
@@ -191,7 +191,7 @@ route_app.openapi(
             responses: {
                 200: { description: "Valid Token" },
                 401: { description: "Invalid Token" },
-                500: { description: "Internal Deno Server Error" }
+                500: { description: "Internal Server Error" }
             },
         } as const,
     ),

@@ -7,7 +7,7 @@
     "@std/fs": "jsr:@std/fs@1.0.17",
     "@std/path": "jsr:@std/path@1.0.9",
     "@supabase/supabase-js": "jsr:@supabase/supabase-js@2.49.4",
-    "bcrypt-ts": "npm:bcrypt-ts@6.0.0",
+    "bcrypt-ts": "npm:bcrypt-ts@7.0.0",
     "flat": "npm:flat@6.0.1",
     "hono": "npm:hono@4.7.8",
     "hono-i18n": "npm:hono-i18n@1.1.1",

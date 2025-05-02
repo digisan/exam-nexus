@@ -55,6 +55,13 @@ export const lang = {
                 _: "Token is invalid",
             },
         },
+        set: {
+            config: {
+                err: "an error occur when setting config",
+                fail: "set config failed",
+                ok: "set config successfully",
+            },
+        },
     } as const,
     "zh-CN": {
         test: "测试消息: {message}",
@@ -110,6 +117,13 @@ export const lang = {
                 _: "令牌无效或失效",
             },
         },
+        set: {
+            config: {
+                err: "设置配置时发生错误",
+                fail: "设置配置失败",
+                ok: "设置配置成功",
+            },
+        },
     } as const,
 };
 
@@ -143,6 +157,9 @@ const keys = [
     "login.ok.__",
     "login.ok._",
     "token.fail._",
+    "set.config.err",
+    "set.config.fail",
+    "set.config.ok",
 ] as const;
 
 import { createI18n } from "hono-i18n";
