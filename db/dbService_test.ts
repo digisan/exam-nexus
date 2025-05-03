@@ -121,21 +121,16 @@ Deno.test(async function InsertDataRow() {
 
 Deno.test(async function UpdateDataRow() {
     const id = "abcd"
-    const r1 = await toIdKey(id, 'test')
-    if (r1.isErr()) {
+    const r_k = await toIdKey(id, 'test')
+    if (r_k.isErr()) {
         console.debug(`❌ Not existing ID '${id}'`)
         return
     }
-    const ID = r1.value
-    if (!ID) {
-        console.debug(`❌ Not existing ID '${id}'`)
-        return
-    }
-    const r2 = await agent.updateDataRow('test', ID, { user: "ABCE", password: "ASDFWERADF" })
-    if (r2.isOk()) {
-        console.log(r2.value)
+    const r = await agent.updateDataRow('test', r_k.value, { user: "ABCE", password: "ASDFWERADF" })
+    if (r.isOk()) {
+        console.log(r.value)
     } else {
-        console.debug(`❌ ${r2.error}`)
+        console.debug(`❌ ${r.error}`)
     }
 });
 
@@ -168,20 +163,16 @@ Deno.test(async function DeleteDataRows() {
 
 Deno.test(async function GetSingleRowData() {
     const id = "abcd"
-    const r1 = await toIdKey(id, 'test')
-    if (r1.isErr()) {
-        return
-    }
-    const ID = r1.value
-    if (!ID) {
+    const r_k = await toIdKey(id, 'test')
+    if (r_k.isErr()) {
         console.debug(`'${id}' is NOT existing or invalid format`)
         return
     }
-    const r2 = await agent.getSingleRowData('test', ID)
-    if (r2.isErr()) {
+    const r = await agent.getSingleRowData('test', r_k.value)
+    if (r.isErr()) {
         return
     }
-    console.log(r2.value)
+    console.log(r.value)
 });
 
 Deno.test(async function SetSingleRowData() {

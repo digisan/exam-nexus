@@ -17,14 +17,12 @@ Deno.test(async function AuthCtrlReg() {
 });
 
 Deno.test(async function AuthCtrlLogin() {
-    const r = await toValidCredential({ email: "12347000@qq.com", password: "12345@ABCdef" })
-    if (r.isErr()) {
-        console.log(r.error)
+    const r_cred = await toValidCredential({ email: "12347000@qq.com", password: "12345@ABCdef" })
+    if (r_cred.isErr()) {
+        console.log(r_cred.error)
         return
     }
-    const c = r.value
-    if (!c) return
-    const result = await auth.login(c)
+    const result = await auth.login(r_cred.value)
     console.log(result)
 });
 

@@ -135,14 +135,14 @@ route_app.openapi(
         const t = createStrictT(c)
         const { email, password, captchaToken } = c.req.valid("json");
 
-        const cred = await toValidCredential({ email, password })
-        if (!cred) return c.json({ success: false, message: t('login.fail.invalid_credential') }, 400)
+        const r_cred = await toValidCredential({ email, password })
+        if (r_cred.isErr()) return c.json({ success: false, message: t('login.fail.invalid_credential') }, 400)
 
         const rCaptcha = await verifyHCaptcha(captchaToken);
         if (rCaptcha.isErr()) return c.json({ success: false, message: t('captcha.err') }, 500)
         if (!rCaptcha.value) return c.json({ success: false, message: t('captcha.fail') }, 400)
 
-        const result = await auth.login(cred, t);
+        const result = await auth.login(r_cred.value, t);
         if (result.isErr()) return c.json({ success: false, message: t('login.fail._') }, 500)
         return c.json({ success: true, token: result.value, message: t(`login.ok._`) }, 200)
     }

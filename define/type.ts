@@ -58,11 +58,11 @@ export const toEmailKeyOnAll = async<T extends readonly TableType[]>(s: string |
 export type IdRef<T1 extends TableType, F extends string, T2 extends TableType> = Brand<string, `IdRef<${T1}_${F}_${T2}>`>
 export const toIdRef = async <T1 extends TableType, F extends string, T2 extends TableType>(s: string | Id | IdKey<T2>, table: T1, field: F, ref_table: T2, ct?: TransFnType): Promise<Result<IdRef<T1, F, T2>, string>> => {
     const t = wrapOptT(ct);
-    const r1 = await toIdKey(s, ref_table)
-    if (r1.isErr()) return err(r1.error)
-    const r2 = await agent.firstDataRow(table, field, s)
-    if (r2.isErr()) return err(r2.error)
-    if (!hasSome(r2.value)) return err(t('get.db.fail_by_field_value'))
+    const r_k = await toIdKey(s, ref_table)
+    if (r_k.isErr()) return err(r_k.error)
+    const r = await agent.firstDataRow(table, field, s)
+    if (r.isErr()) return err(r.error)
+    if (!hasSome(r.value)) return err(t('get.db.fail_by_field_value'))
     return ok(s as unknown as IdRef<T1, F, T2>)
 }
 

@@ -168,15 +168,15 @@ class SupabaseAgent {
 
     async setSingleRowData(table: TableType, id: Id | Email, value: Data): Promise<Result<JSONObject | null, string>> {
         // fetch previous value under id
-        const r1 = await toIdKey(id, table)
-        if (r1.isErr()) return err(r1.error)
-        const ID = r1.value
+        const r_k = await toIdKey(id, table)
+        if (r_k.isErr()) return err(r_k.error)
+        const ID = r_k.value
         const prevData = ID ? await this.getSingleRowData(table, ID) : null
 
         if (!isValidId(id)) return err(`${id} is invalid format`);
-        const r2 = await this.upsertDataRow(table, id, normalizeData(value))
-        if (r2.isErr()) return r2
-        if (hasSome(value)) return ok(r2.value.data as JSONObject) // if there are some new data, return new data
+        const r = await this.upsertDataRow(table, id, normalizeData(value))
+        if (r.isErr()) return r
+        if (hasSome(value)) return ok(r.value.data as JSONObject) // if there are some new data, return new data
         return ok(prevData?.isOk() ? prevData.value : null) // delete action, return previous data
     }
 

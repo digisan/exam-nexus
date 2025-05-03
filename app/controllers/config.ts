@@ -1,7 +1,8 @@
 import { Result } from "neverthrow";
 import { dbAgent as agent } from "@db/dbService.ts";
 import { T_REGISTER, T_USER_CONFIG } from "@define/system.ts";
-import type { Data, EmailKey, EmailKeyOnAll, Email, Config } from "@define/type.ts";
+import type { EmailKey, EmailKeyOnAll, Email, Config } from "@define/type.ts";
+import type { Data } from "@db/dbService.ts"
 import { singleton } from "@util/util.ts";
 
 class ConfigController {

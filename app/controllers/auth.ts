@@ -18,7 +18,8 @@ class AuthController {
     async register(info: { email: Email, password: Password }, ct?: TransFnType): Promise<Result<string, string>> {
         const t = wrapOptT(ct);
         try {
-            if (await toEmailKey(info.email, T_REGISTER)) return err(t('register.fail.existing'))
+            const r_ek = await toEmailKey(info.email, T_REGISTER)
+            if (r_ek.isOk()) return err(t('register.fail.existing'))
 
             const r = await agent.setSingleRowData(T_REGISTER, info.email, {
                 email: info.email,
@@ -55,10 +56,10 @@ class AuthController {
     async login(credential: Credential, ct?: TransFnType): Promise<Result<string, string>> {
         const t = wrapOptT(ct);
         try {
-            const cred = await toValidCredential(credential)
-            if (!cred) return err(t(`login.fail.invalid_credential`))
+            const r_cred = await toValidCredential(credential)
+            if (r_cred.isErr()) return err(t(`login.fail.invalid_credential`, { message: r_cred.error }))
 
-            const r = await agent.getSingleRowData(T_REGISTER, cred.email as unknown as EmailKey<T_REGISTER>)
+            const r = await agent.getSingleRowData(T_REGISTER, r_cred.value.email as unknown as EmailKey<T_REGISTER>)
             if (r.isErr()) return err(r.error)
 
             if (!await compare(credential.password, r.value!.password as string)) return err(t('login.fail.verification'));

@@ -17,16 +17,19 @@ Deno.test(async function Test() {
 
     const s = "abcd@test.com";
 
-    const email1 = await toEmailKey(s, T_REGISTER)
-    if (!email1) return;
+    const r_ek1 = await toEmailKey(s, T_REGISTER)
+    if (r_ek1.isErr()) return;
+    const email1 = r_ek1.value;
     p(email1);
 
-    const email2 = await toEmailKey(s, T_TEST)
-    if (!email2) return;
+    const r_ek2 = await toEmailKey(s, T_TEST)
+    if (r_ek2.isErr()) return;
+    const email2 = r_ek2.value;
     pp(email2);
 
-    const emailBoth = await toEmailKeyOnAll(s, T_REGISTER, T_TEST)
-    // const emailBoth = await toEmailKeyOnAll(s, T_TEST, T_REGISTER) // 最好忽略顺序时候，也不报错
-    if (!emailBoth) return;
+    const r_eka = await toEmailKeyOnAll(s, T_REGISTER, T_TEST)
+    // const r_eka = await toEmailKeyOnAll(s, T_TEST, T_REGISTER) // 最好忽略顺序时候，也不报错
+    if (r_eka.isErr()) return;
+    const emailBoth = r_eka.value;
     ppp(emailBoth);
 });

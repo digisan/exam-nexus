@@ -48,10 +48,10 @@ route_app.openapi(
     async (c) => {
         const t = createStrictT(c)
 
-        const cfg = await toValidConfig(c.req.valid("json"))
-        if (!cfg) return c.json({ success: false, message: t('set.config.fail') }, 400)
+        const r_cfg = await toValidConfig(c.req.valid("json"))
+        if (r_cfg.isErr()) return c.json({ success: false, message: t('set.config.fail') }, 400)
 
-        const result = await cc.setUserCfg(cfg);
+        const result = await cc.setUserCfg(r_cfg.value);
         if (result.isErr()) return c.json({ success: false, message: t('set.config.err') }, 500)
         return c.json({ success: true, message: t('set.config.ok') }, 200)
     },

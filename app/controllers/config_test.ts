@@ -17,17 +17,17 @@ Deno.test(async function SetUserCfg() {
 
     const s = "123470@qq.com";
 
-    const email = await toEmailKey(s, T_REGISTER);
-    if (!email) {
+    const r_ek = await toEmailKey(s, T_REGISTER);
+    if (r_ek.isErr()) {
         console.debug(`${s} is NOT valid email or NOT registered`);
         return;
     }
 
-    const emailBoth = await toEmailKeyOnAll(s, T_REGISTER, T_USER_CONFIG)
-    if (!emailBoth) {
+    const r_eka = await toEmailKeyOnAll(s, T_REGISTER, T_USER_CONFIG)
+    if (r_eka.isErr()) {
         console.debug(`${s} is NOT both valid key for '${T_REGISTER}' & '${T_USER_CONFIG}'`);
         return
     }
-    const result = await cc.getUserCfg(emailBoth)
-    console.log(result)
+    const r = await cc.getUserCfg(r_eka.value)
+    console.log(r)
 });
