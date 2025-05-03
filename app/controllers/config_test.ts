@@ -23,7 +23,7 @@ Deno.test(async function SetUserCfg() {
         return;
     }
 
-    const r_eka = await toEmailKeyOnAll(s, T_REGISTER, T_USER_CONFIG)
+    const r_eka = await toEmailKeyOnAll(s, undefined, T_REGISTER, T_USER_CONFIG)
     if (r_eka.isErr()) {
         console.debug(`${s} is NOT both valid key for '${T_REGISTER}' & '${T_USER_CONFIG}'`);
         return

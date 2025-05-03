@@ -2,6 +2,10 @@
     "test": "test: {message}",
     "catch": "catch: {error}",
     "fatal": "fatal: {message}",
+    "param": {
+        "missing": "missing param(s) - {param}",
+        "invalid": "invalid param(s) - {param}"
+    },
     "id": {
         "invalid": "invalid {id} as id"
     },
@@ -80,6 +84,11 @@
         }
     },
     "get": {
+        "config": {
+            "err": "an error occur when getting config",
+            "fail": "get config failed",
+            "ok": "get config successfully"
+        },
         "db": {
             "fail_by_id": "missing item keyed by {id}",
             "fail_by_email": "missing item keyed by {email}",

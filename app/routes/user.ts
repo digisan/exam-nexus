@@ -62,7 +62,7 @@ route_app.openapi(
             },
             responses: {
                 200: {
-                    description: "返回所有用户的 ID 列表",
+                    description: "return user info",
                     content: {
                         "application/json": {
                             schema: UserResp,

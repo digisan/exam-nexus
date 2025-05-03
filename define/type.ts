@@ -45,7 +45,9 @@ export const toEmailKey = async <T extends TableType>(s: string | Email, table: 
 }
 
 export type EmailKeyOnAll<T extends readonly TableType[]> = Brand<string, `EmailKeyOnAll<${T & string}>`>;
-export const toEmailKeyOnAll = async<T extends readonly TableType[]>(s: string | Email, ...tables: T): Promise<Result<EmailKeyOnAll<T>, string>> => {
+export const toEmailKeyOnAll = async<T extends readonly TableType[]>(s: string | Email, ct?: TransFnType, ...tables: T): Promise<Result<EmailKeyOnAll<T>, string>> => {
+    const t = wrapOptT(ct);
+    if (!hasSome(tables)) return err(t('param.missing', { param: 'tables' }))
     for (const table of tables) {
         const r = await toEmailKey(s, table)
         if (r.isErr()) return err(r.error)

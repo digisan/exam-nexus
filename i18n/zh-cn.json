@@ -2,6 +2,10 @@
     "test": "测试消息: {message}",
     "catch": "异常错误: {error}",
     "fatal": "严重错误: {message}",
+    "param": {
+        "missing": "参数缺失 - {param}",
+        "invalid": "无效参数 - {param}"
+    },
     "id": {
         "invalid": "{id}为无效ID"
     },
@@ -80,6 +84,11 @@
         }
     },
     "get": {
+        "config": {
+            "err": "获取配置时错误发生",
+            "fail": "获取配置失败",
+            "ok": "获取配置成功"
+        },
         "db": {
             "fail_by_id": "缺少主键为{id}的元素",
             "fail_by_email": "缺少Email主键为{email}的元素",

@@ -5,6 +5,10 @@ export const lang = {
         test: "test: {message}",
         catch: "catch: {error}",
         fatal: "fatal: {message}",
+        param: {
+            missing: "missing param(s) - {param}",
+            invalid: "invalid param(s) - {param}",
+        },
         id: {
             invalid: "invalid {id} as id",
         },
@@ -83,6 +87,11 @@ export const lang = {
             },
         },
         get: {
+            config: {
+                err: "an error occur when getting config",
+                fail: "get config failed",
+                ok: "get config successfully",
+            },
             db: {
                 fail_by_id: "missing item keyed by {id}",
                 fail_by_email: "missing item keyed by {email}",
@@ -94,6 +103,10 @@ export const lang = {
         test: "测试消息: {message}",
         catch: "异常错误: {error}",
         fatal: "严重错误: {message}",
+        param: {
+            missing: "参数缺失 - {param}",
+            invalid: "无效参数 - {param}",
+        },
         id: {
             invalid: "{id}为无效ID",
         },
@@ -172,6 +185,11 @@ export const lang = {
             },
         },
         get: {
+            config: {
+                err: "获取配置时错误发生",
+                fail: "获取配置失败",
+                ok: "获取配置成功",
+            },
             db: {
                 fail_by_id: "缺少主键为{id}的元素",
                 fail_by_email: "缺少Email主键为{email}的元素",
@@ -185,6 +203,8 @@ const keys = [
     "test",
     "catch",
     "fatal",
+    "param.missing",
+    "param.invalid",
     "id.invalid",
     "email.invalid",
     "password.invalid",
@@ -222,6 +242,9 @@ const keys = [
     "set.config.err",
     "set.config.fail",
     "set.config.ok",
+    "get.config.err",
+    "get.config.fail",
+    "get.config.ok",
     "get.db.fail_by_id",
     "get.db.fail_by_email",
     "get.db.fail_by_field_value",
