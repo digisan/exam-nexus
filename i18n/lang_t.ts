@@ -6,7 +6,27 @@ export const lang = {
         catch: "catch: {error}",
         fatal: "fatal: {message}",
         id: {
-            invalid: "invalid id",
+            invalid: "invalid {id} as id",
+        },
+        email: {
+            invalid: "invalid {email} as email",
+        },
+        password: {
+            invalid: "invalid {password} as password",
+        },
+        region: {
+            invalid: "invalid {region} as region",
+        },
+        language: {
+            invalid: "invalid {language} as language",
+        },
+        credential: {
+            empty: "empty credential content",
+            invalid: "invalid credential format or content - {message}",
+        },
+        config: {
+            empty: "empty config content",
+            invalid: "invalid config format or content - {message}",
         },
         captcha: {
             err: "captcha CANNOT be verified as 3rd access error",
@@ -62,13 +82,40 @@ export const lang = {
                 ok: "set config successfully",
             },
         },
+        get: {
+            db: {
+                fail_by_id: "missing item keyed by {id}",
+                fail_by_email: "missing item keyed by {email}",
+                fail_by_field_value: "missing item by {field} and value {value}",
+            },
+        },
     } as const,
     "zh-CN": {
         test: "测试消息: {message}",
         catch: "异常错误: {error}",
         fatal: "严重错误: {message}",
         id: {
-            invalid: "非法ID",
+            invalid: "{id}为无效ID",
+        },
+        email: {
+            invalid: "{email}为无效Email格式",
+        },
+        password: {
+            invalid: "{password}为无效密码",
+        },
+        region: {
+            invalid: "{region}为无效区域",
+        },
+        language: {
+            invalid: "{language}为无效语言",
+        },
+        credential: {
+            empty: "身份验证内容为空",
+            invalid: "非法身份验证格式或内容 - {message}",
+        },
+        config: {
+            empty: "配置内容为空",
+            invalid: "非法配置格式或内容 - {message}",
         },
         captcha: {
             err: "验证码无法验证，因第三方访问错误",
@@ -82,7 +129,7 @@ export const lang = {
                 _: "服务暂时不可用，请稍后再试",
             },
             fail: {
-                invalid_id: "无效ID格式",
+                invalid_id: "无效ID",
                 invalid_email: "无效Email格式",
                 weak_password: "密码不符合强度要求",
                 invalid_credential: "无效的身份验证信息",
@@ -124,6 +171,13 @@ export const lang = {
                 ok: "设置配置成功",
             },
         },
+        get: {
+            db: {
+                fail_by_id: "缺少主键为{id}的元素",
+                fail_by_email: "缺少Email主键为{email}的元素",
+                fail_by_field_value: "缺少匹配字段{field}和其值为{value}的元素",
+            },
+        },
     } as const,
 };
 
@@ -132,6 +186,14 @@ const keys = [
     "catch",
     "fatal",
     "id.invalid",
+    "email.invalid",
+    "password.invalid",
+    "region.invalid",
+    "language.invalid",
+    "credential.empty",
+    "credential.invalid",
+    "config.empty",
+    "config.invalid",
     "captcha.err",
     "captcha.fail",
     "register.err.fmt_json",
@@ -160,6 +222,9 @@ const keys = [
     "set.config.err",
     "set.config.fail",
     "set.config.ok",
+    "get.db.fail_by_id",
+    "get.db.fail_by_email",
+    "get.db.fail_by_field_value",
 ] as const;
 
 import { createI18n } from "hono-i18n";

@@ -3,7 +3,27 @@
     "catch": "catch: {error}",
     "fatal": "fatal: {message}",
     "id": {
-        "invalid": "invalid id"
+        "invalid": "invalid {id} as id"
+    },
+    "email": {
+        "invalid": "invalid {email} as email"
+    },
+    "password": {
+        "invalid": "invalid {password} as password"
+    },
+    "region": {
+        "invalid": "invalid {region} as region"
+    },
+    "language": {
+        "invalid": "invalid {language} as language"
+    },
+    "credential": {
+        "empty": "empty credential content",
+        "invalid": "invalid credential format or content - {message}"
+    },
+    "config": {
+        "empty": "empty config content",
+        "invalid": "invalid config format or content - {message}"
     },
     "captcha": {
         "err": "captcha CANNOT be verified as 3rd access error",
@@ -57,6 +77,13 @@
             "err": "an error occur when setting config",
             "fail": "set config failed",
             "ok": "set config successfully"
+        }
+    },
+    "get": {
+        "db": {
+            "fail_by_id": "missing item keyed by {id}",
+            "fail_by_email": "missing item keyed by {email}",
+            "fail_by_field_value": "missing item by {field} and value {value}"
         }
     }
 }
