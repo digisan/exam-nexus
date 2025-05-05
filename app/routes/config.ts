@@ -3,7 +3,7 @@ import { currentFilename } from "@util/util.ts";
 import { createStrictT } from "@i18n/lang_t.ts";
 import { app } from "@app/app.ts";
 import { cc } from "@app/controllers/config.ts";
-import { toValidConfig, toEmailKeyOnAll } from "@define/type.ts";
+import { toEmailKeyOnAll, toValidConfig } from "@define/type.ts";
 import { T_REGISTER, T_USER_CONFIG } from "@define/system.ts";
 
 const route_app = new OpenAPIHono();
@@ -47,14 +47,14 @@ route_app.openapi(
         } as const,
     ),
     async (c) => {
-        const t = createStrictT(c)
+        const t = createStrictT(c);
 
-        const r_cfg = await toValidConfig(c.req.valid("json"))
-        if (r_cfg.isErr()) return c.json({ success: false, message: t('set.config.fail') }, 400)
+        const r_cfg = await toValidConfig(c.req.valid("json"));
+        if (r_cfg.isErr()) return c.json({ success: false, message: t("set.config.fail") }, 400);
 
         const result = await cc.setUserCfg(r_cfg.value);
-        if (result.isErr()) return c.json({ success: false, message: t('set.config.err') }, 500)
-        return c.json({ success: true, message: t('set.config.ok') }, 200)
+        if (result.isErr()) return c.json({ success: false, message: t("set.config.err") }, 500);
+        return c.json({ success: true, message: t("set.config.ok") }, 200);
     },
 );
 
@@ -89,12 +89,12 @@ route_app.openapi(
         } as const,
     ),
     async (c) => {
-        const t = createStrictT(c)
+        const t = createStrictT(c);
         const email = c.req.param("email");
-        const r = await toEmailKeyOnAll(email, t, T_REGISTER, T_USER_CONFIG)
-        if (r.isErr()) return c.json({ success: false, message: t('param.invalid', { param: 'email' }) }, 400)
+        const r = await toEmailKeyOnAll(email, t, T_REGISTER, T_USER_CONFIG);
+        if (r.isErr()) return c.json({ success: false, message: t("param.invalid", { param: "email" }) }, 400);
 
-        const cfg = await cc.getUserCfg(r.value)
+        const cfg = await cc.getUserCfg(r.value);
         return cfg ? c.json(cfg) : c.text(t(`get.config.fail`), 404);
     },
 );

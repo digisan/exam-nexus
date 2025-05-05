@@ -1,4 +1,3 @@
-
 import { isValidId } from "@define/type.ts";
 import { err } from "neverthrow";
 import { dbAgent as agent } from "@db/dbService.ts";
@@ -9,6 +8,6 @@ import { hasSome } from "@util/util.ts";
 export const log2db = async (msg: string, logId?: string, ct?: TransFnType) => {
     const id = hasSome(logId) ? logId : new Date().toISOString();
     const t = wrapOptT(ct);
-    if (!isValidId(id!)) return err(t(`id.invalid`))
-    await agent.setSingleRowData(T_TEST, id, { msg })
-}
+    if (!isValidId(id!)) return err(t(`id.invalid`));
+    await agent.setSingleRowData(T_TEST, id, { msg });
+};

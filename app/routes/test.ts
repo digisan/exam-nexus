@@ -1,5 +1,5 @@
 import { createRoute, OpenAPIHono, z } from "@hono/zod-openapi";
-import { getConnInfo } from 'hono/deno'
+import { getConnInfo } from "hono/deno";
 import { currentFilename } from "@util/util.ts";
 import { dbAgent as agent } from "@db/dbService.ts";
 import { getPublicIP } from "@util/net.ts";
@@ -72,8 +72,8 @@ route_app.openapi(
         } as const,
     ),
     async (c) => {
-        const id = "test_id"
-        if (!isValidId(id)) return c.text(`${id} error`, 400)
+        const id = "test_id";
+        if (!isValidId(id)) return c.text(`${id} error`, 400);
         await agent.insertDataRow(T_TEST, id, { msg: "my test message" });
         return c.text("insert test message to supabase table success");
     },
@@ -137,7 +137,7 @@ route_app.openapi(
         } as const,
     ),
     (c) => {
-        const info = getConnInfo(c)
+        const info = getConnInfo(c);
         return c.json({ ip: info.remote.address ?? "" });
     },
 );
@@ -155,7 +155,7 @@ route_app.openapi(
             description: "translate template test",
             request: {
                 query: z.object({ lang: z.string().optional() }),
-                headers: z.object({ 'x-lang': z.string().optional() }),
+                headers: z.object({ "x-lang": z.string().optional() }),
                 cookies: z.object({ lang: z.string().optional() }),
             },
             responses: {
@@ -171,8 +171,8 @@ route_app.openapi(
         } as const,
     ),
     (c) => {
-        const t = createStrictT(c)
-        return c.text(t(`test`, { message: `this is my test message` }))
+        const t = createStrictT(c);
+        return c.text(t(`test`, { message: `this is my test message` }));
     },
 );
 

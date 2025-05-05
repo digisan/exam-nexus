@@ -1,5 +1,5 @@
-import { assertEquals } from "jsr:@std/assert"
-import { bools2idx, len, lastElem, hasCertainProperty } from "@util/util.ts"
+import { assertEquals } from "jsr:@std/assert";
+import { bools2idx, hasCertainProperty, lastElem, len } from "@util/util.ts";
 import { getPublicIP } from "@util/net.ts";
 import { verifyHCaptcha } from "@util/captcha.ts";
 
@@ -19,33 +19,33 @@ Deno.test(async function verifyCaptcha() {
 });
 
 Deno.test(function Bools2Idx() {
-    const r = bools2idx(true, true, false)
-    console.log(r, r.toString(2).padStart(4, "0"))
+    const r = bools2idx(true, true, false);
+    console.log(r, r.toString(2).padStart(4, "0"));
 });
 
 Deno.test(function GetArrayLength() {
-    console.log(len(null))
-    console.log(len(undefined))
-    console.log(len([]))
-    console.log(len([123]))
+    console.log(len(null));
+    console.log(len(undefined));
+    console.log(len([]));
+    console.log(len([123]));
 });
 
 Deno.test(function GetLastElement() {
-    console.log(lastElem(null))
-    console.log(lastElem(undefined))
-    console.log(lastElem([]))
-    console.log(lastElem([123]))
+    console.log(lastElem(null));
+    console.log(lastElem(undefined));
+    console.log(lastElem([]));
+    console.log(lastElem([123]));
 });
 
 Deno.test(function HasCertainProperty() {
     const o = {
         a: 123,
-        b: 'str',
+        b: "str",
         next: {
-            c: true
-        }
-    }
-    console.log(hasCertainProperty(o, 'a', 'number'))
-    console.log(hasCertainProperty(o, 'next.c', 'boolean'))
-    console.log(hasCertainProperty(o, 'next.d', 'boolean'))
+            c: true,
+        },
+    };
+    console.log(hasCertainProperty(o, "a", "number"));
+    console.log(hasCertainProperty(o, "next.c", "boolean"));
+    console.log(hasCertainProperty(o, "next.d", "boolean"));
 });

@@ -10,6 +10,6 @@ export type RegionType = typeof REGIONS[number];
 
 export const LANGUAGES = [
     "en-AU",
-    "zh-CN"
+    "zh-CN",
 ] as const;
 export type LanguageType = typeof LANGUAGES[number];

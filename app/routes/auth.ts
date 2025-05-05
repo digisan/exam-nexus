@@ -62,25 +62,25 @@ route_app.openapi(
                         },
                     },
                 },
-                500: { description: "Internal Server Error" } // 数据库异常, 邮件服务崩溃 等
+                500: { description: "Internal Server Error" }, // 数据库异常, 邮件服务崩溃 等
             },
         } as const,
     ),
     async (c) => {
-        const t = createStrictT(c)
+        const t = createStrictT(c);
         const { email, password, captchaToken } = c.req.valid("json");
 
-        if (!isEmail(email)) return c.json({ success: false, message: t('register.fail.invalid_email') }, 400)
-        if (!isAllowedPassword(password)) return c.json({ success: false, message: t('register.fail.weak_password') }, 400)
+        if (!isEmail(email)) return c.json({ success: false, message: t("register.fail.invalid_email") }, 400);
+        if (!isAllowedPassword(password)) return c.json({ success: false, message: t("register.fail.weak_password") }, 400);
 
         const rCaptcha = await verifyHCaptcha(captchaToken);
-        if (rCaptcha.isErr()) return c.json({ success: false, message: t('captcha.err') }, 500)
-        if (!rCaptcha.value) return c.json({ success: false, message: t('captcha.fail') }, 400)
+        if (rCaptcha.isErr()) return c.json({ success: false, message: t("captcha.err") }, 500);
+        if (!rCaptcha.value) return c.json({ success: false, message: t("captcha.fail") }, 400);
 
         const result = await auth.register({ email, password }, t);
-        if (result.isErr()) return c.json({ success: false, message: t('register.fail._') }, 500)
-        return c.json({ success: true, message: t(`register.ok._`) }, 200)
-    }
+        if (result.isErr()) return c.json({ success: false, message: t("register.fail._") }, 500);
+        return c.json({ success: true, message: t(`register.ok._`) }, 200);
+    },
 );
 
 // ---------------------------------- //
@@ -127,25 +127,25 @@ route_app.openapi(
                 },
                 400: { description: "Bad Request" }, // 参数缺失
                 401: { description: "Unauthorized" }, // 账号或密码错误
-                500: { description: "Internal Server Error" }
+                500: { description: "Internal Server Error" },
             },
         } as const,
     ),
     async (c) => {
-        const t = createStrictT(c)
+        const t = createStrictT(c);
         const { email, password, captchaToken } = c.req.valid("json");
 
-        const r_cred = await toValidCredential({ email, password })
-        if (r_cred.isErr()) return c.json({ success: false, message: t('login.fail.invalid_credential') }, 400)
+        const r_cred = await toValidCredential({ email, password });
+        if (r_cred.isErr()) return c.json({ success: false, message: t("login.fail.invalid_credential") }, 400);
 
         const rCaptcha = await verifyHCaptcha(captchaToken);
-        if (rCaptcha.isErr()) return c.json({ success: false, message: t('captcha.err') }, 500)
-        if (!rCaptcha.value) return c.json({ success: false, message: t('captcha.fail') }, 400)
+        if (rCaptcha.isErr()) return c.json({ success: false, message: t("captcha.err") }, 500);
+        if (!rCaptcha.value) return c.json({ success: false, message: t("captcha.fail") }, 400);
 
         const result = await auth.login(r_cred.value, t);
-        if (result.isErr()) return c.json({ success: false, message: t('login.fail._') }, 500)
-        return c.json({ success: true, token: result.value, message: t(`login.ok._`) }, 200)
-    }
+        if (result.isErr()) return c.json({ success: false, message: t("login.fail._") }, 500);
+        return c.json({ success: true, token: result.value, message: t(`login.ok._`) }, 200);
+    },
 );
 
 // ---------------------------------- //
@@ -167,15 +167,15 @@ route_app.openapi(
             responses: {
                 204: { description: "Disable Token" },
                 401: { description: "Unauthorized" }, // 未登录或 token 失效
-                500: { description: "Internal Server Error" }
+                500: { description: "Internal Server Error" },
             },
         } as const,
     ),
     (c) => {
-        const { Authorization } = c.req.valid('header') // ✅ 自动校验，不再 undefined
-        const token = Authorization.split(' ')[1]
-        auth.logout(token)
-        return new Response(null, { status: 204 })
+        const { Authorization } = c.req.valid("header"); // ✅ 自动校验，不再 undefined
+        const token = Authorization.split(" ")[1];
+        auth.logout(token);
+        return new Response(null, { status: 204 });
     },
 );
 
@@ -191,7 +191,7 @@ route_app.openapi(
             responses: {
                 200: { description: "Valid Token" },
                 401: { description: "Unauthorized" },
-                500: { description: "Internal Server Error" }
+                500: { description: "Internal Server Error" },
             },
         } as const,
     ),

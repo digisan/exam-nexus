@@ -1,4 +1,4 @@
-import { toEmailKey, isValidLanguage, isValidRegion, toEmailKeyOnAll } from "@define/type.ts";
+import { isValidLanguage, isValidRegion, toEmailKey, toEmailKeyOnAll } from "@define/type.ts";
 import { T_REGISTER, T_USER_CONFIG } from "@define/system.ts";
 import { cc } from "./config.ts";
 
@@ -6,13 +6,13 @@ Deno.test(async function SetUserCfg() {
     const region = "au";
     if (!isValidRegion(region)) {
         console.debug(`${region} is NOT valid RegionType`);
-        return
+        return;
     }
 
-    const language = "en"
+    const language = "en";
     if (!isValidLanguage(language)) {
         console.debug(`${language} is NOT valid LanguageType`);
-        return
+        return;
     }
 
     const s = "123470@qq.com";
@@ -23,11 +23,11 @@ Deno.test(async function SetUserCfg() {
         return;
     }
 
-    const r_eka = await toEmailKeyOnAll(s, undefined, T_REGISTER, T_USER_CONFIG)
+    const r_eka = await toEmailKeyOnAll(s, undefined, T_REGISTER, T_USER_CONFIG);
     if (r_eka.isErr()) {
         console.debug(`${s} is NOT both valid key for '${T_REGISTER}' & '${T_USER_CONFIG}'`);
-        return
+        return;
     }
-    const r = await cc.getUserCfg(r_eka.value)
-    console.log(r)
+    const r = await cc.getUserCfg(r_eka.value);
+    console.log(r);
 });

@@ -12,7 +12,7 @@ class UserController {
             }
             return data.map((u) => u.email);
         }
-        return null
+        return null;
     }
 
     async getUserInfo(email: Email) {
@@ -25,7 +25,7 @@ class UserController {
             }
             return data.find((u) => u.email == email);
         }
-        return null
+        return null;
     }
 }
 

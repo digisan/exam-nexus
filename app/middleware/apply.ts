@@ -1,6 +1,6 @@
 import { jwt } from "hono/jwt";
 import { cors } from "hono/cors";
-import { i18nMiddleware, getI18n, type CtxType } from "@i18n/lang_t.ts";
+import { type CtxType, getI18n, i18nMiddleware } from "@i18n/lang_t.ts";
 import { app, blacklistToken } from "@app/app.ts";
 import { rateControl } from "@app/middleware/mw/rate.ts";
 import { env_get } from "@define/env.ts";
@@ -10,7 +10,7 @@ app.use(cors({
     origin: "*", // 允许所有来源
     allowMethods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allowHeaders: ["Content-Type", "Authorization"],
-    credentials: true
+    credentials: true,
 }));
 
 // Locale Language
@@ -34,7 +34,7 @@ const getToken = (c: CtxType): string | null => {
     const auth = c.req.header("Authorization");
     if (!auth || !auth.startsWith("Bearer ")) return null;
     return auth.split(" ")[1];
-}
+};
 
 authPaths.forEach((path) => {
     // standard JWT
@@ -44,8 +44,8 @@ authPaths.forEach((path) => {
     app.use(path, async (c: CtxType, next) => {
         const token = getToken(c);
         if (!token || blacklistToken.has(token)) {
-            const t = getI18n(c)
-            return c.json({ message: t('token.fail._') }, 401);
+            const t = getI18n(c);
+            return c.json({ message: t("token.fail._") }, 401);
         }
         await next();
     });

@@ -41,7 +41,8 @@
     "deploy": {
         "project": "exam-nexus",
         "exclude": [
-            "**/node_modules"
+            "**/node_modules",
+            "./deno.lock"
         ],
         "include": [],
         "entrypoint": "main.ts"

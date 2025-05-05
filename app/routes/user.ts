@@ -78,7 +78,7 @@ route_app.openapi(
     async (c) => {
         const email = c.req.param("email");
         if (!isEmail(email)) {
-            return c.text("Email format error", 400)
+            return c.text("Email format error", 400);
         }
         const user = await uc.getUserInfo(email);
         return user ? c.json(user) : c.text("User not found", 404);
