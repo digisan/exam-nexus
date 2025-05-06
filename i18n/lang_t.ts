@@ -74,7 +74,15 @@ export const lang = {
                 _: "Login successfully, token sent",
             },
         },
+        logout: {
+            ok: {
+                _: "Logout",
+            },
+        },
         token: {
+            ok: {
+                _: "Token is valid",
+            },
             fail: {
                 _: "Token is invalid",
             },
@@ -172,7 +180,15 @@ export const lang = {
                 _: "登录成功，令牌已发送",
             },
         },
+        logout: {
+            ok: {
+                _: "已登出",
+            },
+        },
         token: {
+            ok: {
+                _: "有效令牌",
+            },
             fail: {
                 _: "令牌无效或失效",
             },
@@ -238,6 +254,8 @@ const keys = [
     "login.fail._",
     "login.ok.__",
     "login.ok._",
+    "logout.ok._",
+    "token.ok._",
     "token.fail._",
     "set.config.err",
     "set.config.fail",

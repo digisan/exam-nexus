@@ -1,31 +1,33 @@
 import type { Email } from "@define/type.ts";
+import { err, ok, Result } from "neverthrow";
 import { fileExists, singleton } from "@util/util.ts";
+import type { Data } from "@db/dbService.ts";
 
 class UserController {
-    async getUserList() {
+    async getUserList(): Promise<Result<Data, string>> {
         const filePath = "./data/users.json";
         if (await fileExists(filePath)) {
             const content = await Deno.readTextFile(filePath);
             const data = JSON.parse(content);
             if (!Array.isArray(data)) {
-                return null;
+                return ok(null);
             }
-            return data.map((u) => u.email);
+            return ok(data.map((u) => u.email));
         }
-        return null;
+        return err(`invalid filePath - ${filePath}`);
     }
 
-    async getUserInfo(email: Email) {
+    async getUserInfo(email: Email): Promise<Result<Data, string>> {
         const filePath = "./data/users.json";
         if (await fileExists(filePath)) {
             const content = await Deno.readTextFile(filePath);
             const data = JSON.parse(content);
             if (!Array.isArray(data)) {
-                return null;
+                return ok(null);
             }
-            return data.find((u) => u.email == email);
+            return ok(data.find((u) => u.email == email));
         }
-        return null;
+        return err(`invalid filePath - ${filePath}`);
     }
 }
 

@@ -45,7 +45,7 @@ authPaths.forEach((path) => {
         const token = getToken(c);
         if (!token || blacklistToken.has(token)) {
             const t = getI18n(c);
-            return c.json({ message: t("token.fail._") }, 401);
+            return c.text(t("token.fail._"), 401);
         }
         await next();
     });

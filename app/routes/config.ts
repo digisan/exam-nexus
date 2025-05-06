@@ -1,5 +1,5 @@
 import { createRoute, OpenAPIHono, z } from "@hono/zod-openapi";
-import { currentFilename } from "@util/util.ts";
+import { currentFilename, sameStruct } from "@util/util.ts";
 import { createStrictT } from "@i18n/lang_t.ts";
 import { app } from "@app/app.ts";
 import { cc } from "@app/controllers/config.ts";
@@ -10,11 +10,11 @@ const route_app = new OpenAPIHono();
 
 // /////////////////////////////////////////////////////////////////////////////////////
 
-const ConfigReqBody = z.object({
+const ConfigReq = {
     email: z.string().email("Invalid email address"),
     region: z.string(),
     lang: z.string(),
-});
+};
 
 route_app.openapi(
     createRoute(
@@ -28,7 +28,7 @@ route_app.openapi(
                     description: "Update Config Request Body",
                     content: {
                         "application/json": {
-                            schema: ConfigReqBody,
+                            schema: z.object(ConfigReq),
                             example: { // 添加测试参数输入
                                 email: "email as id",
                                 region: "au",
@@ -39,7 +39,16 @@ route_app.openapi(
                 },
             },
             responses: {
-                200: { description: "Update Config Successful" },
+                200: {
+                    description: "Update Config Successful",
+                    content: {
+                        "application/json": {
+                            schema: z.object({
+                                message: z.string().openapi({ example: "update ok" }),
+                            }),
+                        },
+                    },
+                },
                 400: { description: "Bad Request" },
                 401: { description: "Unauthorized" },
                 500: { description: "Internal Server Error" }, // 数据库异常, 邮件服务崩溃 等
@@ -50,21 +59,21 @@ route_app.openapi(
         const t = createStrictT(c);
 
         const r_cfg = await toValidConfig(c.req.valid("json"));
-        if (r_cfg.isErr()) return c.json({ success: false, message: t("set.config.fail") }, 400);
+        if (r_cfg.isErr()) return c.text(t("set.config.fail"), 400);
 
         const result = await cc.setUserCfg(r_cfg.value);
-        if (result.isErr()) return c.json({ success: false, message: t("set.config.err") }, 500);
-        return c.json({ success: true, message: t("set.config.ok") }, 200);
+        if (result.isErr()) return c.text(t("set.config.err"), 500);
+        return c.json({ message: t("set.config.ok") }, 200);
     },
 );
 
 // ---------------------------------- //
 
-const ConfigResp = z.object({
+const ConfigResp = {
     email: z.string().email().openapi({ example: "user@email.com" }),
     region: z.string().openapi({ example: "au" }),
     lang: z.string().openapi({ example: "en-AU" }),
-});
+};
 
 route_app.openapi(
     createRoute(
@@ -73,18 +82,24 @@ route_app.openapi(
             path: "/{email}",
             tags: ["Config"],
             // security: [{ BearerAuth: [] }],
+            request: {
+                params: z.object(
+                    { email: z.string().email() },
+                ),
+            },
             responses: {
                 200: {
                     description: "return user config",
                     content: {
                         "application/json": {
-                            schema: ConfigResp,
+                            schema: z.object(ConfigResp),
                         },
                     },
                 },
-                400: { description: "非法输入, email有误" },
+                400: { description: "invalid email param" },
                 401: { description: "Unauthorized" },
-                404: { description: "用户ID下的配置未找到" },
+                404: { description: "Cannot find config by its ID" },
+                500: { description: "Internal Server Error" },
             },
         } as const,
     ),
@@ -92,10 +107,14 @@ route_app.openapi(
         const t = createStrictT(c);
         const email = c.req.param("email");
         const r = await toEmailKeyOnAll(email, t, T_REGISTER, T_USER_CONFIG);
-        if (r.isErr()) return c.json({ success: false, message: t("param.invalid", { param: "email" }) }, 400);
+        if (r.isErr()) return c.text(t("param.invalid", { param: email }), 400);
 
-        const cfg = await cc.getUserCfg(r.value);
-        return cfg ? c.json(cfg) : c.text(t(`get.config.fail`), 404);
+        const r_cfg = await cc.getUserCfg(r.value);
+        if (r_cfg.isErr()) return c.text(t(`get.config.fail`), 404);
+
+        if (!sameStruct(r_cfg.value!, ConfigResp, true)) return c.text(t(`get.config.err`), 500);
+
+        return c.json(r_cfg.value, 200);
     },
 );
 

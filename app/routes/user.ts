@@ -8,9 +8,9 @@ const route_app = new OpenAPIHono();
 
 // /////////////////////////////////////////////////////////////////////////////////////
 
-// const UserlistResp = z.object({
+// const UserlistResp = {
 //     userIds: z.array(z.string()).openapi({ example: ['123', '456'] }),
-// })
+// }
 
 const UserlistResp = z.array(z.string()).openapi({
     example: ["email_1", "email_2"],
@@ -35,20 +35,23 @@ route_app.openapi(
                 },
                 204: { description: "列表为空" },
                 401: { description: "Unauthorized" },
+                500: { description: "Internal Server Error" },
             },
         } as const,
     ),
     async (c) => {
-        return c.json(await uc.getUserList());
+        const r = await uc.getUserList()
+        if (r.isErr()) return c.text(`Internal Server Error`, 500)
+        return c.json(r.value, 200);
     },
 );
 
 // ---------------------------------- //
 
-const UserResp = z.object({
+const UserResp = {
     email: z.string().email().openapi({ example: "张三@EMAIL.COM" }),
     password: z.string().openapi({ example: "bcrypted...password..." }),
-});
+};
 
 route_app.openapi(
     createRoute(
@@ -65,13 +68,14 @@ route_app.openapi(
                     description: "return user info",
                     content: {
                         "application/json": {
-                            schema: UserResp,
+                            schema: z.object(UserResp),
                         },
                     },
                 },
                 400: { description: "非法输入, email格式有误?" },
                 401: { description: "Unauthorized" },
                 404: { description: "用户 ID 未找到" },
+                500: { description: "Internal Server Error" },
             },
         } as const,
     ),
@@ -80,8 +84,10 @@ route_app.openapi(
         if (!isEmail(email)) {
             return c.text("Email format error", 400);
         }
-        const user = await uc.getUserInfo(email);
-        return user ? c.json(user) : c.text("User not found", 404);
+        const r = await uc.getUserInfo(email);
+        if (r.isErr()) return c.text(`Internal Server Error`, 500)
+        const user = r.value;
+        return user ? c.json(user, 200) : c.text("User not found", 404);
     },
 );
 

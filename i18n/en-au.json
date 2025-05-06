@@ -71,7 +71,15 @@
             "_": "Login successfully, token sent"
         }
     },
+    "logout": {
+        "ok": {
+            "_": "Logout"
+        }
+    },
     "token": {
+        "ok": {
+            "_": "Token is valid"
+        },
         "fail": {
             "_": "Token is invalid"
         }

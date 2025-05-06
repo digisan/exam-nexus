@@ -24,5 +24,5 @@ app.openapi(
             },
         } as const,
     ),
-    (c) => c.text("HELLO EXAM-NEXUS"),
+    (c) => c.text("HELLO EXAM-NEXUS"), // exception for return OK as text!
 );

@@ -33,16 +33,18 @@ export const unorderedArraysEqual = <T>(a: T[], b: T[]): boolean => {
 
 export const unorderedSetsEqual = <T>(a: T[], b: T[]): boolean => unorderedArraysEqual([...new Set(a)], [...new Set(b)]);
 
-export const haveSameStructure = (a: object, b: object): boolean => {
+export const sameStruct = (a: object, b: object, ignoreType: boolean = false): boolean => {
     const aKeys = Object.keys(a);
     const bKeys = Object.keys(b);
     if (aKeys.length !== bKeys.length) return false;
     const aKeySet = new Set(aKeys);
     for (const key of bKeys) {
         if (!aKeySet.has(key)) return false;
-        const aType = typeof (a as Record<string, unknown>)[key];
-        const bType = typeof (b as Record<string, unknown>)[key];
-        if (aType !== bType) return false;
+        if (!ignoreType) {
+            const aType = typeof (a as Record<string, unknown>)[key];
+            const bType = typeof (b as Record<string, unknown>)[key];
+            if (aType !== bType) return false;
+        }
     }
     return true;
 };
@@ -52,11 +54,11 @@ const isResult = <T, E>(value: unknown): value is Result<T, E> => {
     return typeof value === "object" && value !== null && "isOk" in value && "isErr" in value;
 };
 
-export const hasSome = <T, E>(input: Result<T, E> | T): boolean => {
+export const some = <T, E>(input: Result<T, E> | T): boolean => {
     // 如果是 Result 对象
     if (isResult<T, E>(input)) {
         if (input.isErr()) return false;
-        return hasSome(input.value);
+        return some(input.value);
     }
 
     const val = input;

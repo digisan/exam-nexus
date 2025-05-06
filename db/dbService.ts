@@ -1,5 +1,5 @@
 import { err, ok, Result } from "neverthrow";
-import { firstWord, hasSome, singleton } from "@util/util.ts";
+import { firstWord, some, singleton } from "@util/util.ts";
 import { createClient } from "@supabase/supabase-js";
 import type { Email, EmailKey, Id, IdKey } from "@define/type.ts";
 import { isValidId, toIdKey } from "@define/type.ts";
@@ -83,8 +83,8 @@ class SupabaseAgent {
             .eq("id", id);
 
         if (error) return err(error.message);
-        if (!data) return err("Fetch succeeded but no data returned");
-        if (!hasSome(data)) return ok(null);
+        // if (!data) return err("Fetch succeeded but no data returned");
+        if (!some(data)) return ok(null);
         if (Array.isArray(data) && data.length === 1) return ok(data[0]);
         return ok(data);
     }
@@ -142,8 +142,8 @@ class SupabaseAgent {
             .limit(1);
 
         if (error) return err(error.message);
-        if (!data) return err("Fetch succeeded but no data returned");
-        if (!hasSome(data)) return ok(null);
+        // if (!data) return err("Fetch succeeded but no data returned");
+        if (!some(data)) return ok(null);
         if (Array.isArray(data) && data.length === 1) return ok(data[0]);
         return ok(data);
     }
@@ -163,7 +163,7 @@ class SupabaseAgent {
         if (!isValidId(id)) return err(`${id} is invalid format`);
         const r = await this.getDataRow(table, id);
         if (r.isErr()) return err(r.error);
-        if (hasSome(r) && "data" in r.value!) return ok(r.value.data as JSONObject);
+        if (some(r) && "data" in r.value!) return ok(r.value.data as JSONObject);
         return ok(null);
     }
 
@@ -177,7 +177,7 @@ class SupabaseAgent {
         if (!isValidId(id)) return err(`${id} is invalid format`);
         const r = await this.upsertDataRow(table, id, normalizeData(value));
         if (r.isErr()) return r;
-        if (hasSome(value)) return ok(r.value.data as JSONObject); // if there are some new data, return new data
+        if (some(value)) return ok(r.value.data as JSONObject); // if there are some new data, return new data
         return ok(prevData?.isOk() ? prevData.value : null); // delete action, return previous data
     }
 

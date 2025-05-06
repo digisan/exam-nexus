@@ -138,7 +138,7 @@ route_app.openapi(
     ),
     (c) => {
         const info = getConnInfo(c);
-        return c.json({ ip: info.remote.address ?? "" });
+        return c.json({ ip: info.remote.address ?? "" }, 200);
     },
 );
 
@@ -172,7 +172,7 @@ route_app.openapi(
     ),
     (c) => {
         const t = createStrictT(c);
-        return c.text(t(`test`, { message: `this is my test message` }));
+        return c.text(t(`test`, { message: `this is my test message` }), 200); // exception for return OK as text!
     },
 );
 

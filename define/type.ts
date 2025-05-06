@@ -3,7 +3,7 @@ import { type TransFnType, wrapOptT } from "@i18n/lang_t.ts";
 import { dbAgent as agent } from "@db/dbService.ts";
 import { LANGUAGES, type LanguageType, REGIONS, type RegionType } from "@define/config.ts";
 import { T_REGISTER, type TableType } from "@define/system.ts";
-import { hasCertainProperty, hasSome, RE_EMAIL, RE_PWD } from "@util/util.ts";
+import { hasCertainProperty, some, RE_EMAIL, RE_PWD } from "@util/util.ts";
 
 type Brand<T, B> = T & { readonly __brand: B; readonly __exact: T; readonly __types: T };
 
@@ -27,7 +27,7 @@ export type IdKey<T extends TableType> = Brand<string, `IdKey<${T}>`>;
 export const toIdKey = async <T extends TableType>(s: string | Id, table: T, ct?: TransFnType): Promise<Result<IdKey<T>, string>> => {
     const t = wrapOptT(ct);
     if (!isValidId(s)) return err(t("id.invalid"));
-    if (!hasSome(await agent.getDataRow(table, s))) return err(t("get.db.fail_by_id", { id: s }));
+    if (!some(await agent.getDataRow(table, s))) return err(t("get.db.fail_by_id", { id: s }));
     return ok(s as unknown as IdKey<T>);
 };
 
@@ -40,14 +40,14 @@ export type EmailKey<T extends TableType> = Brand<string, `EmailKey<${T}>`>;
 export const toEmailKey = async <T extends TableType>(s: string | Email, table: T, ct?: TransFnType): Promise<Result<EmailKey<T>, string>> => {
     const t = wrapOptT(ct);
     if (!isValidId(s) || !isEmail(s)) return err(t("email.invalid"));
-    if (!hasSome(await agent.getDataRow(table, s))) return err(t("get.db.fail_by_email", { email: s }));
+    if (!some(await agent.getDataRow(table, s))) return err(t("get.db.fail_by_email", { email: s }));
     return ok(s as unknown as EmailKey<T>);
 };
 
 export type EmailKeyOnAll<T extends readonly TableType[]> = Brand<string, `EmailKeyOnAll<${T & string}>`>;
 export const toEmailKeyOnAll = async <T extends readonly TableType[]>(s: string | Email, ct?: TransFnType, ...tables: T): Promise<Result<EmailKeyOnAll<T>, string>> => {
     const t = wrapOptT(ct);
-    if (!hasSome(tables)) return err(t("param.missing", { param: "tables" }));
+    if (!some(tables)) return err(t("param.missing", { param: "tables" }));
     for (const table of tables) {
         const r = await toEmailKey(s, table);
         if (r.isErr()) return err(r.error);
@@ -70,7 +70,7 @@ export const toIdRef = async <T1 extends TableType, F extends string, T2 extends
     if (r_k.isErr()) return err(r_k.error);
     const r = await agent.firstDataRow(table, field, s);
     if (r.isErr()) return err(r.error);
-    if (!hasSome(r.value)) return err(t("get.db.fail_by_field_value"));
+    if (!some(r.value)) return err(t("get.db.fail_by_field_value"));
     return ok(s as unknown as IdRef<T1, F, T2>);
 };
 
@@ -79,7 +79,7 @@ export const toIdRef = async <T1 extends TableType, F extends string, T2 extends
 export type Credential = Brand<{ email: Email; password: Password }, `Credential`>;
 export const toValidCredential = async (c: object | null, ct?: TransFnType): Promise<Result<Credential, string>> => {
     const t = wrapOptT(ct);
-    if (!hasSome(c)) return err(t("credential.empty"));
+    if (!some(c)) return err(t("credential.empty"));
 
     if (!hasCertainProperty(c!, "email", "string")) return err(t("credential.invalid", { message: "email" }));
     if (!hasCertainProperty(c!, "password", "string")) return err(t("credential.invalid", { message: "password" }));
@@ -94,7 +94,7 @@ export const toValidCredential = async (c: object | null, ct?: TransFnType): Pro
 export type Config = Brand<{ email: Email; region: Region; lang: Language }, `Config`>;
 export const toValidConfig = async (c: object | null, ct?: TransFnType): Promise<Result<Config, string>> => {
     const t = wrapOptT(ct);
-    if (!hasSome(c)) return err(t("config.empty"));
+    if (!some(c)) return err(t("config.empty"));
 
     if (!hasCertainProperty(c!, "email", "string")) return err(t("config.invalid", { message: "email" }));
     if (!hasCertainProperty(c!, "region", "string")) return err(t("config.invalid", { message: "region" }));

@@ -10,11 +10,11 @@ const route_app = new OpenAPIHono();
 
 // /////////////////////////////////////////////////////////////////////////////////////
 
-const RegisterReqBody = z.object({
+const RegisterReq = {
     email: z.string().email("Invalid email address"),
     password: z.string().min(8, "Password must be at least 8 characters"),
     captchaToken: z.string().min(1, "Captcha token is required"),
-});
+};
 
 // 创建 OpenAPI 路由
 route_app.openapi(
@@ -29,7 +29,7 @@ route_app.openapi(
                     description: "Register request body",
                     content: {
                         "application/json": {
-                            schema: RegisterReqBody,
+                            schema: z.object(RegisterReq),
                             example: { // 添加测试参数输入
                                 email: "john.doe@example.com",
                                 password: "secure-password-123",
@@ -44,24 +44,13 @@ route_app.openapi(
                     description: "Registration successful",
                     content: {
                         "application/json": {
-                            schema: z.object({
-                                success: z.boolean().openapi({ example: true }),
-                                message: z.string().openapi({ example: "registered" }),
-                            }),
+                            schema: z.object(
+                                { message: z.string().openapi({ example: "registered" }) },
+                            ),
                         },
                     },
                 },
-                400: {
-                    description: "Bad request", // 邮箱格式错误, 密码太弱, 用户已存在
-                    content: {
-                        "application/json": {
-                            schema: z.object({
-                                success: z.boolean().openapi({ example: false }),
-                                message: z.string().openapi({ example: "failed" }),
-                            }),
-                        },
-                    },
-                },
+                400: { description: "Bad Request" }, // 邮箱格式错误, 密码太弱, 用户已存在
                 500: { description: "Internal Server Error" }, // 数据库异常, 邮件服务崩溃 等
             },
         } as const,
@@ -70,26 +59,26 @@ route_app.openapi(
         const t = createStrictT(c);
         const { email, password, captchaToken } = c.req.valid("json");
 
-        if (!isEmail(email)) return c.json({ success: false, message: t("register.fail.invalid_email") }, 400);
-        if (!isAllowedPassword(password)) return c.json({ success: false, message: t("register.fail.weak_password") }, 400);
+        if (!isEmail(email)) return c.text(t("register.fail.invalid_email"), 400);
+        if (!isAllowedPassword(password)) return c.text(t("register.fail.weak_password"), 400);
 
         const rCaptcha = await verifyHCaptcha(captchaToken);
-        if (rCaptcha.isErr()) return c.json({ success: false, message: t("captcha.err") }, 500);
-        if (!rCaptcha.value) return c.json({ success: false, message: t("captcha.fail") }, 400);
+        if (rCaptcha.isErr()) return c.text(t("captcha.err"), 500);
+        if (!rCaptcha.value) return c.text(t("captcha.fail"), 400);
 
         const result = await auth.register({ email, password }, t);
-        if (result.isErr()) return c.json({ success: false, message: t("register.fail._") }, 500);
-        return c.json({ success: true, message: t(`register.ok._`) }, 200);
+        if (result.isErr()) return c.text(t("register.fail._"), 500);
+        return c.json({ message: t(`register.ok._`) }, 201);
     },
 );
 
 // ---------------------------------- //
 
-const LoginReqBody = z.object({
+const LoginReq = {
     email: z.string().email("Invalid email address"),
     password: z.string().min(8, "Password must be at least 8 characters"),
     captchaToken: z.string().min(1, "Captcha token is required"),
-});
+};
 
 route_app.openapi(
     createRoute(
@@ -103,7 +92,7 @@ route_app.openapi(
                     description: "Login request body",
                     content: {
                         "application/json": {
-                            schema: LoginReqBody,
+                            schema: z.object(LoginReq),
                             example: { // 添加测试参数输入
                                 email: "john.doe@example.com",
                                 password: "password123",
@@ -136,15 +125,15 @@ route_app.openapi(
         const { email, password, captchaToken } = c.req.valid("json");
 
         const r_cred = await toValidCredential({ email, password });
-        if (r_cred.isErr()) return c.json({ success: false, message: t("login.fail.invalid_credential") }, 400);
+        if (r_cred.isErr()) return c.text(t("login.fail.invalid_credential"), 400);
 
         const rCaptcha = await verifyHCaptcha(captchaToken);
-        if (rCaptcha.isErr()) return c.json({ success: false, message: t("captcha.err") }, 500);
-        if (!rCaptcha.value) return c.json({ success: false, message: t("captcha.fail") }, 400);
+        if (rCaptcha.isErr()) return c.text(t("captcha.err"), 500);
+        if (!rCaptcha.value) return c.text(t("captcha.fail"), 400);
 
         const result = await auth.login(r_cred.value, t);
-        if (result.isErr()) return c.json({ success: false, message: t("login.fail._") }, 500);
-        return c.json({ success: true, token: result.value, message: t(`login.ok._`) }, 200);
+        if (result.isErr()) return c.text(t("login.fail._"), 500);
+        return c.json({ message: t(`login.ok._`), token: result.value }, 200);
     },
 );
 
@@ -165,17 +154,28 @@ route_app.openapi(
                 }),
             },
             responses: {
-                204: { description: "Disable Token" },
-                401: { description: "Unauthorized" }, // 未登录或 token 失效
+                200: {
+                    description: "Token Disabled",
+                    content: {
+                        "application/json": {
+                            schema: z.object({
+                                message: z.string().openapi({ example: "ok" }),
+                            }),
+                        },
+                    },
+                },
+                401: { description: "Unauthorized" },
                 500: { description: "Internal Server Error" },
             },
         } as const,
     ),
     (c) => {
+        const t = createStrictT(c);
         const { Authorization } = c.req.valid("header"); // ✅ 自动校验，不再 undefined
         const token = Authorization.split(" ")[1];
         auth.logout(token);
-        return new Response(null, { status: 204 });
+        return c.json({ message: t(`logout.ok._`) }, 200);
+        // return new Response(null, { status: 204 });
     },
 );
 
@@ -189,13 +189,25 @@ route_app.openapi(
             path: "/validate-token",
             tags: ["Auth"],
             responses: {
-                200: { description: "Valid Token" },
+                200: {
+                    description: "Token is valid",
+                    content: {
+                        "application/json": {
+                            schema: z.object({
+                                message: z.string().openapi({ example: "ok" }),
+                            }),
+                        },
+                    },
+                },
                 401: { description: "Unauthorized" },
                 500: { description: "Internal Server Error" },
             },
         } as const,
     ),
-    (_c) => new Response(null, { status: 200 }),
+    (c) => {
+        const t = createStrictT(c);
+        return c.json({ message: t(`token.ok._`) }, 200);
+    },
 );
 
 // /////////////////////////////////////////////////////////////////////////////////////
