@@ -64,6 +64,7 @@ if (import.meta.main) {
 
     import { createI18n } from "hono-i18n";
     import { getCookie } from "hono/cookie";
+    import { type Context } from "hono";
 
     export const { i18nMiddleware, getI18n } = createI18n({
         messages: ${messages},
@@ -73,9 +74,8 @@ if (import.meta.main) {
 
     export type TransKeyType = typeof keys[number]
     export type TransFnType = (key: TransKeyType, params?: Record<string, unknown>) => string
-    export type CtxType = Parameters<typeof getI18n>[0]
 
-    export const createStrictT = (c: CtxType): TransFnType => getI18n(c) as TransFnType
+    export const createStrictT = (c: Context): TransFnType => getI18n(c) as TransFnType
     export const wrapOptT = (t?: TransFnType): (s: TransKeyType, params?: Record<string, unknown>) => string => t ?? ((s: TransKeyType) => s + "*");
     `;
         Deno.writeTextFileSync(out_lang, content, { append: true });

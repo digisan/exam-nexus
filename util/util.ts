@@ -1,6 +1,9 @@
 import { err, ok, Result } from "neverthrow";
 import { basename, extname, fromFileUrl } from "jsr:@std/path";
 
+// import { getConnInfo } from "hono/deno";
+// type CtxType = Parameters<typeof getConnInfo>[0];
+
 const TYPES = ["string", "number", "boolean", "undefined", "object", "function", "symbol", "bigint"] as const;
 export type Typable = typeof TYPES[number];
 
@@ -14,8 +17,6 @@ export const lastElem = <T>(arr: T[] | null | undefined): T | undefined => arr?.
 export const false2err = (b: boolean, errMsg: string = "false as error"): Result<boolean, string> => !b ? err(errMsg) : ok(b);
 
 export const true2err = (b: boolean, errMsg: string = "true as error"): Result<boolean, string> => b ? err(errMsg) : ok(b);
-
-export const bools2idx = (...flags: boolean[]): number => flags.reduce((acc, flag, i) => acc | (+flag << (flags.length - 1 - i)), 0);
 
 export const firstWord = (sql: string): string | null => sql.trim().split(/\s+/)[0] ?? null;
 
@@ -60,7 +61,6 @@ export const some = <T, E>(input: Result<T, E> | T): boolean => {
         if (input.isErr()) return false;
         return some(input.value);
     }
-
     const val = input;
     if (val === null || val === undefined) return false;
     if (typeof val === "number" && isNaN(val)) return false;

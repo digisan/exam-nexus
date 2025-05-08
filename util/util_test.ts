@@ -1,5 +1,5 @@
 import { assertEquals } from "jsr:@std/assert";
-import { bools2idx, hasCertainProperty, lastElem, len } from "@util/util.ts";
+import { hasCertainProperty, lastElem, len } from "@util/util.ts";
 import { getPublicIP } from "@util/net.ts";
 import { verifyHCaptcha } from "@util/captcha.ts";
 
@@ -16,11 +16,6 @@ Deno.test(async function verifyCaptcha() {
     } else {
         console.error("Error:", result.error);
     }
-});
-
-Deno.test(function Bools2Idx() {
-    const r = bools2idx(true, true, false);
-    console.log(r, r.toString(2).padStart(4, "0"));
 });
 
 Deno.test(function GetArrayLength() {

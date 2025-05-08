@@ -5,15 +5,20 @@ import { app } from "@app/app.ts";
 import { cc } from "@app/controllers/config.ts";
 import { toEmailKeyOnAll, toValidConfig } from "@define/type.ts";
 import { T_REGISTER, T_USER_CONFIG } from "@define/system.ts";
+import { zodErrorHandler } from "@app/routes/handler/zod_err.ts";
 
-const route_app = new OpenAPIHono();
+const route_app = new OpenAPIHono({ defaultHook: zodErrorHandler });
 
 // /////////////////////////////////////////////////////////////////////////////////////
 
-const ConfigReq = {
+const ConfigUpdateReq = {
     email: z.string().email("Invalid email address"),
     region: z.string(),
     lang: z.string(),
+};
+
+const ConfigUpdateResp = {
+    message: z.string().openapi({ example: "update ok" })
 };
 
 route_app.openapi(
@@ -28,7 +33,7 @@ route_app.openapi(
                     description: "Update Config Request Body",
                     content: {
                         "application/json": {
-                            schema: z.object(ConfigReq),
+                            schema: z.object(ConfigUpdateReq),
                             example: { // 添加测试参数输入
                                 email: "email as id",
                                 region: "au",
@@ -43,9 +48,7 @@ route_app.openapi(
                     description: "Update Config Successful",
                     content: {
                         "application/json": {
-                            schema: z.object({
-                                message: z.string().openapi({ example: "update ok" }),
-                            }),
+                            schema: z.object(ConfigUpdateResp),
                         },
                     },
                 },
@@ -69,7 +72,11 @@ route_app.openapi(
 
 // ---------------------------------- //
 
-const ConfigResp = {
+const ConfigGetReq = {
+    email: z.string().email()
+};
+
+const ConfigGetResp = {
     email: z.string().email().openapi({ example: "user@email.com" }),
     region: z.string().openapi({ example: "au" }),
     lang: z.string().openapi({ example: "en-AU" }),
@@ -83,16 +90,14 @@ route_app.openapi(
             tags: ["Config"],
             // security: [{ BearerAuth: [] }],
             request: {
-                params: z.object(
-                    { email: z.string().email() },
-                ),
+                params: z.object(ConfigGetReq),
             },
             responses: {
                 200: {
                     description: "return user config",
                     content: {
                         "application/json": {
-                            schema: z.object(ConfigResp),
+                            schema: z.object(ConfigGetResp),
                         },
                     },
                 },
@@ -112,7 +117,7 @@ route_app.openapi(
         const r_cfg = await cc.getUserCfg(r.value);
         if (r_cfg.isErr()) return c.text(t(`get.config.fail`), 404);
 
-        if (!sameStruct(r_cfg.value!, ConfigResp, true)) return c.text(t(`get.config.err`), 500);
+        if (!sameStruct(r_cfg.value!, ConfigGetResp, true)) return c.text(t(`get.config.err`), 500);
 
         return c.json(r_cfg.value, 200);
     },

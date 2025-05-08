@@ -1,14 +1,12 @@
 import { getConnInfo } from "hono/deno";
-import { type Next } from "hono";
+import type { Context, Next } from "hono";
 
 const mRateLimit = new Map();
 
 export const rateControl = (limit = 5, duration = 2 * 1000, blockTime = 5 * 1000) => {
-    type c_type = Parameters<typeof getConnInfo>[0];
-    return async (c: c_type, next: Next) => {
+    return async (c: Context, next: Next) => {
         const info = getConnInfo(c);
         const ip = info.remote.address;
-
         const path = c.req.path;
         const key = `${ip}:${path}`;
 

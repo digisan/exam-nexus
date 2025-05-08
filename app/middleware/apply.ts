@@ -1,6 +1,7 @@
 import { jwt } from "hono/jwt";
 import { cors } from "hono/cors";
-import { type CtxType, getI18n, i18nMiddleware } from "@i18n/lang_t.ts";
+import { type Context } from "hono";
+import { getI18n, i18nMiddleware } from "@i18n/lang_t.ts";
 import { app, blacklistToken } from "@app/app.ts";
 import { rateControl } from "@app/middleware/mw/rate.ts";
 import { env_get } from "@define/env.ts";
@@ -30,7 +31,7 @@ const authPaths = [
     "/api/config/*",
 ];
 
-const getToken = (c: CtxType): string | null => {
+const getToken = (c: Context): string | null => {
     const auth = c.req.header("Authorization");
     if (!auth || !auth.startsWith("Bearer ")) return null;
     return auth.split(" ")[1];
@@ -41,7 +42,7 @@ authPaths.forEach((path) => {
     app.use(path, mw_jwt);
 
     // manual logout blacklist check
-    app.use(path, async (c: CtxType, next) => {
+    app.use(path, async (c: Context, next) => {
         const token = getToken(c);
         if (!token || blacklistToken.has(token)) {
             const t = getI18n(c);
