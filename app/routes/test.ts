@@ -8,8 +8,9 @@ import { isValidId } from "@define/type.ts";
 import { app } from "@app/app.ts";
 import { env_get } from "@define/env.ts";
 import { createStrictT } from "@i18n/lang_t.ts";
+import { zodErrorHandler } from "@app/routes/handler/zod_err.ts";
 
-const route_app = new OpenAPIHono();
+const route_app = new OpenAPIHono({ defaultHook: zodErrorHandler });
 
 // /////////////////////////////////////////////////////////////////////////////////////
 

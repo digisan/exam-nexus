@@ -6,6 +6,14 @@
         "missing": "missing param(s) - {param}",
         "invalid": "invalid param(s) - {param}"
     },
+    "req": {
+        "missing": "missing req(s) - {req}",
+        "invalid": "invalid req(s) - {req}"
+    },
+    "resp": {
+        "missing": "missing resp(s) - {resp}",
+        "invalid": "invalid resp(s) - {resp}"
+    },
     "id": {
         "invalid": "invalid {id} as id"
     },

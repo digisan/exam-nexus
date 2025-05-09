@@ -3,7 +3,7 @@ import { type TransFnType, wrapOptT } from "@i18n/lang_t.ts";
 import { dbAgent as agent } from "@db/dbService.ts";
 import { LANGUAGES, type LanguageType, REGIONS, type RegionType } from "@define/config.ts";
 import { T_REGISTER, type TableType } from "@define/system.ts";
-import { hasCertainProperty, some, RE_EMAIL, RE_PWD } from "@util/util.ts";
+import { hasCertainProperty, RE_EMAIL, RE_PWD, some } from "@util/util.ts";
 
 type Brand<T, B> = T & { readonly __brand: B; readonly __exact: T; readonly __types: T };
 

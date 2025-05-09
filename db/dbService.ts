@@ -1,5 +1,5 @@
 import { err, ok, Result } from "neverthrow";
-import { firstWord, some, singleton } from "@util/util.ts";
+import { firstWord, singleton, some } from "@util/util.ts";
 import { createClient } from "@supabase/supabase-js";
 import type { Email, EmailKey, Id, IdKey } from "@define/type.ts";
 import { isValidId, toIdKey } from "@define/type.ts";

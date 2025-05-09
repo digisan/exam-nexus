@@ -9,6 +9,14 @@ export const lang = {
             missing: "missing param(s) - {param}",
             invalid: "invalid param(s) - {param}",
         },
+        req: {
+            missing: "missing req(s) - {req}",
+            invalid: "invalid req(s) - {req}",
+        },
+        resp: {
+            missing: "missing resp(s) - {resp}",
+            invalid: "invalid resp(s) - {resp}",
+        },
         id: {
             invalid: "invalid {id} as id",
         },
@@ -114,6 +122,14 @@ export const lang = {
         param: {
             missing: "参数缺失 - {param}",
             invalid: "无效参数 - {param}",
+        },
+        req: {
+            missing: "请求内容缺失(s) - {req}",
+            invalid: "请求内容无效(s) - {req}",
+        },
+        resp: {
+            missing: "回复内容缺失(s) - {resp}",
+            invalid: "回复内容无效(s) - {resp}",
         },
         id: {
             invalid: "{id}为无效ID",
@@ -221,6 +237,10 @@ const keys = [
     "fatal",
     "param.missing",
     "param.invalid",
+    "req.missing",
+    "req.invalid",
+    "resp.missing",
+    "resp.invalid",
     "id.invalid",
     "email.invalid",
     "password.invalid",
