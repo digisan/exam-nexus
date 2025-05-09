@@ -1,5 +1,6 @@
 {
     "test": "测试消息: {message}",
+    "welcome": "欢迎来到EXAM-NEXUS",
     "catch": "异常错误: {error}",
     "fatal": "严重错误: {message}",
     "param": {

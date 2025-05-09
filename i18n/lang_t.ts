@@ -3,6 +3,7 @@
 export const lang = {
     "en-AU": {
         test: "test: {message}",
+        welcome: "welcome to exam-nexus",
         catch: "catch: {error}",
         fatal: "fatal: {message}",
         param: {
@@ -117,6 +118,7 @@ export const lang = {
     } as const,
     "zh-CN": {
         test: "测试消息: {message}",
+        welcome: "欢迎来到EXAM-NEXUS",
         catch: "异常错误: {error}",
         fatal: "严重错误: {message}",
         param: {
@@ -233,6 +235,7 @@ export const lang = {
 
 const keys = [
     "test",
+    "welcome",
     "catch",
     "fatal",
     "param.missing",

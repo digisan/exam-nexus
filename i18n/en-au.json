@@ -1,5 +1,6 @@
 {
     "test": "test: {message}",
+    "welcome": "welcome to exam-nexus",
     "catch": "catch: {error}",
     "fatal": "fatal: {message}",
     "param": {
