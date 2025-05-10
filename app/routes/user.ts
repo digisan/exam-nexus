@@ -4,11 +4,9 @@ import { isEmail } from "@define/type.ts";
 import { app } from "@app/app.ts";
 import { uc } from "@app/controllers/userLocal.ts";
 import { zodErrorHandler } from "@app/routes/handler/zod_err.ts";
-import { createStrictT } from "@i18n/lang_t.ts";
+import { n204, t400, t404, t500 } from "@app/routes/handler/resp.ts";
 
 const route_app = new OpenAPIHono({ defaultHook: zodErrorHandler });
-
-// /////////////////////////////////////////////////////////////////////////////////////
 
 {
     // const RespSchema = {
@@ -35,24 +33,22 @@ const route_app = new OpenAPIHono({ defaultHook: zodErrorHandler });
                             },
                         },
                     },
-                    204: { description: "列表为空" },
+                    204: { description: "Empty List" },
                     401: { description: "Unauthorized" },
                     500: { description: "Internal Server Error" },
                 },
             } as const,
         ),
         async (c) => {
-            const t = createStrictT(c);
             const r = await uc.getUserList();
-            if (r.isErr()) return c.text(`Internal Server Error`, 500);
+            if (r.isErr()) return t500(c, "fatal", { message: r.error });
 
             const data = r.value;
-            return RespSchema.safeParse(data).success ? c.json(data, 200) : c.text(t(`resp.invalid`, { resp: data }), 500);
+            if (!some(data)) return n204([]);
+            return RespSchema.safeParse(data).success ? c.json(data) : t500(c, "resp.invalid", { resp: data });
         },
     );
 }
-
-// ---------------------------------- //
 
 {
     const ReqSchema = z.object({
@@ -91,21 +87,16 @@ const route_app = new OpenAPIHono({ defaultHook: zodErrorHandler });
             } as const,
         ),
         async (c) => {
-            const t = createStrictT(c);
             const email = c.req.param("email");
-            if (!isEmail(email)) {
-                return c.text("Email format error", 400);
-            }
+            if (!isEmail(email)) return t400(c, "email.invalid");
             const r = await uc.getUserInfo(email);
-            if (r.isErr()) return c.text(`Internal Server Error`, 500);
+            if (r.isErr()) return t500(c, "fatal", { message: r.error });
 
             const data = r.value;
-            if (!some(data)) return c.text("User not found", 404);
-            return RespSchema.safeParse(data).success ? c.json(data, 200) : c.text(t(`resp.invalid`, { resp: data }), 500);
+            if (!some(data)) return t404(c, "get.user.not_found", { user: email });
+            return RespSchema.safeParse(data).success ? c.json(data) : t500(c, "resp.invalid", { resp: data });
         },
     );
 }
-
-// /////////////////////////////////////////////////////////////////////////////////////
 
 app.route(`/api/${currentFilename(import.meta.url, false)}`, route_app);

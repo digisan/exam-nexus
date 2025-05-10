@@ -1,8 +1,13 @@
 {
+    "success": "success: {message}",
     "test": "test: {message}",
     "welcome": "welcome to exam-nexus",
     "catch": "catch: {error}",
     "fatal": "fatal: {message}",
+    "access": {
+        "block_frequently": "too many request, temporarily blocked",
+        "wait_frequently": "too many request, access later"
+    },
     "param": {
         "missing": "missing param(s) - {param}",
         "invalid": "invalid param(s) - {param}"
@@ -110,6 +115,9 @@
             "fail_by_id": "missing item keyed by {id}",
             "fail_by_email": "missing item keyed by {email}",
             "fail_by_field_value": "missing item by {field} and value {value}"
+        },
+        "user": {
+            "not_found": "missing user keyed by {user}"
         }
     }
 }

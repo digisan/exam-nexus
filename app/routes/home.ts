@@ -1,6 +1,7 @@
 import { createRoute, z } from "@hono/zod-openapi";
 import { app } from "@app/app.ts";
 import { createStrictT } from "@i18n/lang_t.ts";
+import { t500 } from "@app/routes/handler/resp.ts";
 
 // Example homepage for api with doc
 //
@@ -35,7 +36,7 @@ import { createStrictT } from "@i18n/lang_t.ts";
         (c) => {
             const t = createStrictT(c);
             const data = { success: true, message: t(`welcome`) };
-            return RespSchema.safeParse(data).success ? c.json(data, 200) : c.text(t(`resp.invalid`, { resp: data }), 500);
+            return RespSchema.safeParse(data).success ? c.json(data) : t500(c, "resp.invalid", { resp: data });
         },
     );
 }

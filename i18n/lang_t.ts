@@ -2,10 +2,15 @@
 
 export const lang = {
     "en-AU": {
+        success: "success: {message}",
         test: "test: {message}",
         welcome: "welcome to exam-nexus",
         catch: "catch: {error}",
         fatal: "fatal: {message}",
+        access: {
+            block_frequently: "too many request, temporarily blocked",
+            wait_frequently: "too many request, access later",
+        },
         param: {
             missing: "missing param(s) - {param}",
             invalid: "invalid param(s) - {param}",
@@ -114,13 +119,21 @@ export const lang = {
                 fail_by_email: "missing item keyed by {email}",
                 fail_by_field_value: "missing item by {field} and value {value}",
             },
+            user: {
+                not_found: "missing user keyed by {user}",
+            },
         },
     } as const,
     "zh-CN": {
+        success: "返回成功: {message}",
         test: "测试消息: {message}",
         welcome: "欢迎来到EXAM-NEXUS",
         catch: "异常错误: {error}",
         fatal: "严重错误: {message}",
+        access: {
+            block_frequently: "过于频繁访问, 暂时停止服务",
+            wait_frequently: "过于频繁访问, 稍后再次访问",
+        },
         param: {
             missing: "参数缺失 - {param}",
             invalid: "无效参数 - {param}",
@@ -225,19 +238,25 @@ export const lang = {
                 ok: "获取配置成功",
             },
             db: {
-                fail_by_id: "缺少主键为{id}的元素",
-                fail_by_email: "缺少Email主键为{email}的元素",
-                fail_by_field_value: "缺少匹配字段{field}和其值为{value}的元素",
+                fail_by_id: "缺失主键为{id}的元素",
+                fail_by_email: "缺失Email主键为{email}的元素",
+                fail_by_field_value: "缺失匹配字段{field}和其值为{value}的元素",
+            },
+            user: {
+                not_found: "缺失主键为{user}的用户信息",
             },
         },
     } as const,
 };
 
 const keys = [
+    "success",
     "test",
     "welcome",
     "catch",
     "fatal",
+    "access.block_frequently",
+    "access.wait_frequently",
     "param.missing",
     "param.invalid",
     "req.missing",
@@ -289,6 +308,7 @@ const keys = [
     "get.db.fail_by_id",
     "get.db.fail_by_email",
     "get.db.fail_by_field_value",
+    "get.user.not_found",
 ] as const;
 
 import { createI18n } from "hono-i18n";

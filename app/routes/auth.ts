@@ -6,10 +6,9 @@ import { auth } from "@app/controllers/auth.ts";
 import { verifyHCaptcha } from "@util/captcha.ts";
 import { currentFilename } from "@util/util.ts";
 import { zodErrorHandler } from "@app/routes/handler/zod_err.ts";
+import { t400, t401, t402, t403, t500 } from "@app/routes/handler/resp.ts";
 
 const route_app = new OpenAPIHono({ defaultHook: zodErrorHandler });
-
-// /////////////////////////////////////////////////////////////////////////////////////
 
 {
     const ReqSchema = z.object({
@@ -64,18 +63,18 @@ const route_app = new OpenAPIHono({ defaultHook: zodErrorHandler });
             const t = createStrictT(c);
             const { email, password, captchaToken } = c.req.valid("json");
 
-            if (!isEmail(email)) return c.text(t("register.fail.invalid_email"), 400);
-            if (!isAllowedPassword(password)) return c.text(t("register.fail.weak_password"), 400);
+            if (!isEmail(email)) return t400(c, "register.fail.invalid_email");
+            if (!isAllowedPassword(password)) return t400(c, "register.fail.weak_password");
 
             const rCaptcha = await verifyHCaptcha(captchaToken);
-            if (rCaptcha.isErr()) return c.text(t("captcha.err"), 500);
-            if (!rCaptcha.value) return c.text(t("captcha.fail"), 400);
+            if (rCaptcha.isErr()) return t500(c, "captcha.err");
+            if (!rCaptcha.value) return t400(c, "captcha.fail");
 
             const result = await auth.register({ email, password }, t);
-            if (result.isErr()) return c.text(t("register.fail._"), 500);
+            if (result.isErr()) return t500(c, "register.fail._");
 
             const data = { success: true, message: t(`register.ok._`) };
-            return RespSchema.safeParse(data).success ? c.json(data, 200) : c.text(t(`resp.invalid`, { resp: data }), 500);
+            return RespSchema.safeParse(data).success ? c.json(data, 201) : t500(c, "resp.invalid", { resp: data });
         },
     );
 }
@@ -135,17 +134,17 @@ const route_app = new OpenAPIHono({ defaultHook: zodErrorHandler });
             const { email, password, captchaToken } = c.req.valid("json");
 
             const r_cred = await toValidCredential({ email, password });
-            if (r_cred.isErr()) return c.text(t("login.fail.invalid_credential"), 400);
+            if (r_cred.isErr()) return t400(c, "login.fail.invalid_credential");
 
             const rCaptcha = await verifyHCaptcha(captchaToken);
-            if (rCaptcha.isErr()) return c.text(t("captcha.err"), 500);
-            if (!rCaptcha.value) return c.text(t("captcha.fail"), 400);
+            if (rCaptcha.isErr()) return t500(c, "captcha.err");
+            if (!rCaptcha.value) return t400(c, "captcha.fail");
 
             const result = await auth.login(r_cred.value, t);
-            if (result.isErr()) return c.text(t("login.fail._"), 500);
+            if (result.isErr()) return t500(c, "login.fail._");
 
             const data = { success: true, message: t(`login.ok._`), token: result.value };
-            return RespSchema.safeParse(data).success ? c.json(data, 200) : c.text(t(`resp.invalid`, { resp: data }), 500);
+            return RespSchema.safeParse(data).success ? c.json(data) : t500(c, "resp.invalid", { resp: data });
         },
     );
 }
@@ -193,8 +192,7 @@ const route_app = new OpenAPIHono({ defaultHook: zodErrorHandler });
             auth.logout(token);
 
             const data = { success: true, message: t(`logout.ok._`) };
-            return RespSchema.safeParse(data).success ? c.json(data, 200) : c.text(t(`resp.invalid`, { resp: data }), 500);
-            // return new Response(null, { status: 204 });
+            return RespSchema.safeParse(data).success ? c.json(data) : t500(c, "resp.invalid", { resp: data });
         },
     );
 }
@@ -229,11 +227,9 @@ const route_app = new OpenAPIHono({ defaultHook: zodErrorHandler });
         (c) => {
             const t = createStrictT(c);
             const data = { success: true, message: t(`token.ok._`) };
-            return RespSchema.safeParse(data).success ? c.json(data, 200) : c.text(t(`resp.invalid`, { resp: data }), 500);
+            return RespSchema.safeParse(data).success ? c.json(data) : t500(c, "resp.invalid", { resp: data });
         },
     );
 }
-
-// /////////////////////////////////////////////////////////////////////////////////////
 
 app.route(`/api/${currentFilename(import.meta.url, false)}`, route_app);

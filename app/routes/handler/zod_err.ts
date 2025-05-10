@@ -4,6 +4,7 @@ import type { Context, ValidationTargets } from "hono";
 import { isValidLanguage, type Language } from "@define/type.ts";
 import { type LanguageType } from "@define/config.ts";
 import { hasCertainProperty } from "@util/util.ts";
+import { t500 } from "@app/routes/handler/resp.ts";
 
 const VALIDATION = [
     "email",
@@ -101,7 +102,7 @@ const createZodErrorHandler = () => {
     ) => {
         if (!result.success) {
             const lang = c.req.query("lang") || c.req.header("x-lang") || getCookie(c, "lang") || "zh-CN" || "en-AU";
-            if (!isValidLanguage(lang)) return c.text("Internal Server Error (lang)", 500);
+            if (!isValidLanguage(lang)) return t500(c, "req.invalid", { req: lang });
             let body: Record<string, unknown> = {};
             try {
                 body = await c.req.json();
@@ -110,7 +111,7 @@ const createZodErrorHandler = () => {
             }
             const raw = { ...c.req.param(), ...c.req.query(), ...body };
             const messages = translateZodIssues(result.error.issues, raw, lang);
-            return c.text(messages.join("\n"), 400);
+            return c.text(messages.join("\n"), 400); // only here, 'c.text' for text returning (as already translated).
         }
     };
 };

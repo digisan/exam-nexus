@@ -6,11 +6,47 @@ import { cc } from "@app/controllers/config.ts";
 import { toEmailKeyOnAll, toValidConfig } from "@define/type.ts";
 import { T_REGISTER, T_USER_CONFIG } from "@define/system.ts";
 import { zodErrorHandler } from "@app/routes/handler/zod_err.ts";
+import { LANGUAGES, REGIONS } from "@define/config.ts";
+import { t400, t404, t500 } from "@app/routes/handler/resp.ts";
 
 const route_app = new OpenAPIHono({ defaultHook: zodErrorHandler });
 
-// /////////////////////////////////////////////////////////////////////////////////////
+// Get System Const Config
+{
+    const RespSchema = z.object({
+        regions: z.array(z.string()).openapi({ example: ["cn", "au"] }),
+        languages: z.array(z.string()).openapi({ example: ["zh-CN", "en-AU"] }),
+    });
 
+    route_app.openapi(
+        createRoute(
+            {
+                method: "get",
+                path: "/const_list",
+                tags: ["Config"],
+                // security: [{ BearerAuth: [] }],
+                responses: {
+                    200: {
+                        description: "Return list of all CONST config",
+                        content: {
+                            "application/json": {
+                                schema: RespSchema,
+                            },
+                        },
+                    },
+                    401: { description: "Unauthorized" },
+                    500: { description: "Internal Server Error" },
+                },
+            } as const,
+        ),
+        (c) => {
+            const data = { regions: REGIONS, languages: LANGUAGES };
+            return RespSchema.safeParse(data).success ? c.json(data) : t500(c, "resp.invalid", { resp: data });
+        },
+    );
+}
+
+// Update User Config
 {
     const ReqSchema = z.object({
         email: z.string().email("Invalid email address"),
@@ -64,17 +100,18 @@ const route_app = new OpenAPIHono({ defaultHook: zodErrorHandler });
             const t = createStrictT(c);
 
             const r_cfg = await toValidConfig(c.req.valid("json"));
-            if (r_cfg.isErr()) return c.text(t("set.config.fail"), 400);
+            if (r_cfg.isErr()) return t400(c, "set.config.fail");
 
             const result = await cc.setUserCfg(r_cfg.value);
-            if (result.isErr()) return c.text(t("set.config.err"), 500);
+            if (result.isErr()) return t500(c, "set.config.err");
 
             const data = { success: true, message: t("set.config.ok") };
-            return RespSchema.safeParse(data).success ? c.json(data, 200) : c.text(t(`resp.invalid`, { resp: data }), 500);
+            return RespSchema.safeParse(data).success ? c.json(data) : t500(c, "resp.invalid", { resp: data });
         },
     );
 }
 
+// Get User Config
 {
     const ReqSchema = z.object({
         email: z.string().email(),
@@ -116,17 +153,15 @@ const route_app = new OpenAPIHono({ defaultHook: zodErrorHandler });
             const t = createStrictT(c);
             const email = c.req.param("email");
             const r = await toEmailKeyOnAll(email, t, T_REGISTER, T_USER_CONFIG);
-            if (r.isErr()) return c.text(t("param.invalid", { param: email }), 400);
+            if (r.isErr()) return t400(c, "param.invalid", { param: email });
 
             const r_cfg = await cc.getUserCfg(r.value);
-            if (r_cfg.isErr()) return c.text(t(`get.config.fail`), 404);
+            if (r_cfg.isErr()) return t404(c, "get.config.fail");
 
             const data = r_cfg.value;
-            return RespSchema.safeParse(data).success ? c.json(data, 200) : c.text(t(`resp.invalid`, { resp: data }), 500);
+            return RespSchema.safeParse(data).success ? c.json(data) : t500(c, "resp.invalid", { resp: data });
         },
     );
 }
-
-// /////////////////////////////////////////////////////////////////////////////////////
 
 app.route(`/api/${currentFilename(import.meta.url, false)}`, route_app);

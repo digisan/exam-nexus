@@ -1,5 +1,6 @@
 import { getConnInfo } from "hono/deno";
 import type { Context, Next } from "hono";
+import { t429 } from "@app/routes/handler/resp.ts";
 
 const mRateLimit = new Map();
 
@@ -22,7 +23,7 @@ export const rateControl = (limit = 5, duration = 2 * 1000, blockTime = 5 * 1000
 
         if (record.blockedUntil > now) {
             // record.blockedUntil = now + blockTime
-            return c.text("Too Many Requests - Access Later", 429);
+            return t429(c, "access.wait_frequently");
         }
 
         // normal access
@@ -35,7 +36,7 @@ export const rateControl = (limit = 5, duration = 2 * 1000, blockTime = 5 * 1000
 
         if (record.count > limit) {
             record.blockedUntil = now + blockTime;
-            return c.text("Too Many Requests - Temporarily Blocked", 429);
+            return t429(c, "access.block_frequently");
         }
 
         await next();

@@ -1,8 +1,13 @@
 {
+    "success": "返回成功: {message}",
     "test": "测试消息: {message}",
     "welcome": "欢迎来到EXAM-NEXUS",
     "catch": "异常错误: {error}",
     "fatal": "严重错误: {message}",
+    "access": {
+        "block_frequently": "过于频繁访问, 暂时停止服务",
+        "wait_frequently": "过于频繁访问, 稍后再次访问"
+    },
     "param": {
         "missing": "参数缺失 - {param}",
         "invalid": "无效参数 - {param}"
@@ -107,9 +112,12 @@
             "ok": "获取配置成功"
         },
         "db": {
-            "fail_by_id": "缺少主键为{id}的元素",
-            "fail_by_email": "缺少Email主键为{email}的元素",
-            "fail_by_field_value": "缺少匹配字段{field}和其值为{value}的元素"
+            "fail_by_id": "缺失主键为{id}的元素",
+            "fail_by_email": "缺失Email主键为{email}的元素",
+            "fail_by_field_value": "缺失匹配字段{field}和其值为{value}的元素"
+        },
+        "user": {
+            "not_found": "缺失主键为{user}的用户信息"
         }
     }
 }

@@ -1,10 +1,11 @@
 import { jwt } from "hono/jwt";
 import { cors } from "hono/cors";
 import { type Context } from "hono";
-import { getI18n, i18nMiddleware } from "@i18n/lang_t.ts";
+import { i18nMiddleware } from "@i18n/lang_t.ts";
 import { app, blacklistToken } from "@app/app.ts";
 import { rateControl } from "@app/middleware/mw/rate.ts";
 import { env_get } from "@define/env.ts";
+import { t401 } from "@app/routes/handler/resp.ts";
 
 // CORS
 app.use(cors({
@@ -44,10 +45,7 @@ authPaths.forEach((path) => {
     // manual logout blacklist check
     app.use(path, async (c: Context, next) => {
         const token = getToken(c);
-        if (!token || blacklistToken.has(token)) {
-            const t = getI18n(c);
-            return c.text(t("token.fail._"), 401);
-        }
+        if (!token || blacklistToken.has(token)) return t401(c, "token.fail._");
         await next();
     });
 });
