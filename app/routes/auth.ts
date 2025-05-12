@@ -26,10 +26,13 @@ const route_app = new OpenAPIHono({ defaultHook: zodErrorHandler });
     route_app.openapi(
         createRoute(
             {
+                operationId: "REGISTER",
                 method: "post",
                 path: "/register",
                 tags: ["Auth"],
                 security: [], // without swagger UI jwt security
+                summary: "REGISTER",
+                description: "Sign up a user",
                 request: {
                     body: {
                         description: "Register request body",
@@ -95,10 +98,13 @@ const route_app = new OpenAPIHono({ defaultHook: zodErrorHandler });
     route_app.openapi(
         createRoute(
             {
+                operationId: "LOGIN",
                 method: "post",
                 path: "/login",
                 tags: ["Auth"],
                 security: [], // without swagger UI jwt security
+                summary: "LOGIN",
+                description: "User login",
                 request: {
                     body: {
                         description: "Login request body",
@@ -165,9 +171,12 @@ const route_app = new OpenAPIHono({ defaultHook: zodErrorHandler });
     route_app.openapi(
         createRoute(
             {
+                operationId: "LOGOUT",
                 method: "post",
                 path: "/logout",
                 tags: ["Auth"],
+                summary: "LOGOUT",
+                description: "User logout",
                 request: {
                     headers: ReqSchema,
                 },
@@ -207,9 +216,12 @@ const route_app = new OpenAPIHono({ defaultHook: zodErrorHandler });
     route_app.openapi(
         createRoute(
             {
+                operationId: "VALIDATE_TOKEN",
                 method: "get",
                 path: "/validate-token",
                 tags: ["Auth"],
+                summary: "VALIDATE_TOKEN",
+                description: "Validate a token",
                 responses: {
                     200: {
                         description: "Token is valid",

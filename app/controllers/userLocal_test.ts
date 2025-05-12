@@ -10,5 +10,5 @@ Deno.test(async function UserCtrlInfo() {
     if (!isEmail(email)) {
         return;
     }
-    console.log(await uc.getUserInfo(email));
+    console.log(await uc.getUserReg(email));
 });

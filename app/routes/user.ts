@@ -20,13 +20,16 @@ const route_app = new OpenAPIHono({ defaultHook: zodErrorHandler });
     route_app.openapi(
         createRoute(
             {
+                operationId: "USER_LIST",
                 method: "get",
                 path: "/list",
                 tags: ["User"],
                 // security: [{ BearerAuth: [] }],
+                summary: "USER_LIST",
+                description: "List of user ID(email)",
                 responses: {
                     200: {
-                        description: "返回所有用户的 ID 列表",
+                        description: "Get list of user ID",
                         content: {
                             "application/json": {
                                 schema: RespSchema,
@@ -63,25 +66,28 @@ const route_app = new OpenAPIHono({ defaultHook: zodErrorHandler });
     route_app.openapi(
         createRoute(
             {
+                operationId: "USER_REG",
                 method: "get",
-                path: "/{email}",
+                path: "/reg/{email}",
                 tags: ["User"],
                 // security: [{ BearerAuth: [] }],
+                summary: "USER_REG",
+                description: "Get a user's reg by its ID(email)",
                 request: {
                     params: ReqSchema,
                 },
                 responses: {
                     200: {
-                        description: "return user info",
+                        description: "return user registration successfully",
                         content: {
                             "application/json": {
                                 schema: RespSchema,
                             },
                         },
                     },
-                    400: { description: "非法输入, email格式有误?" },
+                    400: { description: "Invalid request, email incorrect?" },
                     401: { description: "Unauthorized" },
-                    404: { description: "用户 ID 未找到" },
+                    404: { description: "Not Found User by ID(email)" },
                     500: { description: "Internal Server Error" },
                 },
             } as const,
@@ -89,7 +95,7 @@ const route_app = new OpenAPIHono({ defaultHook: zodErrorHandler });
         async (c) => {
             const email = c.req.param("email");
             if (!isEmail(email)) return t400(c, "email.invalid");
-            const r = await uc.getUserInfo(email);
+            const r = await uc.getUserReg(email);
             if (r.isErr()) return t500(c, "fatal", { message: r.error });
 
             const data = r.value;

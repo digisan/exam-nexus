@@ -16,10 +16,13 @@ const route_app = new OpenAPIHono({ defaultHook: zodErrorHandler });
     route_app.openapi(
         createRoute(
             {
+                operationId: "ENVVAR",
                 method: "get",
                 path: "/env",
                 tags: ["_Test"],
                 security: [], // without swagger UI jwt security
+                summary: "ENVVAR",
+                description: "Get environment variables",
                 responses: {
                     200: {
                         description: "Test Environment Variables",
@@ -47,13 +50,16 @@ const route_app = new OpenAPIHono({ defaultHook: zodErrorHandler });
     route_app.openapi(
         createRoute(
             {
+                operationId: "INSERT_SB_TEST",
                 method: "post",
                 path: "/sb_insert",
                 tags: ["_Test"],
                 security: [], // without swagger UI jwt security
+                summary: "INSERT_SB_TEST",
+                description: "Insert data to supabase",
                 responses: {
                     200: {
-                        description: "insert message to a supabase table",
+                        description: "insert test data to a supabase table",
                         content: {
                             "text/plain": {
                                 schema: z.string(),
@@ -77,16 +83,16 @@ const route_app = new OpenAPIHono({ defaultHook: zodErrorHandler });
     route_app.openapi(
         createRoute(
             {
+                operationId: "SERVER_IP",
                 method: "get",
                 path: "/pub_ip",
-                operationId: "getPublicIP",
                 tags: ["_Test"],
                 security: [], // without swagger UI jwt security
-                summary: "本地公网 IP",
-                description: "返回服务器的公网 IP 地址",
+                summary: "SERVER_IP",
+                description: "Server public IP",
                 responses: {
                     200: {
-                        description: "成功获取公网 IP",
+                        description: "Get IP successfully",
                         content: {
                             "application/json": {
                                 schema: z.object({
@@ -108,16 +114,16 @@ const route_app = new OpenAPIHono({ defaultHook: zodErrorHandler });
     route_app.openapi(
         createRoute(
             {
+                operationId: "CLIENT_PUB_IP",
                 method: "get",
                 path: "/client_ip",
-                operationId: "getClientAccessIP",
                 tags: ["_Test"],
                 security: [], // without swagger UI jwt security
-                summary: "访问者IP",
-                description: "返回访问者的公网 IP 地址",
+                summary: "CLIENT_PUB_IP",
+                description: "Client public IP",
                 responses: {
                     200: {
-                        description: "成功获取访问者 IP",
+                        description: "Get IP successfully",
                         content: {
                             "application/json": {
                                 schema: z.object({
@@ -140,12 +146,13 @@ const route_app = new OpenAPIHono({ defaultHook: zodErrorHandler });
     route_app.openapi(
         createRoute(
             {
+                operationId: "I18N_TEST",
                 method: "get",
                 path: "/translate",
                 tags: ["_Test"],
                 security: [], // without swagger UI jwt security
-                summary: "translate template",
-                description: "translate template test",
+                summary: "I18N_TEST",
+                description: "translate & template test",
                 request: {
                     query: z.object({ lang: z.string().optional() }),
                     headers: z.object({ "x-lang": z.string().optional() }),

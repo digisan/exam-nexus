@@ -17,7 +17,7 @@ class UserController {
         return err(`invalid filePath - ${filePath}`);
     }
 
-    async getUserInfo(email: Email): Promise<Result<Data, string>> {
+    async getUserReg(email: Email): Promise<Result<Data, string>> {
         const filePath = "./data/users.json";
         if (await fileExists(filePath)) {
             const content = await Deno.readTextFile(filePath);

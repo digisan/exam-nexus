@@ -14,10 +14,11 @@ import { t500 } from "@app/routes/handler/resp.ts";
     app.openapi(
         createRoute(
             {
+                operationId: "ROOT",
                 method: "get",
                 path: "/",
-                summary: "Root API",
-                description: "hello exam-nexus",
+                summary: "ROOT",
+                description: "HELLO Exam-Nexus",
                 tags: ["Root"],
                 security: [], // without swagger UI jwt security
                 responses: {

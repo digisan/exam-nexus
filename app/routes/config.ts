@@ -21,13 +21,16 @@ const route_app = new OpenAPIHono({ defaultHook: zodErrorHandler });
     route_app.openapi(
         createRoute(
             {
+                operationId: "CFG_CONSTS",
                 method: "get",
                 path: "/const_list",
                 tags: ["Config"],
                 // security: [{ BearerAuth: [] }],
+                summary: "CFG_CONSTS",
+                description: "Get lists of const in config",
                 responses: {
                     200: {
-                        description: "Return list of all CONST config",
+                        description: "Return list of all const config",
                         content: {
                             "application/json": {
                                 schema: RespSchema,
@@ -62,10 +65,13 @@ const route_app = new OpenAPIHono({ defaultHook: zodErrorHandler });
     route_app.openapi(
         createRoute(
             {
+                operationId: "CFG_SET",
                 method: "post",
                 path: "/update",
                 tags: ["Config"],
                 // security: [], // with swagger UI jwt security
+                summary: "CFG_SET",
+                description: "Set user's config",
                 request: {
                     body: {
                         description: "Update Config Request Body",
@@ -126,10 +132,13 @@ const route_app = new OpenAPIHono({ defaultHook: zodErrorHandler });
     route_app.openapi(
         createRoute(
             {
+                operationId: "CFG_GET",
                 method: "get",
                 path: "/{email}",
                 tags: ["Config"],
                 // security: [{ BearerAuth: [] }],
+                summary: "CFG_GET",
+                description: "Get user's config",
                 request: {
                     params: ReqSchema,
                 },
