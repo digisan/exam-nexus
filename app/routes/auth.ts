@@ -30,7 +30,7 @@ const route_app = new OpenAPIHono({ defaultHook: zodErrorHandler });
                 method: "post",
                 path: "/register",
                 tags: ["Auth"],
-                security: [], // without swagger UI jwt security
+                security: [], // without swagger UI lock
                 summary: "REGISTER",
                 description: "Sign up a user",
                 request: {
@@ -102,7 +102,7 @@ const route_app = new OpenAPIHono({ defaultHook: zodErrorHandler });
                 method: "post",
                 path: "/login",
                 tags: ["Auth"],
-                security: [], // without swagger UI jwt security
+                security: [], // without swagger UI lock
                 summary: "LOGIN",
                 description: "User login",
                 request: {

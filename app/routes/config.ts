@@ -25,7 +25,7 @@ const route_app = new OpenAPIHono({ defaultHook: zodErrorHandler });
                 method: "get",
                 path: "/const_list",
                 tags: ["Config"],
-                // security: [{ BearerAuth: [] }],
+                // security: [],
                 summary: "CFG_CONSTS",
                 description: "Get lists of const in config",
                 responses: {
@@ -69,7 +69,7 @@ const route_app = new OpenAPIHono({ defaultHook: zodErrorHandler });
                 method: "post",
                 path: "/update",
                 tags: ["Config"],
-                // security: [], // with swagger UI jwt security
+                // security: [],
                 summary: "CFG_SET",
                 description: "Set user's config",
                 request: {
@@ -136,7 +136,7 @@ const route_app = new OpenAPIHono({ defaultHook: zodErrorHandler });
                 method: "get",
                 path: "/{email}",
                 tags: ["Config"],
-                // security: [{ BearerAuth: [] }],
+                // security: [],
                 summary: "CFG_GET",
                 description: "Get user's config",
                 request: {

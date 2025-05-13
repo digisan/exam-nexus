@@ -20,7 +20,7 @@ const route_app = new OpenAPIHono({ defaultHook: zodErrorHandler });
                 method: "get",
                 path: "/env",
                 tags: ["_Test"],
-                security: [], // without swagger UI jwt security
+                security: [], // without swagger UI lock
                 summary: "ENVVAR",
                 description: "Get environment variables",
                 responses: {
@@ -54,7 +54,7 @@ const route_app = new OpenAPIHono({ defaultHook: zodErrorHandler });
                 method: "post",
                 path: "/sb_insert",
                 tags: ["_Test"],
-                security: [], // without swagger UI jwt security
+                security: [], // without swagger UI lock
                 summary: "INSERT_SB_TEST",
                 description: "Insert data to supabase",
                 responses: {
@@ -87,7 +87,7 @@ const route_app = new OpenAPIHono({ defaultHook: zodErrorHandler });
                 method: "get",
                 path: "/pub_ip",
                 tags: ["_Test"],
-                security: [], // without swagger UI jwt security
+                security: [], // without swagger UI lock
                 summary: "SERVER_IP",
                 description: "Server public IP",
                 responses: {
@@ -118,7 +118,7 @@ const route_app = new OpenAPIHono({ defaultHook: zodErrorHandler });
                 method: "get",
                 path: "/client_ip",
                 tags: ["_Test"],
-                security: [], // without swagger UI jwt security
+                security: [], // without swagger UI lock
                 summary: "CLIENT_PUB_IP",
                 description: "Client public IP",
                 responses: {
@@ -150,13 +150,13 @@ const route_app = new OpenAPIHono({ defaultHook: zodErrorHandler });
                 method: "get",
                 path: "/translate",
                 tags: ["_Test"],
-                security: [], // without swagger UI jwt security
+                security: [], // without swagger UI lock
                 summary: "I18N_TEST",
                 description: "translate & template test",
                 request: {
                     query: z.object({ lang: z.string().optional() }),
                     headers: z.object({ "x-lang": z.string().optional() }),
-                    cookies: z.object({ lang: z.string().optional() }),
+                    cookies: z.object({ locale: z.string().optional() }),
                 },
                 responses: {
                     200: { description: "translate template test" },

@@ -24,7 +24,7 @@ const route_app = new OpenAPIHono({ defaultHook: zodErrorHandler });
                 method: "get",
                 path: "/list",
                 tags: ["User"],
-                // security: [{ BearerAuth: [] }],
+                security: [], // without swagger UI lock
                 summary: "USER_LIST",
                 description: "List of user ID(email)",
                 responses: {
@@ -70,7 +70,7 @@ const route_app = new OpenAPIHono({ defaultHook: zodErrorHandler });
                 method: "get",
                 path: "/reg/{email}",
                 tags: ["User"],
-                // security: [{ BearerAuth: [] }],
+                security: [], // without swagger UI lock
                 summary: "USER_REG",
                 description: "Get a user's reg by its ID(email)",
                 request: {

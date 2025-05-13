@@ -15,9 +15,19 @@ app.openAPIRegistry.registerComponent("securitySchemes", "BearerAuth", {
 app.doc31("/openapi.json", {
     openapi: "3.1.0",
     info: {
-        title: "Hono API 文档",
-        version: "1.0.0",
+        title: "Easy Exam API Doc",
+        version: "0.1.0",
     },
+    servers: [
+        {
+            url: 'https://exam-nexus.deno.dev',
+            description: 'default base',
+        },
+        {
+            url: 'http://localhost:8001', // port refers to main.ts
+            description: 'local dev base',
+        }
+    ],
     security: [{ BearerAuth: [] }], // lock each API by default in swagger UI
 });
 

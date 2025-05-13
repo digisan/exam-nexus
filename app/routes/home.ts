@@ -20,7 +20,7 @@ import { t500 } from "@app/routes/handler/resp.ts";
                 summary: "ROOT",
                 description: "HELLO Exam-Nexus",
                 tags: ["Root"],
-                security: [], // without swagger UI jwt security
+                security: [], // without swagger UI lock
                 responses: {
                     200: {
                         description: "HomePage 'hello exam-nexus'",

@@ -25,8 +25,8 @@ app.use("*", rateControl(10, 1000, 5000));
 const mw_jwt = jwt({ secret: env_get("SIGNATURE_KEY") ?? "" });
 
 const authPaths = [
-    // "/", // TEST
-    "/api/user/*",
+    // "/",
+    // "/api/user/*", // for testing
     "/api/auth/logout",
     "/api/auth/validate-token",
     "/api/config/*",
