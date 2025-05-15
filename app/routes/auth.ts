@@ -175,6 +175,7 @@ const route_app = new OpenAPIHono({ defaultHook: zodErrorHandler });
                 method: "post",
                 path: "/logout",
                 tags: ["Auth"],
+                security: [{ BearerAuth: [] }],
                 summary: "LOGOUT",
                 description: "User logout",
                 request: {
@@ -220,6 +221,7 @@ const route_app = new OpenAPIHono({ defaultHook: zodErrorHandler });
                 method: "get",
                 path: "/validate-token",
                 tags: ["Auth"],
+                security: [{ BearerAuth: [] }],
                 summary: "VALIDATE_TOKEN",
                 description: "Validate a token",
                 responses: {

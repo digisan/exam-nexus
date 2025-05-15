@@ -6,48 +6,9 @@ import { cc } from "@app/controllers/config.ts";
 import { toEmailKeyOnAll, toValidConfig } from "@define/type.ts";
 import { T_REGISTER, T_USER_CONFIG } from "@define/system.ts";
 import { zodErrorHandler } from "@app/routes/handler/zod_err.ts";
-import { LANGUAGES, REGIONS } from "@define/config.ts";
 import { t400, t404, t500 } from "@app/routes/handler/resp.ts";
 
 const route_app = new OpenAPIHono({ defaultHook: zodErrorHandler });
-
-// Get System Const Config
-{
-    const RespSchema = z.object({
-        regions: z.array(z.string()).openapi({ example: ["cn", "au"] }),
-        languages: z.array(z.string()).openapi({ example: ["zh-CN", "en-AU"] }),
-    });
-
-    route_app.openapi(
-        createRoute(
-            {
-                operationId: "CFG_CONSTS",
-                method: "get",
-                path: "/const_list",
-                tags: ["Config"],
-                // security: [],
-                summary: "CFG_CONSTS",
-                description: "Get lists of const in config",
-                responses: {
-                    200: {
-                        description: "Return list of all const config",
-                        content: {
-                            "application/json": {
-                                schema: RespSchema,
-                            },
-                        },
-                    },
-                    401: { description: "Unauthorized" },
-                    500: { description: "Internal Server Error" },
-                },
-            } as const,
-        ),
-        (c) => {
-            const data = { regions: REGIONS, languages: LANGUAGES };
-            return RespSchema.safeParse(data).success ? c.json(data) : t500(c, "resp.invalid", { resp: data });
-        },
-    );
-}
 
 // Update User Config
 {
@@ -69,7 +30,7 @@ const route_app = new OpenAPIHono({ defaultHook: zodErrorHandler });
                 method: "post",
                 path: "/update",
                 tags: ["Config"],
-                // security: [],
+                security: [{ BearerAuth: [] }],
                 summary: "CFG_SET",
                 description: "Set user's config",
                 request: {
@@ -136,7 +97,7 @@ const route_app = new OpenAPIHono({ defaultHook: zodErrorHandler });
                 method: "get",
                 path: "/{email}",
                 tags: ["Config"],
-                // security: [],
+                security: [{ BearerAuth: [] }],
                 summary: "CFG_GET",
                 description: "Get user's config",
                 request: {

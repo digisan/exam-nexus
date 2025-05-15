@@ -123,6 +123,12 @@ export const lang = {
                 not_found: "missing user keyed by {user}",
             },
         },
+        exams: {
+            selective: "selective",
+            proficiency: "proficiency",
+            certification: "certification",
+            final: "final",
+        },
     } as const,
     "zh-CN": {
         success: "返回成功: {message}",
@@ -246,6 +252,12 @@ export const lang = {
                 not_found: "缺失主键为{user}的用户信息",
             },
         },
+        exams: {
+            selective: "选拔类",
+            proficiency: "水平测试类",
+            certification: "资格认证类",
+            final: "期末结业类",
+        },
     } as const,
 };
 
@@ -309,6 +321,10 @@ const keys = [
     "get.db.fail_by_email",
     "get.db.fail_by_field_value",
     "get.user.not_found",
+    "exams.selective",
+    "exams.proficiency",
+    "exams.certification",
+    "exams.final",
 ] as const;
 
 import { createI18n } from "hono-i18n";

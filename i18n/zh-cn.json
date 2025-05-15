@@ -119,5 +119,11 @@
         "user": {
             "not_found": "缺失主键为{user}的用户信息"
         }
+    },
+    "exams": {
+        "selective": "选拔类",
+        "proficiency": "水平测试类",
+        "certification": "资格认证类",
+        "final": "期末结业类"
     }
 }

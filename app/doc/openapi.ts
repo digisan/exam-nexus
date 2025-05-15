@@ -20,13 +20,13 @@ app.doc31("/openapi.json", {
     },
     servers: [
         {
-            url: 'https://exam-nexus.deno.dev',
-            description: 'default base',
+            url: "https://exam-nexus.deno.dev",
+            description: "default base",
         },
         {
-            url: 'http://localhost:8001', // port refers to main.ts
-            description: 'local dev base',
-        }
+            url: "http://localhost:8001", // port refers to main.ts
+            description: "local dev base",
+        },
     ],
     security: [{ BearerAuth: [] }], // lock each API by default in swagger UI
 });

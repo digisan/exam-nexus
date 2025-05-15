@@ -119,5 +119,11 @@
         "user": {
             "not_found": "missing user keyed by {user}"
         }
+    },
+    "exams": {
+        "selective": "selective",
+        "proficiency": "proficiency",
+        "certification": "certification",
+        "final": "final"
     }
 }
