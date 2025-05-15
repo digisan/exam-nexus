@@ -1,8 +1,8 @@
 import { err, ok, Result } from "neverthrow";
 import { type TransFnType, wrapOptT } from "@i18n/lang_t.ts";
 import { dbAgent as agent } from "@db/dbService.ts";
-import { EXAM_CATEGORIES, LANGUAGES, REGIONS } from "@define/config.ts";
-import type { ExamCatType, LanguageType, RegionType } from "@define/config.ts";
+import { LANGUAGES, REGIONS } from "@define/config.ts";
+import type { LanguageType, RegionType } from "@define/config.ts";
 import { T_REGISTER, type TableType } from "@define/system.ts";
 import { hasCertainProperty, RE_EMAIL, RE_PWD, some } from "@util/util.ts";
 
@@ -18,9 +18,6 @@ export const isValidRegion = (s: string | null): s is Region => REGIONS.includes
 
 export type Language = Brand<LanguageType, "Language">;
 export const isValidLanguage = (s: string | null): s is Language => LANGUAGES.includes(s as LanguageType);
-
-export type Exams = Brand<ExamCatType, "Exams">;
-export const isValidExams = (s: string | null): s is Exams => EXAM_CATEGORIES.includes(s as ExamCatType);
 
 ////////////////////////////////////////////////
 

@@ -13,11 +13,3 @@ export const LANGUAGES = [
     "zh-CN",
 ] as const;
 export type LanguageType = typeof LANGUAGES[number];
-
-export const EXAM_CATEGORIES = [
-    "selective",
-    "proficiency",
-    "certification",
-    "final",
-] as const;
-export type ExamCatType = typeof EXAM_CATEGORIES[number];
