@@ -129,6 +129,51 @@ export const lang = {
             certification: "certification",
             final: "final",
         },
+        exam: {
+            vce: {
+                ma: {
+                    1: "VCE Further Mathematics",
+                    2: "VCE Mathematical Methods",
+                    3: "VCE Specialist Mathematics",
+                },
+                en: {
+                    1: "VCE English as an Additional Language",
+                    2: "VCE English",
+                    3: "VCE English Language",
+                    4: "VCE Literature",
+                },
+            },
+            naplan: {
+                r: {
+                    y3: "NAPLAN Reading Year3",
+                    y5: "NAPLAN Reading Year5",
+                    y7: "NAPLAN Reading Year7",
+                    y9: "NAPLAN Reading Year9",
+                },
+                w: {
+                    y3: "NAPLAN Writing Year3",
+                    y5: "NAPLAN Writing Year5",
+                    y7: "NAPLAN Writing Year7",
+                    y9: "NAPLAN Writing Year9",
+                },
+                lc: {
+                    y3: "NAPLAN Language Conventions Year3",
+                    y5: "NAPLAN Language Conventions Year5",
+                    y7: "NAPLAN Language Conventions Year7",
+                    y9: "NAPLAN Language Conventions Year9",
+                },
+                n: {
+                    y3: "NAPLAN Numeracy Year3",
+                    y5: "NAPLAN Numeracy Year5",
+                    y7: "NAPLAN Numeracy Year7",
+                    y9: "NAPLAN Numeracy Year9",
+                },
+            },
+            cet: {
+                4: "College English Test Band 4",
+                6: "College English Test Band 6",
+            },
+        },
     } as const,
     "zh-CN": {
         success: "返回成功: {message}",
@@ -258,6 +303,51 @@ export const lang = {
             certification: "资格认证类",
             final: "期末结业类",
         },
+        exam: {
+            vce: {
+                ma: {
+                    1: "VCE 进阶数学",
+                    2: "VCE 数学方法",
+                    3: "VCE 专业数学",
+                },
+                en: {
+                    1: "VCE 英语作为附加语言",
+                    2: "VCE 英语",
+                    3: "VCE 英语语言",
+                    4: "VCE 文学",
+                },
+            },
+            naplan: {
+                r: {
+                    y3: "NAPLAN 三年级阅读",
+                    y5: "NAPLAN 五年级阅读",
+                    y7: "NAPLAN 七年级阅读",
+                    y9: "NAPLAN 九年级阅读",
+                },
+                w: {
+                    y3: "NAPLAN 三年级写作",
+                    y5: "NAPLAN 五年级写作",
+                    y7: "NAPLAN 七年级写作",
+                    y9: "NAPLAN 九年级写作",
+                },
+                lc: {
+                    y3: "NAPLAN 三年级语言规范",
+                    y5: "NAPLAN 五年级语言规范",
+                    y7: "NAPLAN 七年级语言规范",
+                    y9: "NAPLAN 九年级语言规范",
+                },
+                n: {
+                    y3: "NAPLAN 三年级数学",
+                    y5: "NAPLAN 五年级数学",
+                    y7: "NAPLAN 七年级数学",
+                    y9: "NAPLAN 九年级数学",
+                },
+            },
+            cet: {
+                4: "大学英语四级考试",
+                6: "大学英语六级考试",
+            },
+        },
     } as const,
 };
 
@@ -325,6 +415,31 @@ const keys = [
     "exams.proficiency",
     "exams.certification",
     "exams.final",
+    "exam.vce.ma.1",
+    "exam.vce.ma.2",
+    "exam.vce.ma.3",
+    "exam.vce.en.1",
+    "exam.vce.en.2",
+    "exam.vce.en.3",
+    "exam.vce.en.4",
+    "exam.naplan.r.y3",
+    "exam.naplan.r.y5",
+    "exam.naplan.r.y7",
+    "exam.naplan.r.y9",
+    "exam.naplan.w.y3",
+    "exam.naplan.w.y5",
+    "exam.naplan.w.y7",
+    "exam.naplan.w.y9",
+    "exam.naplan.lc.y3",
+    "exam.naplan.lc.y5",
+    "exam.naplan.lc.y7",
+    "exam.naplan.lc.y9",
+    "exam.naplan.n.y3",
+    "exam.naplan.n.y5",
+    "exam.naplan.n.y7",
+    "exam.naplan.n.y9",
+    "exam.cet.4",
+    "exam.cet.6",
 ] as const;
 
 import { createI18n } from "hono-i18n";

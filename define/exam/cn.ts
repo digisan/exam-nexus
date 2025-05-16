@@ -1,27 +1,20 @@
-export const EXAM_SELECTIVE = [
-    "GAOKAO-MATH",
-    "ZHONGKAO-MATH",
-] as const;
+export const EXAM_SELECTIVE = [];
 
 export const EXAM_PROFICIENCY = [
-    "CET-4",
-    "CET-6",
-] as const;
+    "cet.4",
+    "cet.6",
+];
 
-export const EXAM_CERTIFICATION = [
-    "AWS",
-] as const;
+export const EXAM_CERTIFICATION = [];
 
-const EXAM_FINAL = [
-    "Y1-MATH",
-] as const;
+export const EXAM_FINAL = [];
 
-const ExamCatCollection = {
+const ExamCatMap = {
     selective: EXAM_SELECTIVE,
     proficiency: EXAM_PROFICIENCY,
     certification: EXAM_CERTIFICATION,
-    // final: EXAM_FINAL,
+    final: EXAM_FINAL,
 } as const;
 
-export const EXAM_CATEGORIES = Object.keys(ExamCatCollection) as (keyof typeof ExamCatCollection)[];
+export const EXAM_CATEGORIES = Object.keys(ExamCatMap) as (keyof typeof ExamCatMap)[];
 type ExamCatType = typeof EXAM_CATEGORIES[number];
