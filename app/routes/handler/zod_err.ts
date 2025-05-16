@@ -101,7 +101,7 @@ const createZodErrorHandler = () => {
         c: Context,
     ) => {
         if (!result.success) {
-            const lang = c.req.query("lang") || c.req.header("x-lang") || getCookie(c, "lang") || "zh-CN" || "en-AU";
+            const lang = c.req.query("lang") || c.req.header("x-lang") || getCookie(c, "locale") || "en-AU" || "zh-CN";
             if (!isValidLanguage(lang)) return t500(c, "req.invalid", { req: lang });
             let body: Record<string, unknown> = {};
             try {

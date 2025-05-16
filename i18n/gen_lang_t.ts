@@ -69,7 +69,7 @@ if (import.meta.main) {
     export const { i18nMiddleware, getI18n } = createI18n({
         messages: ${messages},
         defaultLocale: "${defaultLocale}",
-        getLocale: (c) => c.req.query("lang") ?? c.req.header("x-lang") ?? getCookie(c, "lang") ?? "en-AU",
+        getLocale: (c) => c.req.query("lang") ?? c.req.header("x-lang") ?? getCookie(c, "locale") ?? "en-AU",
     })
 
     export type TransKeyType = typeof keys[number]
@@ -77,6 +77,13 @@ if (import.meta.main) {
 
     export const createStrictT = (c: Context): TransFnType => getI18n(c) as TransFnType
     export const wrapOptT = (t?: TransFnType): (s: TransKeyType, params?: Record<string, unknown>) => string => t ?? ((s: TransKeyType) => s + "*");
+    
+    export const isTransKey = (s?: string): boolean => keys.includes(s as TransKeyType);
+    export const safeT = (t: TransFnType, s: string, defaultOut?: string): string => isTransKey(s) ? t(s as TransKeyType) : (defaultOut ?? s);
+    export const batchT = (c: Context, s: string[], prefix?: string): string[] => {
+        const t = createStrictT(c);
+        return prefix ? s.map((item) => safeT(t, \`\${prefix.replace(/\\.+$/, "")}.\${item}\`, item)) : s.map((item) => safeT(t, item));
+    };
     `;
         Deno.writeTextFileSync(out_lang, content, { append: true });
     };

@@ -4,6 +4,7 @@ import { app } from "@app/app.ts";
 import { zodErrorHandler } from "@app/routes/handler/zod_err.ts";
 import { t400, t500 } from "@app/routes/handler/resp.ts";
 import { isValidRegion } from "@define/type.ts";
+import { batchT } from "@i18n/lang_t.ts";
 
 const route_app = new OpenAPIHono({ defaultHook: zodErrorHandler });
 
@@ -14,7 +15,10 @@ const route_app = new OpenAPIHono({ defaultHook: zodErrorHandler });
     });
 
     const RespSchema = z.object({
-        categories: z.array(z.string()).openapi({ example: ["selective", "proficiency"] }),
+        exam_categories: z.array(z.string()).openapi({ example: ["selective", "proficiency"] }),
+        selective: z.array(z.string()).openapi({ example: ["VCE"] }),
+        proficiency: z.array(z.string()).openapi({ example: ["NAPLAN"] }),
+        certification: z.array(z.string()).openapi({ example: ["AWS"] }),
     });
 
     route_app.openapi(
@@ -29,6 +33,7 @@ const route_app = new OpenAPIHono({ defaultHook: zodErrorHandler });
                 description: "Get lists of exam const",
                 request: {
                     query: ReqSchema,
+                    headers: z.object({ "x-lang": z.string().optional() }), // translating test
                 },
                 responses: {
                     200: {
@@ -48,8 +53,12 @@ const route_app = new OpenAPIHono({ defaultHook: zodErrorHandler });
             const region = c.req.query("region") ?? "au";
             if (!isValidRegion(region)) return t400(c, "region.invalid", { region });
             try {
+                const modExams = await import(`@define/exam/${region}.ts`);
                 const data = {
-                    categories: (await import(`@define/exam/${region}.ts`)).EXAM_CATEGORIES,
+                    exam_categories: batchT(c, modExams.EXAM_CATEGORIES, "exams"),
+                    selective: modExams.EXAM_SELECTIVE,
+                    proficiency: modExams.EXAM_PROFICIENCY,
+                    certification: modExams.EXAM_CERTIFICATION,
                 };
                 return RespSchema.safeParse(data).success ? c.json(data) : t500(c, "resp.invalid", { resp: data });
             } catch (err) {

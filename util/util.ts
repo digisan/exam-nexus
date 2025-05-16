@@ -20,6 +20,16 @@ export const true2err = (b: boolean, errMsg: string = "true as error"): Result<b
 
 export const firstWord = (sql: string): string | null => sql.trim().split(/\s+/)[0] ?? null;
 
+export const normalizeTrailing = (input: string, trail: string): string => {
+    if (input === "" || trail === "") return input;
+    // 构造正则，移除所有末尾的目标字符（如 "." 或 ","）
+    const escapedChar = trail.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"); // 转义正则特殊字符
+    const regex = new RegExp(`${escapedChar}+$`);
+    const stripped = input.replace(regex, "");
+    // 如果去除后是空字符串，不加任何字符
+    return stripped === "" ? "" : stripped + trail;
+};
+
 export const arraysEqual = <T>(a: T[], b: T[]): boolean => {
     if (a.length !== b.length) return false;
     return a.every((val, i) => val === b[i]);

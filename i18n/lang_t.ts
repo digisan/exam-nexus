@@ -334,7 +334,7 @@ import { type Context } from "hono";
 export const { i18nMiddleware, getI18n } = createI18n({
     messages: lang,
     defaultLocale: "en-AU",
-    getLocale: (c) => c.req.query("lang") ?? c.req.header("x-lang") ?? getCookie(c, "lang") ?? "en-AU",
+    getLocale: (c) => c.req.query("lang") ?? c.req.header("x-lang") ?? getCookie(c, "locale") ?? "en-AU",
 });
 
 export type TransKeyType = typeof keys[number];
@@ -342,3 +342,10 @@ export type TransFnType = (key: TransKeyType, params?: Record<string, unknown>) 
 
 export const createStrictT = (c: Context): TransFnType => getI18n(c) as TransFnType;
 export const wrapOptT = (t?: TransFnType): (s: TransKeyType, params?: Record<string, unknown>) => string => t ?? ((s: TransKeyType) => s + "*");
+
+export const isTransKey = (s?: string): boolean => keys.includes(s as TransKeyType);
+export const safeT = (t: TransFnType, s: string, defaultOut?: string): string => isTransKey(s) ? t(s as TransKeyType) : (defaultOut ?? s);
+export const batchT = (c: Context, s: string[], prefix?: string): string[] => {
+    const t = createStrictT(c);
+    return prefix ? s.map((item) => safeT(t, `${prefix.replace(/\.+$/, "")}.${item}`, item)) : s.map((item) => safeT(t, item));
+};
