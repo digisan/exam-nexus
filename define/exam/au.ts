@@ -1,55 +1,29 @@
-export const EXAM_SELECTIVE = [
-    "vce.ma.1",
-    "vce.ma.2",
-    "vce.ma.3",
-    "vce.en.1",
-    "vce.en.2",
-    "vce.en.3",
-    "vce.en.4",
-];
+const EXAM_SELECTIVE: Record<string, readonly string[]> = {
+    vce: ["ma.1", "ma.2", "ma.3", "en.1", "en.2", "en.3", "en.4"] as const,
+};
 
-export const EXAM_PROFICIENCY = [
-    "naplan.r.y3",
-    "naplan.r.y5",
-    "naplan.r.y7",
-    "naplan.r.y9",
-    "naplan.w.y3",
-    "naplan.w.y5",
-    "naplan.w.y7",
-    "naplan.w.y9",
-    "naplan.lc.y3",
-    "naplan.lc.y5",
-    "naplan.lc.y7",
-    "naplan.lc.y9",
-    "naplan.n.y3",
-    "naplan.n.y5",
-    "naplan.n.y7",
-    "naplan.n.y9",
-];
+const EXAM_PROFICIENCY: Record<string, readonly string[]> = {
+    naplan: ["r.y3", "r.y5", "r.y7", "r.y9", "w.y3", "w.y5", "w.y7", "w.y9", "lc.y3", "lc.y5", "lc.y7", "lc.y9", "n.y3", "n.y5", "n.y7", "n.y9"] as const,
+};
 
-export const EXAM_CERTIFICATION = [];
+const EXAM_CERTIFICATION: Record<string, readonly string[]> = {};
 
-export const EXAM_FINAL = [];
+const EXAM_FINAL: Record<string, readonly string[]> = {};
 
-const ExamCatMap = {
-    selective: EXAM_SELECTIVE,
-    proficiency: EXAM_PROFICIENCY,
-    certification: EXAM_CERTIFICATION,
-    final: EXAM_FINAL,
+const addKeyAsPrefix = (input: Record<string, readonly string[]>): Record<string, string[]> => {
+    const result: Record<string, string[]> = {};
+    for (const [key, values] of Object.entries(input)) {
+        result[key] = values.map((v) => `${key}.${v}`);
+    }
+    return result;
+};
+
+export const ExamCatMap = {
+    selective: addKeyAsPrefix(EXAM_SELECTIVE),
+    proficiency: addKeyAsPrefix(EXAM_PROFICIENCY),
+    certification: addKeyAsPrefix(EXAM_CERTIFICATION),
+    final: addKeyAsPrefix(EXAM_FINAL),
 } as const;
 
-export const EXAM_CATEGORIES = Object.keys(ExamCatMap) as (keyof typeof ExamCatMap)[];
-type ExamCatType = typeof EXAM_CATEGORIES[number];
-
-// *** User Selected *** //
-
-// export const ExamSelected: {
-//     [K in ExamCatType]: typeof ExamCatMap[K][number][];
-// } = {
-//     selective: ["VCE-MATH"],
-//     proficiency: ["NAPLAN-MATH"],
-//     certification: [],
-//     final: [],
-// };
-
-// *** User Selected *** //
+// export const EXAM_CATEGORIES = Object.keys(ExamCatMap) as (keyof typeof ExamCatMap)[];
+// type ExamCatType = typeof EXAM_CATEGORIES[number];

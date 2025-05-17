@@ -1,20 +1,27 @@
-export const EXAM_SELECTIVE = [];
+const EXAM_SELECTIVE: Record<string, readonly string[]> = {};
 
-export const EXAM_PROFICIENCY = [
-    "cet.4",
-    "cet.6",
-];
+const EXAM_PROFICIENCY: Record<string, readonly string[]> = {
+    cet: ["4", "6"] as const,
+};
 
-export const EXAM_CERTIFICATION = [];
+const EXAM_CERTIFICATION: Record<string, readonly string[]> = {};
 
-export const EXAM_FINAL = [];
+const EXAM_FINAL: Record<string, readonly string[]> = {};
 
-const ExamCatMap = {
-    selective: EXAM_SELECTIVE,
-    proficiency: EXAM_PROFICIENCY,
-    certification: EXAM_CERTIFICATION,
-    final: EXAM_FINAL,
+const addKeyAsPrefix = (input: Record<string, readonly string[]>): Record<string, string[]> => {
+    const result: Record<string, string[]> = {};
+    for (const [key, values] of Object.entries(input)) {
+        result[key] = values.map((v) => `${key}.${v}`);
+    }
+    return result;
+};
+
+export const ExamCatMap = {
+    selective: addKeyAsPrefix(EXAM_SELECTIVE),
+    proficiency: addKeyAsPrefix(EXAM_PROFICIENCY),
+    certification: addKeyAsPrefix(EXAM_CERTIFICATION),
+    final: addKeyAsPrefix(EXAM_FINAL),
 } as const;
 
-export const EXAM_CATEGORIES = Object.keys(ExamCatMap) as (keyof typeof ExamCatMap)[];
-type ExamCatType = typeof EXAM_CATEGORIES[number];
+// export const EXAM_CATEGORIES = Object.keys(ExamCatMap) as (keyof typeof ExamCatMap)[];
+// type ExamCatType = typeof EXAM_CATEGORIES[number];

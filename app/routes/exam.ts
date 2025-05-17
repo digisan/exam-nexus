@@ -5,9 +5,9 @@ import { zodErrorHandler } from "@app/routes/handler/zod_err.ts";
 import { t400, t500 } from "@app/routes/handler/resp.ts";
 import { isValidRegion } from "@define/type.ts";
 import type { RegionType } from "@define/config.ts";
-import { batchT } from "@i18n/lang_t.ts";
 import * as examAu from "@define/exam/au.ts";
 import * as examCn from "@define/exam/cn.ts";
+import { getExamsAsJSON } from "@define/exam/util.ts";
 
 const route_app = new OpenAPIHono({ defaultHook: zodErrorHandler });
 
@@ -17,12 +17,12 @@ const route_app = new OpenAPIHono({ defaultHook: zodErrorHandler });
         region: z.string(),
     });
 
+    const dynInnerMap = z.record(z.array(z.string()));
     const RespSchema = z.object({
-        exam_categories: z.array(z.string()).openapi({ example: ["selective", "proficiency"] }),
-        selective: z.array(z.string()).openapi({ example: ["VCE"] }),
-        proficiency: z.array(z.string()).openapi({ example: ["NAPLAN"] }),
-        certification: z.array(z.string()).openapi({ example: ["AWS"] }),
-        final: z.array(z.string()).openapi({ example: ["Linear Algebra"] }),
+        selective: dynInnerMap,
+        proficiency: dynInnerMap,
+        certification: dynInnerMap,
+        final: dynInnerMap,
     });
 
     route_app.openapi(
@@ -68,13 +68,7 @@ const route_app = new OpenAPIHono({ defaultHook: zodErrorHandler });
                 ]);
                 const mod = mRouteMod.get(region)!;
 
-                const data = {
-                    exam_categories: batchT(c, mod.EXAM_CATEGORIES, "exams"),
-                    selective: batchT(c, mod.EXAM_SELECTIVE, "exam"),
-                    proficiency: batchT(c, mod.EXAM_PROFICIENCY, "exam"),
-                    certification: batchT(c, mod.EXAM_CERTIFICATION, "exam"),
-                    final: batchT(c, mod.EXAM_FINAL, "exam"),
-                };
+                const data = getExamsAsJSON(mod.ExamCatMap);
                 return RespSchema.safeParse(data).success ? c.json(data) : t500(c, "resp.invalid", { resp: data });
             } catch (err) {
                 return t500(c, "catch", { error: err });
