@@ -1,11 +1,15 @@
+// deno-fmt-ignore
 const EXAM_SELECTIVE: Record<string, readonly string[]> = {};
 
+// deno-fmt-ignore
 const EXAM_PROFICIENCY: Record<string, readonly string[]> = {
     cet: ["4", "6"] as const,
 };
 
+// deno-fmt-ignore
 const EXAM_CERTIFICATION: Record<string, readonly string[]> = {};
 
+// deno-fmt-ignore
 const EXAM_FINAL: Record<string, readonly string[]> = {};
 
 const addKeyAsPrefix = (input: Record<string, readonly string[]>): Record<string, string[]> => {

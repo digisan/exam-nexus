@@ -2,17 +2,10 @@
   "version": "5",
   "specifiers": {
     "jsr:@hono/hono@*": "4.7.9",
-    "jsr:@hono/hono@4.7.9": "4.7.9",
-    "jsr:@std/assert@*": "1.0.13",
-    "jsr:@std/assert@1.0.13": "1.0.13",
-    "jsr:@std/fs@1.0.17": "1.0.17",
-    "jsr:@std/internal@^1.0.6": "1.0.6",
     "jsr:@std/path@*": "1.0.9",
-    "jsr:@std/path@1.0.9": "1.0.9",
-    "jsr:@std/path@^1.0.9": "1.0.9",
     "jsr:@supabase/supabase-js@2.49.4": "2.49.4",
-    "npm:@hono/swagger-ui@0.5.1": "0.5.1_hono@4.7.9",
-    "npm:@hono/zod-openapi@0.19.6": "0.19.6_hono@4.7.9_zod@3.24.4",
+    "npm:@hono/swagger-ui@0.5.1": "0.5.1_hono@4.7.10",
+    "npm:@hono/zod-openapi@0.19.6": "0.19.6_hono@4.7.10_zod@3.24.4",
     "npm:@supabase/auth-js@2.69.1": "2.69.1",
     "npm:@supabase/functions-js@2.4.4": "2.4.4",
     "npm:@supabase/node-fetch@2.6.15": "2.6.15",
@@ -20,33 +13,15 @@
     "npm:@supabase/realtime-js@2.11.2": "2.11.2",
     "npm:@supabase/storage-js@2.7.1": "2.7.1",
     "npm:bcrypt-ts@*": "7.0.0",
-    "npm:bcrypt-ts@7.0.0": "7.0.0",
     "npm:flat@6.0.1": "6.0.1",
     "npm:hono-i18n@1.1.1": "1.1.1",
-    "npm:hono@4.7.9": "4.7.9",
-    "npm:http-status-code@2.1.0": "2.1.0",
+    "npm:hono@4.7.10": "4.7.10",
     "npm:neverthrow@8.2.0": "8.2.0",
-    "npm:zod-openapi@4.2.4": "4.2.4_zod@3.24.4",
     "npm:zod@3.24.4": "3.24.4"
   },
   "jsr": {
     "@hono/hono@4.7.9": {
       "integrity": "929baffb76209d2ce4c3442bab45957d5dda1726efb82cef13ec3a51d239c543"
-    },
-    "@std/assert@1.0.13": {
-      "integrity": "ae0d31e41919b12c656c742b22522c32fb26ed0cba32975cb0de2a273cb68b29",
-      "dependencies": [
-        "jsr:@std/internal"
-      ]
-    },
-    "@std/fs@1.0.17": {
-      "integrity": "1c00c632677c1158988ef7a004cb16137f870aafdb8163b9dce86ec652f3952b",
-      "dependencies": [
-        "jsr:@std/path@^1.0.9"
-      ]
-    },
-    "@std/internal@1.0.6": {
-      "integrity": "9533b128f230f73bd209408bb07a4b12f8d4255ab2a4d22a1fd6d87304aca9a4"
     },
     "@std/path@1.0.9": {
       "integrity": "260a49f11edd3db93dd38350bf9cd1b4d1366afa98e81b86167b4e3dd750129e"
@@ -71,13 +46,13 @@
         "zod"
       ]
     },
-    "@hono/swagger-ui@0.5.1_hono@4.7.9": {
+    "@hono/swagger-ui@0.5.1_hono@4.7.10": {
       "integrity": "sha512-XpUCfszLJ9b1rtFdzqOSHfdg9pfBiC2J5piEjuSanYpDDTIwpMz0ciiv5N3WWUaQpz9fEgH8lttQqL41vIFuDA==",
       "dependencies": [
         "hono"
       ]
     },
-    "@hono/zod-openapi@0.19.6_hono@4.7.9_zod@3.24.4": {
+    "@hono/zod-openapi@0.19.6_hono@4.7.10_zod@3.24.4": {
       "integrity": "sha512-qD2I0i5Ksry8gf47rXR6tuUAfv5S/wRZPRUNn+y8vOkgArDtIs30Ha3KGHeuGhcMk773D197IlPUppSCbHt6iQ==",
       "dependencies": [
         "@asteasolutions/zod-to-openapi",
@@ -86,7 +61,7 @@
         "zod"
       ]
     },
-    "@hono/zod-validator@0.5.0_hono@4.7.9_zod@3.24.4": {
+    "@hono/zod-validator@0.5.0_hono@4.7.10_zod@3.24.4": {
       "integrity": "sha512-ds5bW6DCgAnNHP33E3ieSbaZFd5dkV52ZjyaXtGoR06APFrCtzAsKZxTHwOrJNBdXsi0e5wNwo5L4nVEVnJUdg==",
       "dependencies": [
         "hono",
@@ -168,14 +143,8 @@
         "core-i18n"
       ]
     },
-    "hono@4.7.9": {
-      "integrity": "sha512-/EsCoR5h7N4yu01TDu9GMCCJa6ZLk5ZJIWFFGNawAXmd1Tp53+Wir4xm0D2X19bbykWUlzQG0+BvPAji6p9E8Q=="
-    },
-    "http-status-code@2.1.0": {
-      "integrity": "sha512-xlSRDG0i4j2HDR85FW2VGxFBo9GB1LpBp37/gldjrS5ZlAaHp1h0dbq96crIN/D0ur1jAa75ACrN8WezebLXSw==",
-      "dependencies": [
-        "strip-json-comments"
-      ]
+    "hono@4.7.10": {
+      "integrity": "sha512-QkACju9MiN59CKSY5JsGZCYmPZkA6sIW6OFCUp7qDjZu6S6KHtJHhAc9Uy9mV9F8PJ1/HQ3ybZF2yjCa/73fvQ=="
     },
     "neverthrow@8.2.0": {
       "integrity": "sha512-kOCT/1MCPAxY5iUV3wytNFUMUolzuwd/VF/1KCx7kf6CutrOsTie+84zTGTpgQycjvfLdBBdvBvFLqFD2c0wkQ==",
@@ -188,10 +157,6 @@
       "dependencies": [
         "yaml"
       ]
-    },
-    "strip-json-comments@1.0.4": {
-      "integrity": "sha512-AOPG8EBc5wAikaG1/7uFCNFJwnKOuQwFTpYBdTW6OvWHeZBQBrAA/amefHGrEiOnCPcLFZK6FUPtWVKpQVIRgg==",
-      "bin": true
     },
     "tr46@0.0.3": {
       "integrity": "sha512-N3WMsuqV66lT30CrXNbEjx4GEwlow3v6rr4mCcv6prnfwhS01rkgyFdjPNBYd9br7LpXV1+Emh01fHnq2Gdgrw=="
@@ -212,15 +177,9 @@
     "ws@8.18.2": {
       "integrity": "sha512-DMricUmwGZUVr++AEAe2uiVM7UoO9MAVZMDu05UQOaUII0lp+zOzLLU4Xqh/JvTqklB1T4uELaaPBKyjE1r4fQ=="
     },
-    "yaml@2.7.1": {
-      "integrity": "sha512-10ULxpnOCQXxJvBgxsn9ptjq6uviG/htZKk9veJGhlqn3w/DxQ631zFF+nlQXLwmImeS5amR2dl2U8sg6U9jsQ==",
+    "yaml@2.8.0": {
+      "integrity": "sha512-4lLa/EcQCB0cJkyts+FpIRx5G/llPxfP6VQU5KByHEhLxY3IJCH0f0Hy1MHI8sClTvsIb8qwRJ6R/ZdlDJ/leQ==",
       "bin": true
-    },
-    "zod-openapi@4.2.4_zod@3.24.4": {
-      "integrity": "sha512-tsrQpbpqFCXqVXUzi3TPwFhuMtLN3oNZobOtYnK6/5VkXsNdnIgyNr4r8no4wmYluaxzN3F7iS+8xCW8BmMQ8g==",
-      "dependencies": [
-        "zod"
-      ]
     },
     "zod@3.24.4": {
       "integrity": "sha512-OdqJE9UDRPwWsrHjLN2F8bPxvwJBK22EHLWtanu0LSYr5YqzsaaW3RMgmjwr8Rypg5k+meEJdSPXJZXE/yqOMg=="
@@ -228,7 +187,7 @@
   },
   "workspace": {
     "dependencies": [
-      "jsr:@hono/hono@4.7.9",
+      "jsr:@hono/hono@4.7.10",
       "jsr:@std/assert@1.0.13",
       "jsr:@std/fs@1.0.17",
       "jsr:@std/path@1.0.9",
@@ -238,7 +197,7 @@
       "npm:bcrypt-ts@7.0.0",
       "npm:flat@6.0.1",
       "npm:hono-i18n@1.1.1",
-      "npm:hono@4.7.9",
+      "npm:hono@4.7.10",
       "npm:http-status-code@2.1.0",
       "npm:neverthrow@8.2.0",
       "npm:zod-openapi@4.2.4",

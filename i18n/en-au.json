@@ -125,50 +125,5 @@
         "proficiency": "proficiency",
         "certification": "certification",
         "final": "final"
-    },
-    "exam": {
-        "vce": {
-            "ma": {
-                "1": "VCE Further Mathematics",
-                "2": "VCE Mathematical Methods",
-                "3": "VCE Specialist Mathematics"
-            },
-            "en": {
-                "1": "VCE English as an Additional Language",
-                "2": "VCE English",
-                "3": "VCE English Language",
-                "4": "VCE Literature"
-            }
-        },
-        "naplan": {
-            "r": {
-                "y3": "NAPLAN Reading Year3",
-                "y5": "NAPLAN Reading Year5",
-                "y7": "NAPLAN Reading Year7",
-                "y9": "NAPLAN Reading Year9"
-            },
-            "w": {
-                "y3": "NAPLAN Writing Year3",
-                "y5": "NAPLAN Writing Year5",
-                "y7": "NAPLAN Writing Year7",
-                "y9": "NAPLAN Writing Year9"
-            },
-            "lc": {
-                "y3": "NAPLAN Language Conventions Year3",
-                "y5": "NAPLAN Language Conventions Year5",
-                "y7": "NAPLAN Language Conventions Year7",
-                "y9": "NAPLAN Language Conventions Year9"
-            },
-            "n": {
-                "y3": "NAPLAN Numeracy Year3",
-                "y5": "NAPLAN Numeracy Year5",
-                "y7": "NAPLAN Numeracy Year7",
-                "y9": "NAPLAN Numeracy Year9"
-            }
-        },
-        "cet": {
-            "4": "College English Test Band 4",
-            "6": "College English Test Band 6"
-        }
     }
 }
