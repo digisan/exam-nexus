@@ -30,7 +30,7 @@ const authPaths = [
     "/api/auth/logout",
     "/api/auth/validate-token",
     "/api/config/*",
-    // "/api/user_exam/*",
+    "/api/user_exam/*",
 ];
 
 const getToken = (c: Context): string | null => {
