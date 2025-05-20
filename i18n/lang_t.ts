@@ -27,7 +27,7 @@ export const lang = {
             invalid: "invalid {id} as id",
         },
         email: {
-            invalid: "invalid {email} as email",
+            invalid: "invalid {email} as email or user id",
         },
         password: {
             invalid: "invalid {password} as password",
@@ -107,12 +107,22 @@ export const lang = {
                 fail: "set config failed",
                 ok: "set config successfully",
             },
+            user_exam: {
+                err: "an error occur when setting user exam",
+                fail: "set user exam failed",
+                ok: "set user exam successfully",
+            },
         },
         get: {
             config: {
                 err: "an error occur when getting config",
                 fail: "get config failed",
                 ok: "get config successfully",
+            },
+            user_exam: {
+                err: "an error occur when getting user exam",
+                fail: "get user exam failed",
+                ok: "get user exam successfully",
             },
             db: {
                 fail_by_id: "missing item keyed by {id}",
@@ -156,7 +166,7 @@ export const lang = {
             invalid: "{id}为无效ID",
         },
         email: {
-            invalid: "{email}为无效Email格式",
+            invalid: "{email}为无效Email格式或用户ID",
         },
         password: {
             invalid: "{password}为无效密码",
@@ -236,12 +246,22 @@ export const lang = {
                 fail: "设置配置失败",
                 ok: "设置配置成功",
             },
+            user_exam: {
+                err: "设置用户选择考试测试时发生错误",
+                fail: "设置用户选择考试测试失败",
+                ok: "设置用户选择考试测试成功",
+            },
         },
         get: {
             config: {
                 err: "获取配置时错误发生",
                 fail: "获取配置失败",
                 ok: "获取配置成功",
+            },
+            user_exam: {
+                err: "获取用户选择考试测试时发生错误",
+                fail: "获取用户选择考试测试失败",
+                ok: "获取用户选择考试测试成功",
             },
             db: {
                 fail_by_id: "缺失主键为{id}的元素",
@@ -314,9 +334,15 @@ const keys = [
     "set.config.err",
     "set.config.fail",
     "set.config.ok",
+    "set.user_exam.err",
+    "set.user_exam.fail",
+    "set.user_exam.ok",
     "get.config.err",
     "get.config.fail",
     "get.config.ok",
+    "get.user_exam.err",
+    "get.user_exam.fail",
+    "get.user_exam.ok",
     "get.db.fail_by_id",
     "get.db.fail_by_email",
     "get.db.fail_by_field_value",

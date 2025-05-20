@@ -9,13 +9,13 @@ Deno.test(async function SetUserCfg() {
         return;
     }
 
-    const language = "en";
+    const language = "en-AU";
     if (!isValidLanguage(language)) {
         console.debug(`${language} is NOT valid LanguageType`);
         return;
     }
 
-    const s = "123470@qq.com";
+    const s = "cdutwhu@yeah.net";
 
     const r_ek = await toEmailKey(s, T_REGISTER);
     if (r_ek.isErr()) {

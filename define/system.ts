@@ -29,6 +29,7 @@ const TABLES_SB = [
     "test",
     "register",
     "user_config",
+    "user_exam",
 ] as const;
 
 export type TableType = typeof TABLES_SB[number];
@@ -39,15 +40,18 @@ const T = {
     TEST: defineTable("test"),
     REGISTER: defineTable("register"),
     USER_CONFIG: defineTable("user_config"),
+    USER_EXAM: defineTable("user_exam"),
 } as const;
 
 export const T_TEST = T.TEST;
 export const T_REGISTER = T.REGISTER;
 export const T_USER_CONFIG = T.USER_CONFIG;
+export const T_USER_EXAM = T.USER_EXAM;
 
 export type T_TEST = typeof T.TEST;
 export type T_REGISTER = typeof T.REGISTER;
 export type T_USER_CONFIG = typeof T.USER_CONFIG;
+export type T_USER_EXAM = typeof T.USER_EXAM;
 
 //
 // ****************** Validate SupaBaseDB tables ****************** //

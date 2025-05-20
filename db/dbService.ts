@@ -115,10 +115,15 @@ class SupabaseAgent {
     }
 
     async upsertDataRow(table: TableType, id: Id, value: Data): Promise<Result<JSONObject, string>> {
-        const r = await toIdKey(id, table);
-        if (r.isErr()) return err(r.error);
-        const ID = r.value;
-        return ID ? this.updateDataRow(table, ID, value) : this.insertDataRow(table, id, value);
+        const { data, error } = await supabase
+            .from(table)
+            .upsert({ id, data: value })
+            .select()
+            .single();
+
+        if (error) return err(error.message);
+        if (!data) return err("Upsert succeeded but no data returned");
+        return ok(data);
     }
 
     async deleteDataRows(table: TableType, ...ids: Id[]): Promise<Result<JSONObject[], string>> {
@@ -168,17 +173,20 @@ class SupabaseAgent {
     }
 
     async setSingleRowData(table: TableType, id: Id | Email, value: Data): Promise<Result<JSONObject | null, string>> {
-        // fetch previous value under id
-        const r_k = await toIdKey(id, table);
-        if (r_k.isErr()) return err(r_k.error);
-        const ID = r_k.value;
-        const prevData = ID ? await this.getSingleRowData(table, ID) : null;
-
         if (!isValidId(id)) return err(`${id} is invalid format`);
-        const r = await this.upsertDataRow(table, id, normalizeData(value));
-        if (r.isErr()) return r;
-        if (some(value)) return ok(r.value.data as JSONObject); // if there are some new data, return new data
-        return ok(prevData?.isOk() ? prevData.value : null); // delete action, return previous data
+        const r_k = await toIdKey(id, table);
+        if (r_k.isOk()) {
+            // fetch previous value under id
+            const prevData = r_k.value ? await this.getSingleRowData(table, r_k.value) : null;
+            const r = await this.upsertDataRow(table, id, normalizeData(value));
+            if (r.isErr()) return r;
+            // if there are some new data, return new data; if delete action, return previous data
+            return some(value) ? ok(r.value.data as JSONObject) : ok(prevData?.isOk() ? prevData.value : null);
+        } else {
+            const r = await this.upsertDataRow(table, id, normalizeData(value));
+            if (r.isErr()) return r;
+            return some(value) ? ok(r.value.data as JSONObject) : ok(null);
+        }
     }
 
     // remove whole row: return deleted row; remove row data: return null

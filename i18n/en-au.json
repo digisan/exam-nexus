@@ -24,7 +24,7 @@
         "invalid": "invalid {id} as id"
     },
     "email": {
-        "invalid": "invalid {email} as email"
+        "invalid": "invalid {email} as email or user id"
     },
     "password": {
         "invalid": "invalid {password} as password"
@@ -103,6 +103,11 @@
             "err": "an error occur when setting config",
             "fail": "set config failed",
             "ok": "set config successfully"
+        },
+        "user_exam": {
+            "err": "an error occur when setting user exam",
+            "fail": "set user exam failed",
+            "ok": "set user exam successfully"
         }
     },
     "get": {
@@ -110,6 +115,11 @@
             "err": "an error occur when getting config",
             "fail": "get config failed",
             "ok": "get config successfully"
+        },
+        "user_exam": {
+            "err": "an error occur when getting user exam",
+            "fail": "get user exam failed",
+            "ok": "get user exam successfully"
         },
         "db": {
             "fail_by_id": "missing item keyed by {id}",
