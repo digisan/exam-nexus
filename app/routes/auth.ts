@@ -175,7 +175,7 @@ const route_app = new OpenAPIHono({ defaultHook: zodErrorHandler });
                 method: "post",
                 path: "/logout",
                 tags: ["Auth"],
-                security: [{ BearerAuth: [] }],
+                security: [],
                 summary: "LOGOUT",
                 description: "User logout",
                 request: {

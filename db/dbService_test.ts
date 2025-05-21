@@ -12,7 +12,7 @@ Deno.test(async function ListUserFunctions() {
 });
 
 Deno.test(async function CreateDataTable() {
-    const r = await agent.createDataTable("user_exam");
+    const r = await agent.createDataTable("dev_test");
     if (r.isOk()) {
         console.log(r.value);
     } else {
@@ -66,7 +66,7 @@ Deno.test(async function TableList() {
 });
 
 Deno.test(async function TableContent() {
-    const r = await agent.TableContent("test");
+    const r = await agent.TableContent("dev_test");
     if (r.isOk()) {
         if (!r.value) {
             console.log(r.value);
@@ -79,7 +79,7 @@ Deno.test(async function TableContent() {
 });
 
 Deno.test(async function FirstDataRow() {
-    const r = await agent.firstDataRow("test", "user", "abc");
+    const r = await agent.firstDataRow("dev_test", "user", "abc");
     if (r.isOk()) {
         if (!r.value) {
             console.log(r.value);
@@ -97,7 +97,7 @@ Deno.test(async function GetDataRow() {
         console.debug(`❌ Not valid ID (${id})`);
         return;
     }
-    const r = await agent.getDataRow("test", id);
+    const r = await agent.getDataRow("dev_test", id);
     if (r.isOk()) {
         console.log(r.value);
     } else {
@@ -111,7 +111,7 @@ Deno.test(async function InsertDataRow() {
         console.debug(`❌ Not valid ID (${id})`);
         return;
     }
-    const r = await agent.insertDataRow("test", id, { user: "abc", password: "asdfweradf" });
+    const r = await agent.insertDataRow("dev_test", id, { user: "abc", password: "asdfweradf" });
     if (r.isOk()) {
         console.log(r.value);
     } else {
@@ -121,12 +121,12 @@ Deno.test(async function InsertDataRow() {
 
 Deno.test(async function UpdateDataRow() {
     const id = "abcd";
-    const r_k = await toIdKey(id, "test");
+    const r_k = await toIdKey(id, "dev_test");
     if (r_k.isErr()) {
         console.debug(`❌ Not existing ID '${id}'`);
         return;
     }
-    const r = await agent.updateDataRow("test", r_k.value, { user: "ABCE", password: "ASDFWERADF" });
+    const r = await agent.updateDataRow("dev_test", r_k.value, { user: "ABCE", password: "ASDFWERADF" });
     if (r.isOk()) {
         console.log(r.value);
     } else {
@@ -140,7 +140,7 @@ Deno.test(async function DeleteDataRows() {
         console.debug(`❌ Not valid ID (${id})`);
         return;
     }
-    const r = await agent.deleteDataRows("test", id);
+    const r = await agent.deleteDataRows("dev_test", id);
     if (r.isOk()) {
         console.log(r.value);
     } else {
@@ -163,12 +163,12 @@ Deno.test(async function DeleteDataRows() {
 
 Deno.test(async function GetSingleRowData() {
     const id = "abcd";
-    const r_k = await toIdKey(id, "test");
+    const r_k = await toIdKey(id, "dev_test");
     if (r_k.isErr()) {
         console.debug(`'${id}' is NOT existing or invalid format`);
         return;
     }
-    const r = await agent.getSingleRowData("test", r_k.value);
+    const r = await agent.getSingleRowData("dev_test", r_k.value);
     if (r.isErr()) {
         return;
     }
@@ -180,7 +180,7 @@ Deno.test(async function SetSingleRowData() {
     if (!isValidId(id)) {
         return;
     }
-    const r = await agent.setSingleRowData("test", id, { user: "ZZ", password: "ZZZZZZZ" });
+    const r = await agent.setSingleRowData("dev_test", id, { user: "ZZ", password: "ZZZZZZZ" });
     if (r.isErr()) {
         return;
     }
@@ -192,7 +192,7 @@ Deno.test(async function DeleteRowData() {
     if (!isValidId(id)) {
         return;
     }
-    const r = await agent.deleteRowData("test", id);
+    const r = await agent.deleteRowData("dev_test", id);
     if (r.isErr()) {
         return;
     }

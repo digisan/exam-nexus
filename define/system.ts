@@ -26,10 +26,13 @@ export const V_UDF: ViewType = "user_defined_functions";
 // self defined in advance by 'create_data_table'
 //
 const TABLES_SB = [
-    "test",
+    "dev_test",
     "register",
     "user_config",
     "user_exam",
+    "test_analysis",
+    "test_prep_plan",
+    "test_prep_process"
 ] as const;
 
 export type TableType = typeof TABLES_SB[number];
@@ -37,21 +40,30 @@ export type TableType = typeof TABLES_SB[number];
 const defineTable = <T extends TableType>(value: T): T => value;
 
 const T = {
-    TEST: defineTable("test"),
+    TEST: defineTable("dev_test"),
     REGISTER: defineTable("register"),
     USER_CONFIG: defineTable("user_config"),
     USER_EXAM: defineTable("user_exam"),
+    TEST_ANALYSIS: defineTable("test_analysis"),
+    TEST_PREP_PLAN: defineTable("test_prep_plan"),
+    TEST_PREP_PROCESS: defineTable("test_prep_process"),
 } as const;
 
 export const T_TEST = T.TEST;
 export const T_REGISTER = T.REGISTER;
 export const T_USER_CONFIG = T.USER_CONFIG;
 export const T_USER_EXAM = T.USER_EXAM;
+export const T_TEST_ANALYSIS = T.TEST_ANALYSIS;
+export const T_TEST_PREP_PLAN = T.TEST_PREP_PLAN;
+export const T_TEST_PREP_PROCESS = T.TEST_PREP_PROCESS;
 
 export type T_TEST = typeof T.TEST;
 export type T_REGISTER = typeof T.REGISTER;
 export type T_USER_CONFIG = typeof T.USER_CONFIG;
 export type T_USER_EXAM = typeof T.USER_EXAM;
+export type T_TEST_ANALYSIS = typeof T.TEST_ANALYSIS;
+export type T_TEST_PREP_PLAN = typeof T.TEST_PREP_PLAN;
+export type T_TEST_PREP_PROCESS = typeof T.TEST_PREP_PROCESS;
 
 //
 // ****************** Validate SupaBaseDB tables ****************** //
