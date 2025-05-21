@@ -5,11 +5,13 @@
 //
 const FUNCS_SB = [
     "create_data_table",
+    "create_data_table_keys",
     "pg_execute",
 ] as const;
 export type FuncType = typeof FUNCS_SB[number];
 
 export const F_CREATE_DATA_TABLE: FuncType = "create_data_table";
+export const F_CREATE_DATA_TABLE_KEYS: FuncType = "create_data_table_keys";
 export const F_PG_EXECUTE: FuncType = "pg_execute";
 
 //
@@ -23,16 +25,17 @@ export type ViewType = typeof VIEWS_SB[number];
 export const V_UDF: ViewType = "user_defined_functions";
 
 //
-// self defined in advance by 'create_data_table'
+// self defined in advance by 1.'create_data_table' or 2.'create_data_table_keys'
 //
 const TABLES_SB = [
     "dev_test",
+    "dev_test_2k", // 2
     "register",
     "user_config",
     "user_exam",
     "test_analysis",
-    "test_prep_plan",
-    "test_prep_process"
+    "test_prep_plan", // 2
+    "test_prep_process" // 2
 ] as const;
 
 export type TableType = typeof TABLES_SB[number];

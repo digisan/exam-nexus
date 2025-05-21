@@ -3,7 +3,7 @@ import { firstWord, singleton, some } from "@util/util.ts";
 import { createClient } from "@supabase/supabase-js";
 import type { Email, EmailKey, Id, IdKey } from "@define/type.ts";
 import { isValidId, toIdKey } from "@define/type.ts";
-import { F_CREATE_DATA_TABLE, F_PG_EXECUTE, type TableType, V_UDF } from "@define/system.ts";
+import { F_CREATE_DATA_TABLE, F_CREATE_DATA_TABLE_KEYS, F_PG_EXECUTE, type TableType, V_UDF } from "@define/system.ts";
 import { env_get } from "@define/env.ts";
 await import("@define/env.ts");
 
@@ -36,6 +36,12 @@ class SupabaseAgent {
 
     async createDataTable(name: TableType): Promise<Result<Data, string>> {
         const { data, error } = await supabase.rpc(F_CREATE_DATA_TABLE, { name });
+        if (error) return err(error.message);
+        return ok(data);
+    }
+
+    async createDataTableKeys(name: TableType, key_parts: string[]): Promise<Result<Data, string>> {
+        const { data, error } = await supabase.rpc(F_CREATE_DATA_TABLE_KEYS, { name, key_parts });
         if (error) return err(error.message);
         return ok(data);
     }

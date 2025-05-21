@@ -12,7 +12,7 @@ Deno.test(async function ListUserFunctions() {
 });
 
 Deno.test(async function CreateDataTable() {
-    const r = await agent.createDataTable("dev_test");
+    const r = await agent.createDataTableKeys("test_prep_process", ["uid", "tid"]);
     if (r.isOk()) {
         console.log(r.value);
     } else {
