@@ -35,7 +35,7 @@ const TABLES_SB = [
     "user_exam",
     "test_analysis",
     "test_prep_plan", // 2
-    "test_prep_process" // 2
+    "test_prep_process", // 2
 ] as const;
 
 export type TableType = typeof TABLES_SB[number];

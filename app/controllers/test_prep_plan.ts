@@ -6,7 +6,6 @@ import type { Data } from "@db/dbService.ts";
 import { singleton } from "@util/util.ts";
 
 class TestPrepPlanController {
-
     // async getTestPrepPlan(email: EmailKeyOnAll<[T_REGISTER, T_USER_EXAM]>): Promise<Result<Data, string>> {
     //     return await agent.getSingleRowData(T_USER_EXAM, email as unknown as EmailKey<T_USER_EXAM>);
     // }

@@ -6,11 +6,11 @@ await import("@app/routes/_routes_test.ts");
 await import("@app/routes/home.ts"); // import 'routes' MUST AFTER middleware
 await import("@app/routes/auth.ts");
 await import("@app/routes/user.ts");
-await import("@app/routes/config.ts");
 await import("@app/routes/system.ts");
 await import("@app/routes/exam.ts");
+await import("@app/routes/user_config.ts");
 await import("@app/routes/user_exam.ts");
-await import("@app/doc/openapi.ts"); // import 'doc' at the last
+await import("@app/doc/openapi.ts"); // import 'doc' at the last line
 
 // 监听终止信号
 const shutdown = async () => {
