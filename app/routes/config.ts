@@ -2,7 +2,7 @@ import { createRoute, OpenAPIHono, z } from "@hono/zod-openapi";
 import { currentFilename } from "@util/util.ts";
 import { createStrictT } from "@i18n/lang_t.ts";
 import { app } from "@app/app.ts";
-import { cc } from "@app/controllers/config.ts";
+import { ucc } from "@app/controllers/user_config.ts";
 import { toEmailKeyOnAll, toValidConfig } from "@define/type.ts";
 import { T_REGISTER, T_USER_CONFIG } from "@define/system.ts";
 import { zodErrorHandler } from "@app/routes/handler/zod_err.ts";
@@ -69,7 +69,7 @@ const route_app = new OpenAPIHono({ defaultHook: zodErrorHandler });
             const r_cfg = await toValidConfig(c.req.valid("json"));
             if (r_cfg.isErr()) return t400(c, "set.config.fail");
 
-            const result = await cc.setUserCfg(r_cfg.value);
+            const result = await ucc.setUserCfg(r_cfg.value);
             if (result.isErr()) return t500(c, "set.config.err");
 
             const data = { success: true, message: t("set.config.ok") };
@@ -125,7 +125,7 @@ const route_app = new OpenAPIHono({ defaultHook: zodErrorHandler });
             const r = await toEmailKeyOnAll(email, t, T_REGISTER, T_USER_CONFIG);
             if (r.isErr()) return t400(c, "param.invalid", { param: email });
 
-            const r_cfg = await cc.getUserCfg(r.value);
+            const r_cfg = await ucc.getUserCfg(r.value);
             if (r_cfg.isErr()) return t404(c, "get.config.fail");
 
             const data = r_cfg.value;

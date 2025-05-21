@@ -1,6 +1,6 @@
 import { isValidLanguage, isValidRegion, toEmailKey, toEmailKeyOnAll } from "@define/type.ts";
 import { T_REGISTER, T_USER_CONFIG } from "@define/system.ts";
-import { cc } from "./config.ts";
+import { ucc } from "@app/controllers/user_config.ts";
 
 Deno.test(async function SetUserCfg() {
     const region = "au";
@@ -28,6 +28,6 @@ Deno.test(async function SetUserCfg() {
         console.debug(`${s} is NOT both valid key for '${T_REGISTER}' & '${T_USER_CONFIG}'`);
         return;
     }
-    const r = await cc.getUserCfg(r_eka.value);
+    const r = await ucc.getUserCfg(r_eka.value);
     console.log(r);
 });

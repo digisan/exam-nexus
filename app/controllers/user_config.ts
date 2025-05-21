@@ -5,7 +5,7 @@ import type { Config, Email, EmailKey, EmailKeyOnAll } from "@define/type.ts";
 import type { Data } from "@db/dbService.ts";
 import { singleton } from "@util/util.ts";
 
-class ConfigController {
+class UserConfigController {
     async getUserCfg(email: EmailKeyOnAll<[T_REGISTER, T_USER_CONFIG]>): Promise<Result<Data, string>> {
         return await agent.getSingleRowData(T_USER_CONFIG, email as unknown as EmailKey<T_USER_CONFIG>);
     }
@@ -21,4 +21,4 @@ class ConfigController {
     }
 }
 
-export const cc = new (singleton(ConfigController))();
+export const ucc = new (singleton(UserConfigController))();

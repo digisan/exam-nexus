@@ -11,7 +11,7 @@ import { env_get } from "@define/env.ts";
 const SIGNATURE_KEY = env_get("SIGNATURE_KEY");
 const localFilePath = "./data/users.json";
 
-class AuthControllerLocal {
+class AuthLocalController {
     async register(credential: { email: Email; password: Password }, ct?: TransFnType) {
         const t = wrapOptT(ct);
 
@@ -104,4 +104,4 @@ class AuthControllerLocal {
     }
 }
 
-export const authLocal = new (singleton(AuthControllerLocal))();
+export const authLocal = new (singleton(AuthLocalController))();
