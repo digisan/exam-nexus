@@ -2,7 +2,7 @@ import { createRoute, OpenAPIHono, z } from "@hono/zod-openapi";
 import { currentFilename, some } from "@util/util.ts";
 import { isEmail } from "@define/type.ts";
 import { app } from "@app/app.ts";
-import { uc } from "@app/controllers/userLocal.ts";
+import { uc } from "@app/controllers/local/userLocal.ts";
 import { zodErrorHandler } from "@app/routes/handler/zod_err.ts";
 import { n204, t400, t404, t500 } from "@app/routes/handler/resp.ts";
 

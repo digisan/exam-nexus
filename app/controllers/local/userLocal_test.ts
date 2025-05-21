@@ -1,5 +1,5 @@
 import { isEmail } from "@define/type.ts";
-import { uc } from "@app/controllers/userLocal.ts";
+import { uc } from "@app/controllers/local/userLocal.ts";
 
 Deno.test(async function UserCtrlList() {
     console.log(await uc.getUserList());
