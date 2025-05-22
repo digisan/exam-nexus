@@ -1,9 +1,10 @@
 import { err, ok, Result } from "neverthrow";
 import { firstWord, singleton, some } from "@util/util.ts";
 import { createClient } from "@supabase/supabase-js";
-import type { Email, EmailKey, Id, IdKey } from "@define/type.ts";
+import type { Email, EmailKey, Id, IdKey, IdObj } from "@define/type.ts";
 import { isValidId, toIdKey } from "@define/type.ts";
-import { F_CREATE_DATA_TABLE, F_CREATE_DATA_TABLE_KEYS, F_PG_EXECUTE, type TableType, V_UDF } from "@define/system.ts";
+import { F_CREATE_DATA_TABLE, F_CREATE_DATA_TABLE_KEYS, F_PG_EXECUTE, V_UDF } from "@define/system.ts";
+import type { KeyType, TableType } from "@define/system.ts";
 import { env_get } from "@define/env.ts";
 await import("@define/env.ts");
 
@@ -40,7 +41,7 @@ class SupabaseAgent {
         return ok(data);
     }
 
-    async createDataTableKeys(name: TableType, key_parts: string[]): Promise<Result<Data, string>> {
+    async createDataTableKeys(name: TableType, key_parts: KeyType[]): Promise<Result<Data, string>> {
         const { data, error } = await supabase.rpc(F_CREATE_DATA_TABLE_KEYS, { name, key_parts });
         if (error) return err(error.message);
         return ok(data);
@@ -87,6 +88,19 @@ class SupabaseAgent {
             .from(table)
             .select()
             .eq("id", id);
+
+        if (error) return err(error.message);
+        // if (!data) return err("Fetch succeeded but no data returned");
+        if (!some(data)) return ok(null);
+        if (Array.isArray(data) && data.length === 1) return ok(data[0]);
+        return ok(data);
+    }
+
+    async getDataRowByIdObj(table: TableType, id_obj: IdObj): Promise<Result<Data, string>> {
+        const { data, error } = await supabase
+            .from(table)
+            .select("*")
+            .match(id_obj);
 
         if (error) return err(error.message);
         // if (!data) return err("Fetch succeeded but no data returned");

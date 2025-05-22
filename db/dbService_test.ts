@@ -1,5 +1,5 @@
 import { dbAgent as agent } from "@db/dbService.ts";
-import { isValidId, toIdKey } from "@define/type.ts";
+import { type Id, isValidId, isValidIdObj, toIdKey } from "@define/type.ts";
 import type { JSONObject } from "@db/dbService.ts";
 
 Deno.test(async function ListUserFunctions() {
@@ -92,7 +92,9 @@ Deno.test(async function FirstDataRow() {
 });
 
 Deno.test(async function GetDataRow() {
-    const id = "abcd1";
+    // single key
+    //
+    const id = "1234";
     if (!isValidId(id)) {
         console.debug(`❌ Not valid ID (${id})`);
         return;
@@ -102,6 +104,25 @@ Deno.test(async function GetDataRow() {
         console.log(r.value);
     } else {
         console.debug(`❌ ${r.error}`);
+    }
+
+    // composited key
+    //
+    const idobj = {
+        id1: "1234" as Id,
+        id2: "abcd" as Id,
+        // id3: "1245" as Id,
+        // id: "abcd" as Id
+    };
+    if (isValidIdObj(idobj)) {
+        const r2 = await agent.getDataRowByIdObj("dev_test_2k", idobj);
+        if (r2.isOk()) {
+            console.log(r2.value);
+        } else {
+            console.debug(`❌ ${r2.error}`);
+        }
+    } else {
+        console.debug(`❌ ${JSON.stringify(idobj)} is invalid`);
     }
 });
 

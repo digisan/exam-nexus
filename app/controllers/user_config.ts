@@ -6,13 +6,14 @@ import type { Data } from "@db/dbService.ts";
 import { singleton } from "@util/util.ts";
 
 class UserConfigController {
-    async getUserCfg(email: EmailKeyOnAll<[T_REGISTER, T_USER_CONFIG]>): Promise<Result<Data, string>> {
-        return await agent.getSingleRowData(T_USER_CONFIG, email as unknown as EmailKey<T_USER_CONFIG>);
-    }
-
     // insert or update into T_USER_CONFIG
     async setUserCfg(cfg: Config): Promise<Result<Data, string>> {
         return await agent.setSingleRowData(T_USER_CONFIG, cfg.email as unknown as Email, cfg);
+    }
+
+    // get from T_USER_CONFIG
+    async getUserCfg(email: EmailKeyOnAll<[T_REGISTER, T_USER_CONFIG]>): Promise<Result<Data, string>> {
+        return await agent.getSingleRowData(T_USER_CONFIG, email as unknown as EmailKey<T_USER_CONFIG>);
     }
 
     // delete from T_USER_CONFIG

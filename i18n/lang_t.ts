@@ -25,6 +25,7 @@ export const lang = {
         },
         id: {
             invalid: "invalid {id} as id",
+            invalid_as_obj: "invalid {id} as id object",
         },
         email: {
             invalid: "invalid {email} as email or user id",
@@ -126,6 +127,7 @@ export const lang = {
             },
             db: {
                 fail_by_id: "missing item keyed by {id}",
+                fail_by_id_obj: "missing item keyed as object by {id}",
                 fail_by_email: "missing item keyed by {email}",
                 fail_by_field_value: "missing item by {field} and value {value}",
             },
@@ -164,6 +166,7 @@ export const lang = {
         },
         id: {
             invalid: "{id}为无效ID",
+            invalid_as_obj: "{id}为无效ID对象",
         },
         email: {
             invalid: "{email}为无效Email格式或用户ID",
@@ -265,6 +268,7 @@ export const lang = {
             },
             db: {
                 fail_by_id: "缺失主键为{id}的元素",
+                fail_by_id_obj: "缺失主键对象为{id}的元素",
                 fail_by_email: "缺失Email主键为{email}的元素",
                 fail_by_field_value: "缺失匹配字段{field}和其值为{value}的元素",
             },
@@ -296,6 +300,7 @@ const keys = [
     "resp.missing",
     "resp.invalid",
     "id.invalid",
+    "id.invalid_as_obj",
     "email.invalid",
     "password.invalid",
     "region.invalid",
@@ -344,6 +349,7 @@ const keys = [
     "get.user_exam.fail",
     "get.user_exam.ok",
     "get.db.fail_by_id",
+    "get.db.fail_by_id_obj",
     "get.db.fail_by_email",
     "get.db.fail_by_field_value",
     "get.user.not_found",

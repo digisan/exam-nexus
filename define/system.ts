@@ -37,11 +37,9 @@ const TABLES_SB = [
     "test_prep_plan", // 2
     "test_prep_process", // 2
 ] as const;
-
 export type TableType = typeof TABLES_SB[number];
 
 const defineTable = <T extends TableType>(value: T): T => value;
-
 const T = {
     TEST: defineTable("dev_test"),
     REGISTER: defineTable("register"),
@@ -67,6 +65,22 @@ export type T_USER_EXAM = typeof T.USER_EXAM;
 export type T_TEST_ANALYSIS = typeof T.TEST_ANALYSIS;
 export type T_TEST_PREP_PLAN = typeof T.TEST_PREP_PLAN;
 export type T_TEST_PREP_PROCESS = typeof T.TEST_PREP_PROCESS;
+
+//
+// table key(s) name range
+//
+export const KEY_SB = [
+    "id1", // for testing
+    "id2", // for testing
+    "id",
+    "uid",
+    "tid",
+] as const;
+export type KeyType = typeof KEY_SB[number];
+
+export const K_ID: KeyType = "id";
+export const K_UID: KeyType = "uid";
+export const K_TID: KeyType = "tid";
 
 //
 // ****************** Validate SupaBaseDB tables ****************** //

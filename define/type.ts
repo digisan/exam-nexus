@@ -3,7 +3,8 @@ import { type TransFnType, wrapOptT } from "@i18n/lang_t.ts";
 import { dbAgent as agent } from "@db/dbService.ts";
 import { LANGUAGES, REGIONS } from "@define/config.ts";
 import type { LanguageType, RegionType } from "@define/config.ts";
-import { T_REGISTER, type TableType } from "@define/system.ts";
+import { KEY_SB, T_REGISTER } from "@define/system.ts";
+import type { KeyType, TableType } from "@define/system.ts";
 import { hasCertainProperty, RE_EMAIL, RE_PWD, some } from "@util/util.ts";
 
 type Brand<T, B> = T & { readonly __brand: B; readonly __exact: T; readonly __types: T };
@@ -30,6 +31,29 @@ export const toIdKey = async <T extends TableType>(s: string | Id, table: T, ct?
     if (!isValidId(s)) return err(t("id.invalid"));
     if (!some(await agent.getDataRow(table, s))) return err(t("get.db.fail_by_id", { id: s }));
     return ok(s as unknown as IdKey<T>);
+};
+
+type Ids = Brand<string[], "Ids">;
+const isValidIds = (ss: string[] | null): ss is Ids => {
+    if (ss === null) return false;
+    for (const s of ss) if (!isValidId(s)) return false;
+    return true;
+};
+
+export type IdObj = Brand<Partial<Record<KeyType, Id>>, "IdObj">;
+export const isValidIdObj = (so: Partial<Record<KeyType, Id>> | null): so is IdObj => {
+    if (so === null) return false;
+    const keys = Object.keys(so);
+    if (!keys.every((k) => (KEY_SB as readonly string[]).includes(k))) return false;
+    return isValidIds(keys.map((k) => so[k as KeyType]!));
+};
+
+export type IdObjKey<T1 extends TableType, T2 extends KeyType> = Brand<Partial<Record<T2, Id>>, `IdObjKey<${T1}_${T2}>`>;
+export const toIdObjKey = async <T1 extends TableType, T2 extends KeyType>(so: Partial<Record<T2, Id>>, table: T1, ct?: TransFnType): Promise<Result<IdObjKey<T1, T2>, string>> => {
+    const t = wrapOptT(ct);
+    if (!isValidIdObj(so)) return err(t("id.invalid_as_obj"));
+    if (!some(await agent.getDataRowByIdObj(table, so))) return err(t("get.db.fail_by_id_obj", { id: so }));
+    return ok(so as unknown as IdObjKey<T1, T2>);
 };
 
 ////////////////////////////////////////////////

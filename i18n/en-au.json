@@ -21,7 +21,8 @@
         "invalid": "invalid resp(s) - {resp}"
     },
     "id": {
-        "invalid": "invalid {id} as id"
+        "invalid": "invalid {id} as id",
+        "invalid_as_obj": "invalid {id} as id object"
     },
     "email": {
         "invalid": "invalid {email} as email or user id"
@@ -123,6 +124,7 @@
         },
         "db": {
             "fail_by_id": "missing item keyed by {id}",
+            "fail_by_id_obj": "missing item keyed as object by {id}",
             "fail_by_email": "missing item keyed by {email}",
             "fail_by_field_value": "missing item by {field} and value {value}"
         },

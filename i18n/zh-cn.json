@@ -21,7 +21,8 @@
         "invalid": "回复内容无效(s) - {resp}"
     },
     "id": {
-        "invalid": "{id}为无效ID"
+        "invalid": "{id}为无效ID",
+        "invalid_as_obj": "{id}为无效ID对象"
     },
     "email": {
         "invalid": "{email}为无效Email格式或用户ID"
@@ -123,6 +124,7 @@
         },
         "db": {
             "fail_by_id": "缺失主键为{id}的元素",
+            "fail_by_id_obj": "缺失主键对象为{id}的元素",
             "fail_by_email": "缺失Email主键为{email}的元素",
             "fail_by_field_value": "缺失匹配字段{field}和其值为{value}的元素"
         },
