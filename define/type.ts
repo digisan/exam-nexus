@@ -52,7 +52,7 @@ export type IdObjKey<T1 extends TableType, T2 extends KeyType> = Brand<Partial<R
 export const toIdObjKey = async <T1 extends TableType, T2 extends KeyType>(so: Partial<Record<T2, Id>>, table: T1, ct?: TransFnType): Promise<Result<IdObjKey<T1, T2>, string>> => {
     const t = wrapOptT(ct);
     if (!isValidIdObj(so)) return err(t("id.invalid_as_obj"));
-    if (!some(await agent.getDataRowByIdObj(table, so))) return err(t("get.db.fail_by_id_obj", { id: so }));
+    if (!some(await agent.getDataRow(table, so))) return err(t("get.db.fail_by_id_obj", { id: so }));
     return ok(so as unknown as IdObjKey<T1, T2>);
 };
 

@@ -1,8 +1,8 @@
 import { err, ok, Result } from "neverthrow";
 import { firstWord, singleton, some } from "@util/util.ts";
 import { createClient } from "@supabase/supabase-js";
-import type { Email, EmailKey, Id, IdKey, IdObj } from "@define/type.ts";
-import { isValidId, toIdKey } from "@define/type.ts";
+import type { Id, IdKey, IdObj, IdObjKey } from "@define/type.ts";
+import { isValidId, isValidIdObj, toIdKey, toIdObjKey } from "@define/type.ts";
 import { F_CREATE_DATA_TABLE, F_CREATE_DATA_TABLE_KEYS, F_PG_EXECUTE, V_UDF } from "@define/system.ts";
 import type { KeyType, TableType } from "@define/system.ts";
 import { env_get } from "@define/env.ts";
@@ -83,91 +83,67 @@ class SupabaseAgent {
 
     ////////////////////////////////////////////////////////////////////////////////////////
 
-    async getDataRow(table: TableType, id: Id): Promise<Result<Data, string>> {
-        const { data, error } = await supabase
-            .from(table)
-            .select()
-            .eq("id", id);
-
+    async getDataRow(table: TableType, id: Id | IdObj): Promise<Result<Data, string>> {
+        const isStrId = typeof id === "string";
+        const t = supabase.from(table).select("*");
+        const query = isStrId ? t.eq("id", id) : t.match(id);
+        const { data, error } = await query;
         if (error) return err(error.message);
-        // if (!data) return err("Fetch succeeded but no data returned");
         if (!some(data)) return ok(null);
         if (Array.isArray(data) && data.length === 1) return ok(data[0]);
         return ok(data);
     }
 
-    async getDataRowByIdObj(table: TableType, id_obj: IdObj): Promise<Result<Data, string>> {
-        const { data, error } = await supabase
-            .from(table)
-            .select("*")
-            .match(id_obj);
-
-        if (error) return err(error.message);
-        // if (!data) return err("Fetch succeeded but no data returned");
-        if (!some(data)) return ok(null);
-        if (Array.isArray(data) && data.length === 1) return ok(data[0]);
-        return ok(data);
-    }
-
-    async insertDataRow(table: TableType, id: Id, value: Data): Promise<Result<JSONObject, string>> {
-        const { data, error } = await supabase
-            .from(table)
-            .insert({ id, data: value })
-            .select()
-            .single();
-
+    async insertDataRow(table: TableType, id: Id | IdObj, value: Data): Promise<Result<JSONObject, string>> {
+        const isStrId = typeof id === "string";
+        const t = supabase.from(table);
+        const query = isStrId ? t.insert({ id, data: value }).select().single() : t.insert({ ...id, data: value }).select().single();
+        const { data, error } = await query;
         if (error) return err(error.message);
         if (!data) return err("Insert succeeded but no data returned");
         return ok(data);
     }
 
-    async updateDataRow(table: TableType, id: IdKey<TableType>, value: Data): Promise<Result<JSONObject, string>> {
-        const { data, error } = await supabase
-            .from(table)
-            .update({ data: value })
-            .eq("id", id)
-            .select()
-            .single();
-
+    async updateDataRow(table: TableType, id: IdKey<TableType> | IdObjKey<TableType, KeyType>, value: Data): Promise<Result<JSONObject, string>> {
+        const isStrId = typeof id === "string";
+        const t = supabase.from(table).update({ data: value });
+        const query = isStrId ? t.eq("id", id).select().single() : t.match(id).select().single();
+        const { data, error } = await query;
         if (error) return err(error.message);
         if (!data) return err("Update succeeded but no data returned");
         return ok(data);
     }
 
-    async upsertDataRow(table: TableType, id: Id, value: Data): Promise<Result<JSONObject, string>> {
-        const { data, error } = await supabase
-            .from(table)
-            .upsert({ id, data: value })
-            .select()
-            .single();
-
+    async upsertDataRow(table: TableType, id: Id | IdObj, value: Data): Promise<Result<JSONObject, string>> {
+        const isStrId = typeof id === "string";
+        const t = supabase.from(table);
+        const query = isStrId ? t.upsert({ id, data: value }).select().single() : t.upsert({ ...id, data: value }).select().single();
+        const { data, error } = await query;
         if (error) return err(error.message);
         if (!data) return err("Upsert succeeded but no data returned");
         return ok(data);
     }
 
-    async deleteDataRows(table: TableType, ...ids: Id[]): Promise<Result<JSONObject[], string>> {
+    async deleteDataRows(table: TableType, ...ids: Id[] | IdObj[]): Promise<Result<JSONObject[], string>> {
         if (ids.length === 0) return ok([]);
-        const { data, error } = await supabase
-            .from(table)
-            .delete()
-            .in("id", ids)
-            .select();
-
-        if (error) return err(error.message);
-        if (!data) return err("Delete succeeded but no data returned");
-        return ok(data);
+        let result: JSONObject[] = [];
+        if (Array.isArray(ids) && ids.every((id) => typeof id === "string")) {
+            const { data, error } = await supabase.from(table).delete().in("id", ids).select();
+            if (error) return err(error.message);
+            return ok(data ?? []);
+        } else {
+            for (const idObj of ids) {
+                const { data, error } = await supabase.from(table).delete().match(idObj).select();
+                if (error) return err(error.message);
+                if (Array.isArray(data)) result = result.concat(data);
+            }
+            return ok(result);
+        }
     }
 
     async firstDataRow(table: TableType, field: string, value: unknown): Promise<Result<Data, string>> {
-        const { data, error } = await supabase
-            .from(table)
-            .select("*")
-            .filter(`data->>${field}`, "eq", value)
-            .limit(1);
-
+        const { data, error } = await supabase.from(table).select("*").filter(`data->>${field}`, "eq", value).limit(1);
         if (error) return err(error.message);
-        // if (!data) return err("Fetch succeeded but no data returned");
         if (!some(data)) return ok(null);
         if (Array.isArray(data) && data.length === 1) return ok(data[0]);
         return ok(data);
@@ -176,43 +152,48 @@ class SupabaseAgent {
     async searchDataRows(table: TableType, field: string, value: unknown, n?: number): Promise<Result<JSONObject[], string>> {
         const all = supabase.from(table).select("*").filter(`data->>${field}`, "eq", value);
         const { data, error } = await (n === undefined ? all : all.limit(n));
-
         if (error) return err(error.message);
-        if (!data) return err("Fetch succeeded but no data returned");
-        return ok(data);
+        return ok(data ?? []);
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////
 
-    async getSingleRowData(table: TableType, id: IdKey<TableType> | EmailKey<TableType>): Promise<Result<JSONObject | null, string>> {
-        if (!isValidId(id)) return err(`${id} is invalid format`);
-        const r = await this.getDataRow(table, id);
+    async getSingleRowData(table: TableType, id: IdKey<TableType> | IdObjKey<TableType, KeyType>): Promise<Result<JSONObject | null, string>> {
+        const isStrId = typeof id === "string";
+        const r = await (isStrId ? this.getDataRow(table, id as unknown as Id) : this.getDataRow(table, id as unknown as IdObj));
         if (r.isErr()) return err(r.error);
         if (some(r) && "data" in r.value!) return ok(r.value.data as JSONObject);
         return ok(null);
     }
 
-    async setSingleRowData(table: TableType, id: Id | Email, value: Data): Promise<Result<JSONObject | null, string>> {
-        if (!isValidId(id)) return err(`${id} is invalid format`);
-        const r_k = await toIdKey(id, table);
-        if (r_k.isOk()) {
-            // fetch previous value under id
-            const prevData = r_k.value ? await this.getSingleRowData(table, r_k.value) : null;
-            const r = await this.upsertDataRow(table, id, normalizeData(value));
-            if (r.isErr()) return r;
-            // if there are some new data, return new data; if delete action, return previous data
-            return some(value) ? ok(r.value.data as JSONObject) : ok(prevData?.isOk() ? prevData.value : null);
-        } else {
-            const r = await this.upsertDataRow(table, id, normalizeData(value));
-            if (r.isErr()) return r;
-            return some(value) ? ok(r.value.data as JSONObject) : ok(null);
-        }
+    async setSingleRowData(table: TableType, id: Id | IdObj, value: Data): Promise<Result<JSONObject | null, string>> {
+        const isStrId = typeof id === "string";
+        const isValid = isStrId ? isValidId(id) : isValidIdObj(id);
+        if (!isValid) return err(`${id} is invalid`);
+
+        const r_k = await (isStrId ? toIdKey(id, table) : toIdObjKey(id, table));
+        // if no existing id with null value, ignore setting action...
+        if (r_k.isErr() && !value) return ok(value)
+
+        const prevData = (r_k.isOk() && r_k.value) ? await this.getSingleRowData(table, r_k.value) : null;
+
+        const r = await this.upsertDataRow(table, id, normalizeData(value));
+        if (r.isErr()) return r;
+        // Return new data if present, otherwise previous data or null
+        return some(value) ? ok(r.value.data as JSONObject) : ok(prevData?.isOk() ? prevData.value : null);
     }
 
     // remove whole row: return deleted row; remove row data: return null
-    async deleteRowData(table: TableType, id: Id | Email, delWholeRow: boolean = false): Promise<Result<Data, string>> {
-        if (!isValidId(id)) return err(`${id} is invalid format`);
-        return await (delWholeRow ? this.deleteDataRows(table, id) : this.setSingleRowData(table, id, null));
+    async deleteRowData(table: TableType, id: Id | IdObj, delWholeRow: boolean = false): Promise<Result<Data, string>> {
+        const isStrId = typeof id === "string";
+        const isValid = isStrId ? isValidId(id) : isValidIdObj(id);
+        if (!isValid) return err(`${id} is invalid`);
+        if (delWholeRow) {
+            const ids = isStrId ? [id as Id] : [id as IdObj];
+            return await this.deleteDataRows(table, ...ids);
+        } else {
+            return await this.setSingleRowData(table, id, null);
+        }
     }
 }
 
