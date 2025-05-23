@@ -1,41 +1,49 @@
-import { type EmailKey, type EmailKeyOnAll, toEmailKey, toEmailKeyOnAll } from "@define/type.ts";
-import { T_REGISTER, T_TEST } from "@define/system.ts";
+import { toIdKey, toIdMultiKey, toIdObjKey } from "@define/id.ts";
+import type { IdKey, IdMultiKey, IdObjKey } from "@define/id.ts";
+import { K_ID1, K_ID2, T_REGISTER, T_TEST, T_TEST_2k } from "@define/system.ts";
 
-const p = (u: EmailKey<T_REGISTER>) => {
+const p = (u: IdKey<T_TEST>) => {
     console.log(u);
 };
 
-const pp = (u: EmailKey<"test">) => {
+const pp = (u: IdObjKey<T_TEST_2k, [K_ID1, K_ID2]>) => {
     console.log(u);
 };
 
-const ppp = (u: EmailKeyOnAll<[T_REGISTER, T_TEST]>) => {
+const ppp = (u: IdMultiKey<[T_TEST, T_REGISTER]>) => {
     console.log(u);
 };
 
 Deno.test(async function Test() {
-    const s = "abcd@test.com";
+    console.log("here");
 
-    const r_ek1 = await toEmailKey(s, T_REGISTER);
-    if (r_ek1.isErr()) {
-        console.debug(r_ek1.error);
+    const s = "abcde";
+    const r_k_test = await toIdKey(s, T_TEST);
+    if (r_k_test.isErr()) {
+        console.debug(r_k_test.error);
         return;
     }
-    p(r_ek1.value);
+    p(r_k_test.value);
 
-    const r_ek2 = await toEmailKey(s, T_TEST);
-    if (r_ek2.isErr()) {
-        console.debug(r_ek2.error);
+    const so = {
+        id1: "1234",
+        id2: "abcde",
+        // id3: "test"
+    };
+    const r_k_test2k = await toIdObjKey(so, T_TEST_2k, [K_ID1, K_ID2]);
+    if (r_k_test2k.isErr()) {
+        console.debug(r_k_test2k.error);
         return;
     }
-    pp(r_ek2.value);
+    pp(r_k_test2k.value);
 
-    const r_eka = await toEmailKeyOnAll(s, undefined, T_REGISTER, T_TEST);
+    const sm = "cdutwhu@yeah.net";
+    const r_k_reg_test = await toIdMultiKey(sm, [T_REGISTER, T_TEST]);
     // const r_eka = await toEmailKeyOnAll(s, undefined, T_TEST, T_REGISTER) // 最好忽略顺序时候，也不报错
-    if (r_eka.isErr()) {
-        console.debug(r_eka.error);
+    if (r_k_reg_test.isErr()) {
+        console.debug(r_k_reg_test.error);
         return;
     }
-    const emailBoth = r_eka.value;
+    const emailBoth = r_k_reg_test.value;
     ppp(emailBoth);
 });

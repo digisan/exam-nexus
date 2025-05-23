@@ -1,8 +1,7 @@
 import { err, ok, Result } from "neverthrow";
 import { firstWord, singleton, some } from "@util/util.ts";
 import { createClient } from "@supabase/supabase-js";
-import type { Id, IdKey, IdObj, IdObjKey } from "@define/type.ts";
-import { isValidId, isValidIdObj, toIdKey, toIdObjKey } from "@define/type.ts";
+import type { Id, IdKey, IdObj, IdObjKey } from "@define/id.ts";
 import { F_CREATE_DATA_TABLE, F_CREATE_DATA_TABLE_KEYS, F_PG_EXECUTE, V_UDF } from "@define/system.ts";
 import type { KeyType, TableType } from "@define/system.ts";
 import { env_get } from "@define/env.ts";
@@ -83,7 +82,7 @@ class SupabaseAgent {
 
     ////////////////////////////////////////////////////////////////////////////////////////
 
-    async getDataRow(table: TableType, id: Id | IdObj): Promise<Result<Data, string>> {
+    async getDataRow<T extends TableType, Ks extends readonly KeyType[]>(table: T, id: Id | IdObj<Ks>): Promise<Result<Data, string>> {
         const isStrId = typeof id === "string";
         const t = supabase.from(table).select("*");
         const query = isStrId ? t.eq("id", id) : t.match(id);
@@ -94,7 +93,7 @@ class SupabaseAgent {
         return ok(data);
     }
 
-    async insertDataRow(table: TableType, id: Id | IdObj, value: Data): Promise<Result<JSONObject, string>> {
+    async insertDataRow<T extends TableType, Ks extends readonly KeyType[]>(table: T, id: Id | IdObj<Ks>, value: Data): Promise<Result<JSONObject, string>> {
         const isStrId = typeof id === "string";
         const t = supabase.from(table);
         const query = isStrId ? t.insert({ id, data: value }).select().single() : t.insert({ ...id, data: value }).select().single();
@@ -104,7 +103,7 @@ class SupabaseAgent {
         return ok(data);
     }
 
-    async updateDataRow(table: TableType, id: IdKey<TableType> | IdObjKey<TableType, KeyType>, value: Data): Promise<Result<JSONObject, string>> {
+    async updateDataRow<T extends TableType, Ks extends readonly KeyType[]>(table: T, id: IdKey<T> | IdObjKey<T, Ks>, value: Data): Promise<Result<JSONObject, string>> {
         const isStrId = typeof id === "string";
         const t = supabase.from(table).update({ data: value });
         const query = isStrId ? t.eq("id", id).select().single() : t.match(id).select().single();
@@ -114,7 +113,7 @@ class SupabaseAgent {
         return ok(data);
     }
 
-    async upsertDataRow(table: TableType, id: Id | IdObj, value: Data): Promise<Result<JSONObject, string>> {
+    async upsertDataRow<T extends TableType, Ks extends readonly KeyType[]>(table: T, id: Id | IdObj<Ks>, value: Data): Promise<Result<JSONObject, string>> {
         const isStrId = typeof id === "string";
         const t = supabase.from(table);
         const query = isStrId ? t.upsert({ id, data: value }).select().single() : t.upsert({ ...id, data: value }).select().single();
@@ -124,7 +123,7 @@ class SupabaseAgent {
         return ok(data);
     }
 
-    async deleteDataRows(table: TableType, ...ids: Id[] | IdObj[]): Promise<Result<JSONObject[], string>> {
+    async deleteDataRows<T extends TableType, Ks extends readonly KeyType[]>(table: T, ...ids: Id[] | IdObj<Ks>[]): Promise<Result<JSONObject[], string>> {
         if (ids.length === 0) return ok([]);
         let result: JSONObject[] = [];
         if (Array.isArray(ids) && ids.every((id) => typeof id === "string")) {
@@ -141,7 +140,7 @@ class SupabaseAgent {
         }
     }
 
-    async firstDataRow(table: TableType, field: string, value: unknown): Promise<Result<Data, string>> {
+    async firstDataRow<T extends TableType>(table: T, field: string, value: unknown): Promise<Result<Data, string>> {
         const { data, error } = await supabase.from(table).select("*").filter(`data->>${field}`, "eq", value).limit(1);
         if (error) return err(error.message);
         if (!some(data)) return ok(null);
@@ -149,7 +148,7 @@ class SupabaseAgent {
         return ok(data);
     }
 
-    async searchDataRows(table: TableType, field: string, value: unknown, n?: number): Promise<Result<JSONObject[], string>> {
+    async searchDataRows<T extends TableType>(table: T, field: string, value: unknown, n?: number): Promise<Result<JSONObject[], string>> {
         const all = supabase.from(table).select("*").filter(`data->>${field}`, "eq", value);
         const { data, error } = await (n === undefined ? all : all.limit(n));
         if (error) return err(error.message);
@@ -158,38 +157,23 @@ class SupabaseAgent {
 
     ////////////////////////////////////////////////////////////////////////////////////////
 
-    async getSingleRowData(table: TableType, id: IdKey<TableType> | IdObjKey<TableType, KeyType>): Promise<Result<JSONObject | null, string>> {
+    async getSingleRowData<T extends TableType, Ks extends readonly KeyType[]>(table: T, id: IdKey<T> | IdObjKey<T, Ks>): Promise<Result<JSONObject | null, string>> {
         const isStrId = typeof id === "string";
-        const r = await (isStrId ? this.getDataRow(table, id as unknown as Id) : this.getDataRow(table, id as unknown as IdObj));
+        const r = await (isStrId ? this.getDataRow(table, id as unknown as Id) : this.getDataRow(table, id as unknown as IdObj<Ks>));
         if (r.isErr()) return err(r.error);
         if (some(r) && "data" in r.value!) return ok(r.value.data as JSONObject);
         return ok(null);
     }
 
-    async setSingleRowData(table: TableType, id: Id | IdObj, value: Data): Promise<Result<JSONObject | null, string>> {
-        const isStrId = typeof id === "string";
-        const isValid = isStrId ? isValidId(id) : isValidIdObj(id);
-        if (!isValid) return err(`${id} is invalid`);
-
-        const r_k = await (isStrId ? toIdKey(id, table) : toIdObjKey(id, table));
-        // if no existing id with null value, ignore setting action...
-        if (r_k.isErr() && !value) return ok(value)
-
-        const prevData = (r_k.isOk() && r_k.value) ? await this.getSingleRowData(table, r_k.value) : null;
-
-        const r = await this.upsertDataRow(table, id, normalizeData(value));
-        if (r.isErr()) return r;
-        // Return new data if present, otherwise previous data or null
-        return some(value) ? ok(r.value.data as JSONObject) : ok(prevData?.isOk() ? prevData.value : null);
+    async setSingleRowData<T extends TableType, Ks extends readonly KeyType[]>(table: T, id: Id | IdObj<Ks>, value: Data): Promise<Result<JSONObject | null, string>> {
+        return await this.upsertDataRow(table, id, normalizeData(value));
     }
 
     // remove whole row: return deleted row; remove row data: return null
-    async deleteRowData(table: TableType, id: Id | IdObj, delWholeRow: boolean = false): Promise<Result<Data, string>> {
+    async deleteRowData<T extends TableType, Ks extends readonly KeyType[]>(table: T, id: Id | IdObj<Ks>, delWholeRow: boolean = false): Promise<Result<Data, string>> {
         const isStrId = typeof id === "string";
-        const isValid = isStrId ? isValidId(id) : isValidIdObj(id);
-        if (!isValid) return err(`${id} is invalid`);
         if (delWholeRow) {
-            const ids = isStrId ? [id as Id] : [id as IdObj];
+            const ids = isStrId ? [id as Id] : [id as IdObj<Ks>];
             return await this.deleteDataRows(table, ...ids);
         } else {
             return await this.setSingleRowData(table, id, null);

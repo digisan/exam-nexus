@@ -42,6 +42,7 @@ export type TableType = typeof TABLES_SB[number];
 const defineTable = <T extends TableType>(value: T): T => value;
 const T = {
     TEST: defineTable("dev_test"),
+    TEST_2K: defineTable("dev_test_2k"),
     REGISTER: defineTable("register"),
     USER_CONFIG: defineTable("user_config"),
     USER_EXAM: defineTable("user_exam"),
@@ -51,6 +52,7 @@ const T = {
 } as const;
 
 export const T_TEST = T.TEST;
+export const T_TEST_2k = T.TEST_2K;
 export const T_REGISTER = T.REGISTER;
 export const T_USER_CONFIG = T.USER_CONFIG;
 export const T_USER_EXAM = T.USER_EXAM;
@@ -59,6 +61,7 @@ export const T_TEST_PREP_PLAN = T.TEST_PREP_PLAN;
 export const T_TEST_PREP_PROCESS = T.TEST_PREP_PROCESS;
 
 export type T_TEST = typeof T.TEST;
+export type T_TEST_2k = typeof T.TEST_2K;
 export type T_REGISTER = typeof T.REGISTER;
 export type T_USER_CONFIG = typeof T.USER_CONFIG;
 export type T_USER_EXAM = typeof T.USER_EXAM;
@@ -78,9 +81,26 @@ export const KEY_SB = [
 ] as const;
 export type KeyType = typeof KEY_SB[number];
 
-export const K_ID: KeyType = "id";
-export const K_UID: KeyType = "uid";
-export const K_TID: KeyType = "tid";
+const defineKey = <T extends KeyType>(value: T): T => value;
+const K = {
+    ID1: defineKey("id1"),
+    ID2: defineKey("id2"),
+    ID: defineKey("id"),
+    UID: defineKey("uid"),
+    TID: defineKey("tid"),
+} as const;
+
+export const K_ID1 = K.ID1;
+export const K_ID2 = K.ID2;
+export const K_ID = K.ID;
+export const K_UID = K.UID;
+export const K_TID = K.TID;
+
+export type K_ID1 = typeof K.ID1;
+export type K_ID2 = typeof K.ID2;
+export type K_ID = typeof K.ID;
+export type K_UID = typeof K.UID;
+export type K_TID = typeof K.TID;
 
 //
 // ****************** Validate SupaBaseDB tables ****************** //
