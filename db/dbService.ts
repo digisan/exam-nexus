@@ -41,7 +41,7 @@ class SupabaseAgent {
         return ok(data);
     }
 
-    async createDataTableKeys(name: TableType, key_parts: KeyType[]): Promise<Result<Data, string>> {
+    async createDataTableWithKeys(name: TableType, key_parts: KeyType[]): Promise<Result<Data, string>> {
         const { data, error } = await supabase.rpc(F_CREATE_DATA_TABLE_KEYS, { name, key_parts });
         if (error) return err(error.message);
         return ok(data);
@@ -82,6 +82,30 @@ class SupabaseAgent {
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////
+
+    /**
+     * check how many rows in a table
+     * @param table 表名（默认 schema 为 public）
+     * @return promise ok(rows' count); err(error message)
+     */
+    async countRow<T extends TableType>(table: T): Promise<Result<number | null, string>> {
+        const { count, error } = await supabase.from(table).select("*", { count: "exact", head: true });
+        if (error) return err(error.message);
+        return ok(count);
+    }
+
+    async clearTable<T extends TableType>(table: T): Promise<Result<number, string>> {
+        const rn_before = await this.countRow(table);
+        if (rn_before.isErr()) return err(rn_before.error);
+
+        const { error } = await supabase.from(table).delete().gt("created_at", "1900-01-01");
+        if (error) return err(error.message);
+
+        const rn_after = await this.countRow(table);
+        if (rn_after.isErr()) return err(rn_after.error);
+
+        return ok((rn_before.value ?? 0) - (rn_after.value ?? 0));
+    }
 
     async getDataRow<T extends TableType, Ks extends readonly KeyType[]>(table: T, id: Id | IdObj<Ks>): Promise<Result<Data, string>> {
         const isStrId = typeof id === "string";

@@ -111,7 +111,7 @@ export const fileExists = async (path: string): Promise<boolean> => {
 };
 
 // e.g. const object = new (singleton(MyObject))();
-// for runtime creating single object 
+// for runtime creating single object
 //
 type Constructor<T> = new (...args: any[]) => T;
 export const singleton = <T extends object>(ClassType: Constructor<T>): Constructor<T> => {

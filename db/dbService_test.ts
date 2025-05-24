@@ -2,7 +2,25 @@ import { dbAgent as agent } from "@db/dbService.ts";
 import { type Id, isValidId, isValidIdObj, toIdKey, toIdObjKey } from "@define/id.ts";
 import type { JSONObject } from "@db/dbService.ts";
 import type { IdObj } from "@define/id.ts";
-import { K_ID1, K_ID2 } from "@define/system.ts";
+import { K_ID1, K_ID2, T_TEST, T_TEST_2k } from "@define/system.ts";
+
+Deno.test("clearTable", async () => {
+    const r = await agent.clearTable(T_TEST_2k);
+    if (r.isOk()) {
+        console.log(r.value);
+    } else {
+        console.debug(r.error);
+    }
+});
+
+Deno.test("countRow", async () => {
+    const r = await agent.countRow(T_TEST_2k);
+    if (r.isOk()) {
+        console.log(r.value);
+    } else {
+        console.debug(r.error);
+    }
+});
 
 Deno.test(async function ListUserFunctions() {
     const r = await agent.listUserFunctions();
@@ -14,7 +32,7 @@ Deno.test(async function ListUserFunctions() {
 });
 
 Deno.test(async function CreateDataTable() {
-    const r = await agent.createDataTableKeys("test_prep_process", ["uid", "tid"]);
+    const r = await agent.createDataTableWithKeys("test_prep_process", ["uid", "tid"]);
     if (r.isOk()) {
         console.log(r.value);
     } else {
