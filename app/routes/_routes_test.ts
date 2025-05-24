@@ -4,7 +4,7 @@ import { currentFilename } from "@util/util.ts";
 import { dbAgent as agent } from "@db/dbService.ts";
 import { getPublicIP } from "@util/net.ts";
 import { T_TEST } from "@define/system.ts";
-import { isValidId } from "@define/type.ts";
+import { isValidId } from "@define/id.ts";
 import { app } from "@app/app.ts";
 import { env_get } from "@define/env.ts";
 import { zodErrorHandler } from "@app/routes/handler/zod_err.ts";

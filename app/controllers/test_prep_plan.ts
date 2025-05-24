@@ -1,7 +1,7 @@
 import { Result } from "neverthrow";
 import { dbAgent as agent } from "@db/dbService.ts";
 import { T_REGISTER, T_TEST_ANALYSIS, T_USER_EXAM } from "@define/system.ts";
-import type { Email, EmailKey, EmailKeyOnAll } from "@define/type.ts";
+import type { Id, IdKey, IdMultiKey } from "@define/id.ts";
 import type { Data } from "@db/dbService.ts";
 import { singleton } from "@util/util.ts";
 
@@ -10,15 +10,15 @@ class TestPrepPlanController {
 
     //     // return await agent.setS
 
-    //     return await agent.setSingleRowData(T_USER_EXAM, email as unknown as Email, exam);
+    //     return await agent.setSingleRowData(T_USER_EXAM, email, exam);
     // }
 
     // async getTestPrepPlan(email: EmailKeyOnAll<[T_REGISTER, T_USER_EXAM]>): Promise<Result<Data, string>> {
-    //     return await agent.getSingleRowData(T_USER_EXAM, email as unknown as EmailKey<T_USER_EXAM>);
+    //     return await agent.getSingleRowData(T_USER_EXAM, email);
     // }
 
     // async deleteTestPrepPlan(email: EmailKey<T_REGISTER>): Promise<Result<Data, string>> {
-    //     return await agent.deleteRowData(T_USER_EXAM, email as unknown as Email, true);
+    //     return await agent.deleteRowData(T_USER_EXAM, email, true);
     // }
 }
 

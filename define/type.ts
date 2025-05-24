@@ -33,7 +33,6 @@ export const toValidCredential = async (c: object, ct?: TransFnType): Promise<Re
 
     const r = await toIdKey(c.email as string, T_REGISTER);
     if (r.isErr()) return err(r.error);
-
     return ok(c as unknown as Credential);
 };
 
@@ -52,6 +51,5 @@ export const toValidConfig = async (c: object, ct?: TransFnType): Promise<Result
 
     const r = await toIdKey(c.email as string, T_REGISTER);
     if (r.isErr()) return err(r.error);
-
     return ok(c as unknown as Config);
 };

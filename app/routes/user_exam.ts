@@ -3,10 +3,11 @@ import { currentFilename } from "@util/util.ts";
 import { app } from "@app/app.ts";
 import { zodErrorHandler } from "@app/routes/handler/zod_err.ts";
 import { t400, t404, t500 } from "@app/routes/handler/resp.ts";
-import { toEmailKey, toEmailKeyOnAll } from "@define/type.ts";
+import { toIdKey, toIdMultiKey } from "@define/id.ts";
 import { createStrictT } from "@i18n/lang_t.ts";
 import { uec } from "@app/controllers/user_exam.ts";
 import { T_REGISTER, T_USER_EXAM } from "@define/system.ts";
+import { isEmail } from "@define/type.ts";
 
 const route_app = new OpenAPIHono({ defaultHook: zodErrorHandler });
 
@@ -64,10 +65,11 @@ const route_app = new OpenAPIHono({ defaultHook: zodErrorHandler });
             const t = createStrictT(c);
 
             const email = c.req.query("email") ?? "";
-            const r_ek = await toEmailKey(email, "register", t);
-            if (r_ek.isErr()) return t400(c, "email.invalid", { email });
+            const r_ek = await toIdKey(email, "register", t);
+            if (r_ek.isErr() || !isEmail(r_ek.value)) return t400(c, "email.invalid", { email });
 
             const tests = c.req.valid("json");
+
             const result = await uec.setUserExam(r_ek.value, tests);
             if (result.isErr()) return t500(c, "set.user_exam.err");
 
@@ -116,8 +118,8 @@ const route_app = new OpenAPIHono({ defaultHook: zodErrorHandler });
         async (c) => {
             const t = createStrictT(c);
             const email = c.req.param("email");
-            const r = await toEmailKeyOnAll(email, t, T_REGISTER, T_USER_EXAM);
-            if (r.isErr()) return t400(c, "param.invalid", { param: email });
+            const r = await toIdMultiKey(email, [T_REGISTER, T_USER_EXAM], t);
+            if (r.isErr() || !isEmail(r.value)) return t400(c, "param.invalid", { param: email });
 
             const r_exam = await uec.getUserExam(r.value);
             if (r_exam.isErr()) return t404(c, "get.user_exam.fail");

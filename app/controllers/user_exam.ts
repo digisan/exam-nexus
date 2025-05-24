@@ -1,21 +1,22 @@
 import { Result } from "neverthrow";
 import { dbAgent as agent } from "@db/dbService.ts";
 import { T_REGISTER, T_USER_EXAM } from "@define/system.ts";
-import type { Email, EmailKey, EmailKeyOnAll } from "@define/type.ts";
+import type { Email } from "@define/type.ts";
+import type { IdKey, IdMultiKey } from "@define/id.ts";
 import type { Data } from "@db/dbService.ts";
 import { singleton } from "@util/util.ts";
 
 class UserExamController {
-    async setUserExam(email: EmailKey<T_REGISTER>, exam: Record<string, string[]>): Promise<Result<Data, string>> {
-        return await agent.setSingleRowData(T_USER_EXAM, email as unknown as Email, exam);
+    async setUserExam(email: IdKey<T_REGISTER> & Email, exam: Record<string, string[]>): Promise<Result<Data, string>> {
+        return await agent.setSingleRowData(T_USER_EXAM, email, exam);
     }
 
-    async getUserExam(email: EmailKeyOnAll<[T_REGISTER, T_USER_EXAM]>): Promise<Result<Data, string>> {
-        return await agent.getSingleRowData(T_USER_EXAM, email as unknown as EmailKey<T_USER_EXAM>);
+    async getUserExam(email: IdMultiKey<[T_REGISTER, T_USER_EXAM]> & Email): Promise<Result<Data, string>> {
+        return await agent.getSingleRowData(T_USER_EXAM, email);
     }
 
-    async deleteUserExam(email: EmailKey<T_REGISTER>): Promise<Result<Data, string>> {
-        return await agent.deleteRowData(T_USER_EXAM, email as unknown as Email, true);
+    async deleteUserExam(email: IdKey<T_REGISTER> & Email): Promise<Result<Data, string>> {
+        return await agent.deleteRowData(T_USER_EXAM, email, true);
     }
 }
 

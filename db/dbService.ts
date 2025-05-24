@@ -2,6 +2,7 @@ import { err, ok, Result } from "neverthrow";
 import { firstWord, singleton, some } from "@util/util.ts";
 import { createClient } from "@supabase/supabase-js";
 import type { Id, IdKey, IdObj, IdObjKey } from "@define/id.ts";
+import { isValidId, isValidIdObj } from "@define/id.ts";
 import { F_CREATE_DATA_TABLE, F_CREATE_DATA_TABLE_KEYS, F_PG_EXECUTE, V_UDF } from "@define/system.ts";
 import type { KeyType, TableType } from "@define/system.ts";
 import { env_get } from "@define/env.ts";
@@ -157,9 +158,11 @@ class SupabaseAgent {
 
     ////////////////////////////////////////////////////////////////////////////////////////
 
-    async getSingleRowData<T extends TableType, Ks extends readonly KeyType[]>(table: T, id: IdKey<T> | IdObjKey<T, Ks>): Promise<Result<JSONObject | null, string>> {
+    async getSingleRowData<T extends TableType, Ks extends readonly KeyType[]>(table: T, id: IdKey<T> | IdObjKey<T, Ks>, keys?: Ks): Promise<Result<JSONObject | null, string>> {
         const isStrId = typeof id === "string";
-        const r = await (isStrId ? this.getDataRow(table, id as unknown as Id) : this.getDataRow(table, id as unknown as IdObj<Ks>));
+        if (isStrId && !isValidId(id)) return err("invalid id");
+        if (!isStrId && (keys === undefined || !isValidIdObj(id, keys))) return err("invalid id");
+        const r = await this.getDataRow(table, id);
         if (r.isErr()) return err(r.error);
         if (some(r) && "data" in r.value!) return ok(r.value.data as JSONObject);
         return ok(null);

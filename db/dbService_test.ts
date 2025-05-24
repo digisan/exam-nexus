@@ -81,7 +81,7 @@ Deno.test(async function TableContent() {
 });
 
 Deno.test(async function FirstDataRow() {
-    const r = await agent.firstDataRow("dev_test", "user", "abc");
+    const r = await agent.firstDataRow("dev_test", "user", "Z");
     if (r.isOk()) {
         if (!r.value) {
             console.log(r.value);
@@ -112,7 +112,7 @@ Deno.test(async function GetDataRow() {
     //
     const idobj = {
         id1: "1234" as Id,
-        id2: "abcd" as Id,
+        id2: "abcde" as Id,
         // id3: "1245" as Id,
         // id: "abcd" as Id
     };
@@ -131,7 +131,7 @@ Deno.test(async function GetDataRow() {
 Deno.test(async function InsertDataRow() {
     // single key
     //
-    const id = "abcd1";
+    const id = "abcd2";
     if (!isValidId(id)) {
         console.debug(`❌ Not valid ID (${id})`);
         return;
@@ -164,7 +164,7 @@ Deno.test(async function InsertDataRow() {
 });
 
 Deno.test(async function UpdateDataRow() {
-    const id = "abcd";
+    const id = "abcde";
     const r_k = await toIdKey(id, "dev_test");
     if (r_k.isErr()) {
         console.debug(`❌ Not existing ID '${id}'`);
@@ -179,7 +179,7 @@ Deno.test(async function UpdateDataRow() {
 });
 
 Deno.test(async function DeleteDataRows() {
-    const id = "abcd";
+    const id = "abcde";
     if (!isValidId(id)) {
         console.debug(`❌ Not valid ID (${id})`);
         return;
@@ -206,10 +206,10 @@ Deno.test(async function DeleteDataRows() {
 // });
 
 Deno.test(async function GetSingleRowData() {
-    const id = "abcd";
+    const id = "abcd1";
     const r_k = await toIdKey(id, "dev_test");
     if (r_k.isErr()) {
-        console.debug(`❌ '${id}' is NOT existing or invalid format`);
+        console.debug(`❌ ${r_k.error}`);
         return;
     }
     const r = await agent.getSingleRowData("dev_test", r_k.value);
@@ -219,12 +219,12 @@ Deno.test(async function GetSingleRowData() {
     console.log(r.value);
 
     const id_obj = {
-        id1: "1234" as Id,
-        id2: "abcd" as Id,
+        id1: "12345" as Id,
+        id2: "abcde" as Id,
     };
     const r_k1 = await toIdObjKey(id_obj, "dev_test_2k", [K_ID1, K_ID2]);
     if (r_k1.isErr()) {
-        console.debug(`❌ '${JSON.stringify(id_obj)}' is NOT existing or invalid format`);
+        console.debug(`❌ ${r_k1.error}`);
         return;
     }
     const r1 = await agent.getSingleRowData("dev_test_2k", r_k1.value);
@@ -252,7 +252,7 @@ Deno.test(async function SetSingleRowData() {
     if (!isValidIdObj(id_obj, [K_ID1, K_ID2])) {
         return;
     }
-    const r1 = await agent.setSingleRowData("dev_test_2k", id_obj, { user: "XX", password: "XXX" });
+    const r1 = await agent.setSingleRowData("dev_test_2k", id_obj, { user: "MM", password: "MMM" });
     if (r1.isErr()) {
         return;
     }

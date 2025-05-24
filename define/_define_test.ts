@@ -6,7 +6,7 @@ const p = (u: IdKey<T_TEST>) => {
     console.log(u);
 };
 
-const pp = (u: IdObjKey<T_TEST_2k, [K_ID1, K_ID2]>) => {
+const pp = (u: IdObjKey<T_TEST_2k, [K_ID2, K_ID1]>) => {
     console.log(u);
 };
 
@@ -15,8 +15,6 @@ const ppp = (u: IdMultiKey<[T_TEST, T_REGISTER]>) => {
 };
 
 Deno.test(async function Test() {
-    console.log("here");
-
     const s = "abcde";
     const r_k_test = await toIdKey(s, T_TEST);
     if (r_k_test.isErr()) {

@@ -1,4 +1,4 @@
-import { isValidId } from "@define/type.ts";
+import { isValidId } from "@define/id.ts";
 import { err } from "neverthrow";
 import { dbAgent as agent } from "@db/dbService.ts";
 import { T_TEST } from "@define/system.ts";
