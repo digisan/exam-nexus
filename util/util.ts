@@ -110,10 +110,14 @@ export const fileExists = async (path: string): Promise<boolean> => {
     }
 };
 
-export const singleton = <T extends object>(ClassType: new (...args: any[]) => T): new (...args: any[]) => T => {
+// e.g. const object = new (singleton(MyObject))();
+// for runtime creating single object 
+//
+type Constructor<T> = new (...args: any[]) => T;
+export const singleton = <T extends object>(ClassType: Constructor<T>): Constructor<T> => {
     let instance: T;
     const proxy = new Proxy(ClassType, {
-        construct(target: new (...args: any[]) => T, argArray: any[], newTarget: Function): T {
+        construct(target: Constructor<T>, argArray: any[], newTarget: Constructor<T>): T {
             if (!instance) {
                 instance = Reflect.construct(target, argArray, newTarget);
             }

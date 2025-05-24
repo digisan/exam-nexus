@@ -8,7 +8,6 @@ import type { Credential, Email, Password } from "@define/type.ts";
 import { toValidCredential } from "@define/type.ts";
 import { isValidId, toIdKey } from "@define/id.ts";
 import { blacklistToken } from "@app/app.ts";
-import { singleton } from "@util/util.ts";
 import { log2db } from "@util/log.ts";
 import { env_get } from "@define/env.ts";
 
@@ -83,4 +82,4 @@ class AuthController {
     }
 }
 
-export const auth = new (singleton(AuthController))();
+export const auth = new AuthController();

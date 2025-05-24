@@ -4,7 +4,6 @@ import { T_REGISTER, T_USER_EXAM } from "@define/system.ts";
 import type { Email } from "@define/type.ts";
 import type { IdKey, IdMultiKey } from "@define/id.ts";
 import type { Data } from "@db/dbService.ts";
-import { singleton } from "@util/util.ts";
 
 class UserExamController {
     async setUserExam(email: IdKey<T_REGISTER> & Email, exam: Record<string, string[]>): Promise<Result<Data, string>> {
@@ -20,4 +19,4 @@ class UserExamController {
     }
 }
 
-export const uec = new (singleton(UserExamController))();
+export const uec = new UserExamController();

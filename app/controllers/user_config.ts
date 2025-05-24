@@ -4,7 +4,6 @@ import { T_REGISTER, T_USER_CONFIG } from "@define/system.ts";
 import type { Config, Email } from "@define/type.ts";
 import { type IdKey, type IdMultiKey, isValidId } from "@define/id.ts";
 import type { Data } from "@db/dbService.ts";
-import { singleton } from "@util/util.ts";
 import { type TransFnType, wrapOptT } from "@i18n/lang_t.ts";
 
 class UserConfigController {
@@ -27,4 +26,4 @@ class UserConfigController {
     }
 }
 
-export const ucc = new (singleton(UserConfigController))();
+export const ucc = new UserConfigController();

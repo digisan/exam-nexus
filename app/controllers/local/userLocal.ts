@@ -1,6 +1,6 @@
 import type { Email } from "@define/type.ts";
 import { err, ok, Result } from "neverthrow";
-import { fileExists, singleton } from "@util/util.ts";
+import { fileExists } from "@util/util.ts";
 import type { Data } from "@db/dbService.ts";
 
 class UserController {
@@ -31,4 +31,4 @@ class UserController {
     }
 }
 
-export const uc = new (singleton(UserController))();
+export const uc = new UserController();

@@ -3,7 +3,6 @@ import { dbAgent as agent } from "@db/dbService.ts";
 import { T_REGISTER, T_TEST_ANALYSIS, T_USER_EXAM } from "@define/system.ts";
 import type { Id, IdKey, IdMultiKey } from "@define/id.ts";
 import type { Data } from "@db/dbService.ts";
-import { singleton } from "@util/util.ts";
 
 class TestPrepPlanController {
     // async setTestPrepPlan(email: EmailKey<T_REGISTER>, test: EmailKey<T_TEST_ANALYSIS>, plan: Record<string, string[]>): Promise<Result<Data, string>> {
@@ -22,4 +21,4 @@ class TestPrepPlanController {
     // }
 }
 
-export const uec = new (singleton(TestPrepPlanController))();
+export const uec = new TestPrepPlanController();

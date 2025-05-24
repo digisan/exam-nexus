@@ -4,7 +4,6 @@ import { compare, hash } from "npm:bcrypt-ts";
 import { fileExists } from "@util/util.ts";
 import { type TransFnType, wrapOptT } from "@i18n/lang_t.ts";
 import type { Email, Password } from "@define/type.ts";
-import { singleton } from "@util/util.ts";
 import { blacklistToken } from "@app/app.ts";
 import { env_get } from "@define/env.ts";
 
@@ -104,4 +103,4 @@ class AuthLocalController {
     }
 }
 
-export const authLocal = new (singleton(AuthLocalController))();
+export const authLocal = new AuthLocalController();

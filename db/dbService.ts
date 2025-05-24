@@ -1,5 +1,5 @@
 import { err, ok, Result } from "neverthrow";
-import { firstWord, singleton, some } from "@util/util.ts";
+import { firstWord, some } from "@util/util.ts";
 import { createClient } from "@supabase/supabase-js";
 import type { Id, IdKey, IdObj, IdObjKey } from "@define/id.ts";
 import { isValidId, isValidIdObj } from "@define/id.ts";
@@ -184,4 +184,4 @@ class SupabaseAgent {
     }
 }
 
-export const dbAgent = new (singleton(SupabaseAgent))();
+export const dbAgent = new SupabaseAgent();
