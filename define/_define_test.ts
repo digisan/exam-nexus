@@ -15,7 +15,7 @@ const ppp = (u: IdMultiKey<[T_TEST, T_REGISTER]>) => {
     console.log(u);
 };
 
-Deno.test(async function Test() {
+Deno.test("Define Test", async () => {
     const s = "abcde";
     const r_k_test = await toIdKey(s, T.TEST);
     if (r_k_test.isErr()) {

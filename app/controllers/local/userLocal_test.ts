@@ -1,11 +1,11 @@
 import { isEmail } from "@define/type.ts";
 import { uc } from "@app/controllers/local/userLocal.ts";
 
-Deno.test(async function UserCtrlList() {
+Deno.test("UserCtrlList", async () => {
     console.log(await uc.getUserList());
 });
 
-Deno.test(async function UserCtrlInfo() {
+Deno.test("UserCtrlInfo", async () => {
     const email = "user32@email.com";
     if (!isEmail(email)) {
         return;

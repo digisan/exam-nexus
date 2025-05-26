@@ -3,7 +3,7 @@ import { toIdKey, toIdMultiKey } from "@define/id.ts";
 import { T } from "@define/system.ts";
 import { ucc } from "@app/controllers/user_config.ts";
 
-Deno.test(async function SetUserCfg() {
+Deno.test("UserCft", async () => {
     const region = "au";
     if (!isValidRegion(region)) {
         console.debug(`${region} is NOT valid RegionType`);

@@ -3,13 +3,13 @@ import { hasCertainProperty, lastElem, len } from "@util/util.ts";
 import { getPublicIP } from "@util/net.ts";
 import { verifyHCaptcha } from "@util/captcha.ts";
 
-Deno.test(async function getPubIP() {
+Deno.test("getPubIP", async () => {
     const ip = await getPublicIP();
     console.log("Public IP:", ip);
     assertEquals(typeof ip, "string");
 });
 
-Deno.test(async function verifyCaptcha() {
+Deno.test("", async () => {
     const result = await verifyHCaptcha("adsfwe");
     if (result.isOk()) {
         console.log("Result:", result.value);
@@ -18,21 +18,21 @@ Deno.test(async function verifyCaptcha() {
     }
 });
 
-Deno.test(function GetArrayLength() {
+Deno.test("", () => {
     console.log(len(null));
     console.log(len(undefined));
     console.log(len([]));
     console.log(len([123]));
 });
 
-Deno.test(function GetLastElement() {
+Deno.test("", () => {
     console.log(lastElem(null));
     console.log(lastElem(undefined));
     console.log(lastElem([]));
     console.log(lastElem([123]));
 });
 
-Deno.test(function HasCertainProperty() {
+Deno.test("", () => {
     const o = {
         a: 123,
         b: "str",
