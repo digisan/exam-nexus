@@ -1,6 +1,6 @@
 import { err, Result } from "neverthrow";
 import { dbAgent as agent } from "@db/dbService.ts";
-import { T_REGISTER, T_USER_CONFIG } from "@define/system.ts";
+import { T, type T_REGISTER, type T_USER_CONFIG } from "@define/system.ts";
 import type { Config, Email } from "@define/type.ts";
 import { type IdKey, type IdMultiKey, isValidId } from "@define/id.ts";
 import type { Data } from "@db/dbService.ts";
@@ -12,17 +12,17 @@ class UserConfigController {
         const t = wrapOptT(ct);
         const id = cfg.email;
         if (!isValidId(id)) return err(t("param.invalid", { param: cfg.email }));
-        return await agent.setSingleRowData(T_USER_CONFIG, id, cfg);
+        return await agent.SetSingleRowData(T.USER_CONFIG, id, cfg);
     }
 
     // get from T_USER_CONFIG
     async getUserCfg(email: IdMultiKey<[T_REGISTER, T_USER_CONFIG]> & Email, ct?: TransFnType): Promise<Result<Data, string>> {
-        return await agent.getSingleRowData(T_USER_CONFIG, email);
+        return await agent.GetSingleRowData(T.USER_CONFIG, email);
     }
 
     // delete from T_USER_CONFIG
     async deleteUserCfg(email: IdKey<T_REGISTER> & Email, ct?: TransFnType): Promise<Result<Data, string>> {
-        return await agent.deleteRowData(T_USER_CONFIG, email, true);
+        return await agent.DeleteRowData(T.USER_CONFIG, email, true);
     }
 }
 

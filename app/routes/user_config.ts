@@ -5,7 +5,7 @@ import { app } from "@app/app.ts";
 import { ucc } from "@app/controllers/user_config.ts";
 import { isEmail, toValidConfig } from "@define/type.ts";
 import { toIdMultiKey } from "@define/id.ts";
-import { T_REGISTER, T_USER_CONFIG } from "@define/system.ts";
+import { T } from "@define/system.ts";
 import { zodErrorHandler } from "@app/routes/handler/zod_err.ts";
 import { t400, t404, t500 } from "@app/routes/handler/resp.ts";
 
@@ -123,7 +123,7 @@ const route_app = new OpenAPIHono({ defaultHook: zodErrorHandler });
         async (c) => {
             const t = createStrictT(c);
             const email = c.req.param("email");
-            const r = await toIdMultiKey(email, [T_REGISTER, T_USER_CONFIG], t);
+            const r = await toIdMultiKey(email, [T.REGISTER, T.USER_CONFIG], t);
             if (r.isErr() || !isEmail(r.value)) return t400(c, "param.invalid", { param: email });
 
             const r_cfg = await ucc.getUserCfg(r.value);

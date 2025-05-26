@@ -24,7 +24,7 @@ export const toIdKey = async <T extends TableType>(
 ): Promise<Result<IdKey<T>, string>> => {
     const t = wrapOptT(ct);
     if (!isValidId(s)) return err(t("id.invalid"));
-    if (!some(await agent.getDataRow(table, s))) return err(t("get.db.fail_by_id", { id: s }));
+    if (!some(await agent.GetDataRow(table, s))) return err(t("get.db.fail_by_id", { id: s }));
     return ok(s as unknown as IdKey<T>);
 };
 
@@ -49,7 +49,7 @@ export const toIdObjKey = async <T extends TableType, const Ks extends readonly 
 ): Promise<Result<IdObjKey<T, Ks>, string>> => {
     const t = wrapOptT(ct);
     if (!isValidIdObj(so, keys)) return err(t("id.invalid_as_obj"));
-    if (!some(await agent.getDataRow(table, so))) return err(t("get.db.fail_by_id_obj", { id: so }));
+    if (!some(await agent.GetDataRow(table, so))) return err(t("get.db.fail_by_id_obj", { id: so }));
     return ok(so as unknown as IdObjKey<T, Ks>);
 };
 
@@ -79,7 +79,7 @@ export const toIdRef = async <T_DATA extends TableType, DF extends string, T_REF
     const t = wrapOptT(ct);
     const r_k = await toIdKey(val, ref_table);
     if (r_k.isErr()) return err(r_k.error);
-    const r = await agent.firstDataRow(table, field, val);
+    const r = await agent.FirstDataRow(table, field, val);
     if (r.isErr()) return err(r.error);
     if (!some(r.value)) return err(t("get.db.fail_by_field_value"));
     return ok(val as unknown as IdRef<T_DATA, DF, T_REF>);

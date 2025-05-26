@@ -1,12 +1,12 @@
 import { uec } from "./user_exam.ts";
 import { toIdKey } from "@define/id.ts";
-import { T_REGISTER } from "@define/system.ts";
+import { T } from "@define/system.ts";
 import { isEmail } from "@define/type.ts";
 
 Deno.test(async function SetUserExam() {
     const s = "cdutwhu@yeah.net";
 
-    const r_ek = await toIdKey(s, T_REGISTER);
+    const r_ek = await toIdKey(s, T.REGISTER);
     if (r_ek.isErr() || !isEmail(r_ek.value)) {
         console.debug(`${s} is NOT valid email or NOT registered`);
         return;

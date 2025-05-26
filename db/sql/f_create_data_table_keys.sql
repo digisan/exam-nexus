@@ -1,87 +1,72 @@
 -- Step 1: 切换为 postgres 或 owner 用户执行
 -- 如果你在 SQL 编辑器中，默认是 postgres，无需更改
 
-CREATE OR REPLACE FUNCTION create_data_table_keys(name TEXT, key_parts TEXT[])
+create or replace function create_data_table_keys(name text, key_parts text[])
+returns text
+language plpgsql
+security definer  -- 核心关键，使用定义者权限
+as $$
+declare
+  exists boolean;
+  key_definitions text := '';
+  primary_keys text := '';
+  i int;
+  field_name text;
+  sql text;
+begin
+  -- 检查表是否已存在
+  select exists (
+    select from information_schema.tables
+    where table_schema = 'public' and table_name = name
+  ) into exists;
 
-RETURNS TEXT
-
-LANGUAGE plpgsql
-
-SECURITY DEFINER
-
-AS $$
-
-DECLARE
-
-  exists BOOLEAN;
-
-  key_definitions TEXT := '';
-
-  primary_keys TEXT := '';
-
-  i INT;
-
-  field_name TEXT;
-
-  sql TEXT;
-
-BEGIN
-
-  -- 检查表是否存在
-  SELECT EXISTS (
-
-    SELECT FROM information_schema.tables
-
-    WHERE table_schema = 'public' AND table_name = name
-
-  ) INTO exists;
-
-  IF exists THEN
-
-    RETURN format('⚠️ Table "%s" already exists.', name);
-
-  END IF;
+  if exists then
+    return format('⚠️ Table "%s" already exists.', name);
+  end if;
 
   -- 构建字段定义和主键定义
-  FOR i IN 1 .. array_length(key_parts, 1) LOOP
-
+  for i in 1 .. array_length(key_parts, 1) loop
     field_name := key_parts[i];
-
-    -- 添加字段定义
     key_definitions := key_definitions || format('%I TEXT NOT NULL, ', field_name);
 
-    -- 构建主键部分
-    IF i = 1 THEN
+    if i = 1 then
       primary_keys := format('%I', field_name);
-    ELSE
+    else
       primary_keys := primary_keys || format(', %I', field_name);
-    END IF;
+    end if;
+  end loop;
 
-  END LOOP;
-
-  -- 拼接 SQL 创建语句
+  -- 拼接完整的建表 SQL（含 updated_at）
   sql := format(
-    'CREATE TABLE %I (
+    'create table %I (
       %s
-      created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
-      data JSONB,
-      PRIMARY KEY (%s)
+      created_at timestamptz not null default now(),
+      updated_at timestamptz not null default now(),
+      data jsonb,
+      primary key (%s)
     )',
     name,
     key_definitions,
     primary_keys
   );
 
-  EXECUTE sql;
+  -- 执行创建表
+  execute sql;
 
-  RETURN format('✅ Table "%s" with primary key (%s) created successfully.', name, primary_keys);
+  -- 添加 updated_at 触发器
+  execute format(
+    'create trigger set_updated_at
+     before update on %I
+     for each row
+     execute function update_updated_at_column();',
+    name
+  );
 
-END;
-
+  return format('✅ Table "%s" with primary key (%s) created successfully.', name, primary_keys);
+end;
 $$;
 
 -- Step 2: 允许别人调用这个函数，但不拥有建表权限
 
 GRANT EXECUTE ON FUNCTION create_data_table_keys(TEXT, TEXT[]) TO anon;
-
 GRANT EXECUTE ON FUNCTION create_data_table_keys(TEXT, TEXT[]) TO authenticated;

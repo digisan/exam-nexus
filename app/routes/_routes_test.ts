@@ -3,7 +3,7 @@ import { getConnInfo } from "hono/deno";
 import { currentFilename } from "@util/util.ts";
 import { dbAgent as agent } from "@db/dbService.ts";
 import { getPublicIP } from "@util/net.ts";
-import { T_TEST } from "@define/system.ts";
+import { T } from "@define/system.ts";
 import { isValidId } from "@define/id.ts";
 import { app } from "@app/app.ts";
 import { env_get } from "@define/env.ts";
@@ -73,7 +73,7 @@ const route_app = new OpenAPIHono({ defaultHook: zodErrorHandler });
         async (c) => {
             const id = "test_id";
             if (!isValidId(id)) return t400(c, "id.invalid");
-            await agent.insertDataRow(T_TEST, id, { msg: "my test message" });
+            await agent.InsertDataRow(T.TEST, id, { msg: "my test message" });
             return t200(c, "success", { message: "insert test message to supabase table success" });
         },
     );

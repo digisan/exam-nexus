@@ -6,7 +6,7 @@ import { t400, t404, t500 } from "@app/routes/handler/resp.ts";
 import { toIdKey, toIdMultiKey } from "@define/id.ts";
 import { createStrictT } from "@i18n/lang_t.ts";
 import { uec } from "@app/controllers/user_exam.ts";
-import { T_REGISTER, T_USER_EXAM } from "@define/system.ts";
+import { T } from "@define/system.ts";
 import { isEmail } from "@define/type.ts";
 
 const route_app = new OpenAPIHono({ defaultHook: zodErrorHandler });
@@ -118,7 +118,7 @@ const route_app = new OpenAPIHono({ defaultHook: zodErrorHandler });
         async (c) => {
             const t = createStrictT(c);
             const email = c.req.param("email");
-            const r = await toIdMultiKey(email, [T_REGISTER, T_USER_EXAM], t);
+            const r = await toIdMultiKey(email, [T.REGISTER, T.USER_EXAM], t);
             if (r.isErr() || !isEmail(r.value)) return t400(c, "param.invalid", { param: email });
 
             const r_exam = await uec.getUserExam(r.value);

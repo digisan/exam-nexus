@@ -2,6 +2,7 @@
 
 //
 // created from 'db/sql/ f_*.sql'
+// (before create_data_table(_keys), run `t_update_updated_at_column.sql`)
 //
 const FUNCS_SB = [
     "create_data_table",
@@ -27,7 +28,7 @@ export const V_UDF: ViewType = "user_defined_functions";
 //
 // self defined in advance by 1.'create_data_table' or 2.'create_data_table_keys'
 //
-const TABLES_SB = [
+export const TABLES_SB = [
     "dev_test",
     "dev_test_2k", // 2
     "register",
@@ -40,7 +41,7 @@ const TABLES_SB = [
 export type TableType = typeof TABLES_SB[number];
 
 const defineTable = <T extends TableType>(value: T): T => value;
-const T = {
+export const T = {
     TEST: defineTable("dev_test"),
     TEST_2K: defineTable("dev_test_2k"),
     REGISTER: defineTable("register"),
@@ -51,17 +52,8 @@ const T = {
     TEST_PREP_PROCESS: defineTable("test_prep_process"),
 } as const;
 
-export const T_TEST = T.TEST;
-export const T_TEST_2k = T.TEST_2K;
-export const T_REGISTER = T.REGISTER;
-export const T_USER_CONFIG = T.USER_CONFIG;
-export const T_USER_EXAM = T.USER_EXAM;
-export const T_TEST_ANALYSIS = T.TEST_ANALYSIS;
-export const T_TEST_PREP_PLAN = T.TEST_PREP_PLAN;
-export const T_TEST_PREP_PROCESS = T.TEST_PREP_PROCESS;
-
 export type T_TEST = typeof T.TEST;
-export type T_TEST_2k = typeof T.TEST_2K;
+export type T_TEST_2K = typeof T.TEST_2K;
 export type T_REGISTER = typeof T.REGISTER;
 export type T_USER_CONFIG = typeof T.USER_CONFIG;
 export type T_USER_EXAM = typeof T.USER_EXAM;
@@ -73,8 +65,6 @@ export type T_TEST_PREP_PROCESS = typeof T.TEST_PREP_PROCESS;
 // table key(s) name range
 //
 export const KEY_SB = [
-    "id1", // for testing
-    "id2", // for testing
     "id",
     "uid",
     "tid",
@@ -82,28 +72,33 @@ export const KEY_SB = [
 export type KeyType = typeof KEY_SB[number];
 
 const defineKey = <T extends KeyType>(value: T): T => value;
-const K = {
-    ID1: defineKey("id1"),
-    ID2: defineKey("id2"),
+export const K = {
     ID: defineKey("id"),
     UID: defineKey("uid"),
     TID: defineKey("tid"),
 } as const;
 
-export const K_ID1 = K.ID1;
-export const K_ID2 = K.ID2;
-export const K_ID = K.ID;
-export const K_UID = K.UID;
-export const K_TID = K.TID;
-
-export type K_ID1 = typeof K.ID1;
-export type K_ID2 = typeof K.ID2;
 export type K_ID = typeof K.ID;
 export type K_UID = typeof K.UID;
 export type K_TID = typeof K.TID;
 
 //
-// ****************** Validate SupaBaseDB tables ****************** //
+// ****************** Create All SupaBaseDB Tables ****************** //
+//
+
+export const mTableKeys = new Map<TableType, KeyType[]>([
+    [T.TEST, [K.ID]],
+    [T.TEST_2K, [K.UID, K.TID]],
+    [T.REGISTER, [K.ID]],
+    [T.USER_CONFIG, [K.ID]],
+    [T.USER_EXAM, [K.ID]],
+    [T.TEST_ANALYSIS, [K.TID]],
+    [T.TEST_PREP_PLAN, [K.UID, K.TID]],
+    [T.TEST_PREP_PROCESS, [K.UID, K.TID]],
+]);
+
+//
+// ****************** Validate SupaBaseDB Tables ****************** //
 //
 
 import { unorderedSetsEqual } from "@util/util.ts";

@@ -3,7 +3,7 @@ import { sign } from "hono/jwt";
 import { compare, hash } from "npm:bcrypt-ts";
 import { type TransFnType, wrapOptT } from "@i18n/lang_t.ts";
 import { dbAgent as agent } from "@db/dbService.ts";
-import { T_REGISTER } from "@define/system.ts";
+import { T } from "@define/system.ts";
 import type { Credential, Email, Password } from "@define/type.ts";
 import { toValidCredential } from "@define/type.ts";
 import { isValidId, toIdKey } from "@define/id.ts";
@@ -17,13 +17,13 @@ class AuthController {
     async register(info: { email: Email; password: Password }, ct?: TransFnType): Promise<Result<string, string>> {
         const t = wrapOptT(ct);
         try {
-            const r_ek = await toIdKey(info.email, T_REGISTER);
+            const r_ek = await toIdKey(info.email, T.REGISTER);
             if (r_ek.isOk()) return err(t("register.fail.existing"));
 
             const id = info.email;
             if (!isValidId(id)) return err(t("register.fail.invalid_id"));
 
-            const r = await agent.setSingleRowData(T_REGISTER, id, {
+            const r = await agent.SetSingleRowData(T.REGISTER, id, {
                 email: info.email,
                 password: await hash(info.password, 10),
                 registered_at: new Date().toISOString(),
@@ -63,10 +63,10 @@ class AuthController {
             if (r_cred.isErr()) return err(t(`login.fail.invalid_credential`, { message: r_cred.error }));
 
             const id = r_cred.value.email;
-            const r_id = await toIdKey(id, T_REGISTER);
+            const r_id = await toIdKey(id, T.REGISTER);
             if (r_id.isErr()) return err(t("login.fail.not_existing"));
 
-            const r = await agent.getSingleRowData(T_REGISTER, r_id.value);
+            const r = await agent.GetSingleRowData(T.REGISTER, r_id.value);
             if (r.isErr()) return err(r.error);
 
             if (!await compare(credential.password, r.value!.password as string)) return err(t("login.fail.verification"));
