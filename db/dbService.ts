@@ -114,6 +114,16 @@ class SupabaseAgent {
         return ok(rn_before.value!);
     }
 
+    async ClearTables<T extends TableType>(...tables: T[]): Promise<Result<number[], string>> {
+        const num: number[] = [];
+        for (const t of tables) {
+            const r = await this.ClearTable(t);
+            if (r.isErr()) return err(r.error);
+            num.push(r.value);
+        }
+        return ok(num);
+    }
+
     async GetDataRow<T extends TableType, Ks extends readonly KeyType[]>(table: T, id: Id | IdObj<Ks>): Promise<Result<Data, string>> {
         const isStrId = typeof id === "string";
         const t = supabase.from(table).select("*");

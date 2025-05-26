@@ -138,3 +138,13 @@ export const currentFilename = (url: string, withExt: boolean = true): string =>
     const fullPath = fromFileUrl(url); // 处理 file:// URL
     return withExt ? basename(fullPath) : basename(fullPath, extname(fullPath));
 };
+
+export const randId = (): string => {
+    const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+    let result = "";
+    const length = Math.floor(Math.random() * 10) + 4; // 长度在 4 到 13 之间
+    for (let i = 0; i < length; i++) {
+        result += characters.charAt(Math.floor(Math.random() * characters.length));
+    }
+    return result;
+};
