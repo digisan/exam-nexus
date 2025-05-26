@@ -5,6 +5,7 @@ import type { IdObj } from "@define/id.ts";
 import { K, type K_TID, type K_UID, mTableKeys, T } from "@define/system.ts";
 import { printResult } from "@util/log.ts";
 import { randId } from "@util/util.ts";
+import { assertEquals } from "@std/assert/equals";
 
 Deno.test("PgVer", async () => {
     const r = await agent.PgVer();
@@ -67,6 +68,20 @@ Deno.test("InsertDataRow", async () => {
         printResult(r, true);
     } else {
         console.debug(`❌ ${JSON.stringify(idobj)} is invalid`);
+    }
+});
+
+Deno.test("QueryColumns", async () => {
+    const r = await agent.QueryColumns(T.TEST_2K, [K.UID, K.TID]);
+    printResult(r, true);
+    if (r.isOk()) {
+        assertEquals(r.value.length, 10);
+    }
+
+    const r1 = await agent.QueryId(T.TEST, K.ID);
+    printResult(r1, true);
+    if (r1.isOk()) {
+        assertEquals(r1.value.length, 10);
     }
 });
 

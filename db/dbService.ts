@@ -124,6 +124,26 @@ class SupabaseAgent {
         return ok(num);
     }
 
+    async QueryColumns<T extends TableType>(table: T, columns: string | string[]): Promise<Result<unknown[] | unknown[][], string>> {
+        const columnList = Array.isArray(columns) ? columns : [columns];
+        const { data, error } = await supabase.from(table).select(columnList.join(","));
+        if (error) return err(error.message);
+        const rows = data as Record<string, any>[];
+        if (!Array.isArray(columns)) {
+            return ok(rows.map((row) => row[columns]));
+        }
+        return ok(rows.map((row) => columns.map((col) => row[col])));
+    }
+
+    async QueryId<T extends TableType, K extends KeyType>(table: T, columns: K | K[]): Promise<Result<Id[] | Id[][], string>> {
+        const r = await this.QueryColumns(table, columns);
+        if (r.isErr()) return err(r.error);
+        if (!Array.isArray(columns)) {
+            return ok(r.value as Id[]);
+        }
+        return ok(r.value as Id[][]);
+    }
+
     async GetDataRow<T extends TableType, Ks extends readonly KeyType[]>(table: T, id: Id | IdObj<Ks>): Promise<Result<Data, string>> {
         const isStrId = typeof id === "string";
         const t = supabase.from(table).select("*");
