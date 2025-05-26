@@ -1,4 +1,4 @@
-import { uec } from "./user_exam.ts";
+import { uec } from "@app/controllers/user_exam.ts";
 import { toIdKey } from "@define/id.ts";
 import { T } from "@define/system.ts";
 import { isEmail } from "@define/type.ts";
