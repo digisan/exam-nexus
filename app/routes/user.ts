@@ -43,7 +43,7 @@ const route_app = new OpenAPIHono({ defaultHook: zodErrorHandler });
             } as const,
         ),
         async (c) => {
-            const r = await uc.getUserList();
+            const r = await uc.getUserList("./data/users.json");
             if (r.isErr()) return t500(c, "fatal", { message: r.error });
 
             const data = r.value;
@@ -95,7 +95,7 @@ const route_app = new OpenAPIHono({ defaultHook: zodErrorHandler });
         async (c) => {
             const email = c.req.param("email");
             if (!isEmail(email)) return t400(c, "email.invalid");
-            const r = await uc.getUserReg(email);
+            const r = await uc.getUserReg("./data/users.json", email);
             if (r.isErr()) return t500(c, "fatal", { message: r.error });
 
             const data = r.value;

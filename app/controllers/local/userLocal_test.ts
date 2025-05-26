@@ -2,7 +2,7 @@ import { isEmail } from "@define/type.ts";
 import { uc } from "@app/controllers/local/userLocal.ts";
 
 Deno.test("UserCtrlList", async () => {
-    console.log(await uc.getUserList());
+    console.log(await uc.getUserList("./data/users.json"));
 });
 
 Deno.test("UserCtrlInfo", async () => {
@@ -10,5 +10,5 @@ Deno.test("UserCtrlInfo", async () => {
     if (!isEmail(email)) {
         return;
     }
-    console.log(await uc.getUserReg(email));
+    console.log(await uc.getUserReg("./data/users.json", email));
 });

@@ -2,7 +2,7 @@ import { err, ok, Result } from "neverthrow";
 import { type TransFnType, wrapOptT } from "@i18n/lang_t.ts";
 import { LANGUAGES, REGIONS } from "@define/config.ts";
 import type { LanguageType, RegionType } from "@define/config.ts";
-import { T_REGISTER } from "@define/system.ts";
+import { T } from "@define/system.ts";
 import { hasCertainProperty, RE_EMAIL, RE_PWD, some } from "@util/util.ts";
 import { toIdKey } from "@define/id.ts";
 
@@ -31,7 +31,7 @@ export const toValidCredential = async (c: object, ct?: TransFnType): Promise<Re
     if (!isEmail(c.email as string)) return err(t("email.invalid", { email: c.email }));
     if (!isAllowedPassword(c.password as string)) return err(t("password.invalid", { password: c.password }));
 
-    const r = await toIdKey(c.email as string, T_REGISTER);
+    const r = await toIdKey(c.email as string, T.REGISTER);
     if (r.isErr()) return err(r.error);
     return ok(c as unknown as Credential);
 };
@@ -49,7 +49,7 @@ export const toValidConfig = async (c: object, ct?: TransFnType): Promise<Result
     if (!isValidRegion(c.region as string)) return err(t("region.invalid", { region: c.region }));
     if (!isValidLanguage(c.lang as string)) return err(t("language.invalid", { language: c.lang }));
 
-    const r = await toIdKey(c.email as string, T_REGISTER);
+    const r = await toIdKey(c.email as string, T.REGISTER);
     if (r.isErr()) return err(r.error);
     return ok(c as unknown as Config);
 };

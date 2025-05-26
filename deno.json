@@ -7,6 +7,7 @@
         "@std/fs": "jsr:@std/fs@1.0.17",
         "@std/path": "jsr:@std/path@1.0.9",
         "@supabase/supabase-js": "jsr:@supabase/supabase-js@2.49.8",
+        "async-mutex": "npm:async-mutex@^0.5.0",
         "bcrypt-ts": "npm:bcrypt-ts@7.0.0",
         "flat": "npm:flat@6.0.1",
         "hono": "npm:hono@4.7.10",
@@ -22,7 +23,8 @@
         "@db/": "./db/",
         "@i18n/": "./i18n/",
         "@define/": "./define/",
-        "@app/": "./app/"
+        "@app/": "./app/",
+        "@data/": "./data/"
     },
     "tasks": {
         "start": "deno run --allow-net main.ts"
