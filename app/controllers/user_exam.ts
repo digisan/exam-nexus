@@ -6,14 +6,20 @@ import type { IdKey, IdMultiKey } from "@define/id.ts";
 import type { Data } from "@db/dbService.ts";
 
 class UserExamController {
+    // insert or update into T.USER_EXAM
+    //
     async setUserExam(email: IdKey<T_REGISTER> & Email, exam: Record<string, string[]>): Promise<Result<Data, string>> {
         return await agent.SetSingleRowData(T.USER_EXAM, email, exam);
     }
 
+    // get from T.USER_EXAM
+    //
     async getUserExam(email: IdMultiKey<[T_REGISTER, T_USER_EXAM]> & Email): Promise<Result<Data, string>> {
         return await agent.GetSingleRowData(T.USER_EXAM, email);
     }
 
+    // delete from T.USER_EXAM
+    //
     async deleteUserExam(email: IdKey<T_REGISTER> & Email): Promise<Result<Data, string>> {
         return await agent.DeleteRowData(T.USER_EXAM, email, true);
     }

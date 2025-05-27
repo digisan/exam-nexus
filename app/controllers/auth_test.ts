@@ -3,12 +3,12 @@ import { auth } from "@app/controllers/auth.ts";
 import { sleep } from "@util/util.ts";
 
 Deno.test("AuthCtrlReg", async () => {
-    const email = "123470@qq.com";
+    const email = "cdutwhu@yeah.net";
     if (!isEmail(email)) {
         console.debug(`'${email}' is NOT valid Email`);
         return;
     }
-    const password = "123abcDEF_";
+    const password = "pa55w0rd@EXAM";
     if (!isAllowedPassword(password)) {
         console.debug(`'${password}' is NOT valid Password`);
         return;
@@ -19,8 +19,8 @@ Deno.test("AuthCtrlReg", async () => {
 
 Deno.test("AuthCtrlLogin", async () => {
     const r_cred = await toValidCredential({
-        email: "123470@qq.com",
-        password: "123abcDEF_"
+        email: "cdutwhu@yeah.net",
+        password: "pa55w0rd@EXAM"
     });
     if (r_cred.isErr()) {
         console.log(r_cred.error);

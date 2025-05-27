@@ -3,7 +3,10 @@ import { toIdKey } from "@define/id.ts";
 import { T } from "@define/system.ts";
 import { isEmail } from "@define/type.ts";
 
-Deno.test("SetUserExam", async () => {
+
+
+
+Deno.test("setUserExam", async () => {
     const s = "cdutwhu@yeah.net";
 
     const r_ek = await toIdKey(s, T.REGISTER);
@@ -20,3 +23,4 @@ Deno.test("SetUserExam", async () => {
 
     console.log(r.value);
 });
+
