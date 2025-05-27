@@ -73,7 +73,7 @@ const route_app = new OpenAPIHono({ defaultHook: zodErrorHandler });
         async (c) => {
             const id = "test_id";
             if (!isValidId(id)) return t400(c, "id.invalid");
-            await agent.InsertDataRow(T.TEST, id, { msg: "my test message" });
+            await agent.InsertDataRow(T.DEV_TEST, id, { msg: "my test message" });
             return t200(c, "success", { message: "insert test message to supabase table success" });
         },
     );

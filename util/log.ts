@@ -9,7 +9,7 @@ export const log2db = async (msg: string, logId?: string, ct?: TransFnType) => {
     const id = some(logId) ? logId : new Date().toISOString();
     const t = wrapOptT(ct);
     if (!isValidId(id!)) return err(t(`id.invalid`));
-    await agent.SetSingleRowData(T.TEST, id, { msg });
+    await agent.SetSingleRowData(T.DEV_TEST, id, { msg });
 };
 
 export const printResult = (r: Result<unknown, string>, abort: boolean = false, extra_err_msg: string = "") => {

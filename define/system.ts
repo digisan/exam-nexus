@@ -42,8 +42,8 @@ export type TableType = typeof TABLES_SB[number];
 
 const defineTable = <T extends TableType>(value: T): T => value;
 export const T = {
-    TEST: defineTable("dev_test"),
-    TEST_2K: defineTable("dev_test_2k"),
+    DEV_TEST: defineTable("dev_test"),
+    DEV_TEST_2K: defineTable("dev_test_2k"),
     REGISTER: defineTable("register"),
     USER_CONFIG: defineTable("user_config"),
     USER_EXAM: defineTable("user_exam"),
@@ -52,8 +52,8 @@ export const T = {
     TEST_PREP_PROCESS: defineTable("test_prep_process"),
 } as const;
 
-export type T_TEST = typeof T.TEST;
-export type T_TEST_2K = typeof T.TEST_2K;
+export type T_DEV_TEST = typeof T.DEV_TEST;
+export type T_DEV_TEST_2K = typeof T.DEV_TEST_2K;
 export type T_REGISTER = typeof T.REGISTER;
 export type T_USER_CONFIG = typeof T.USER_CONFIG;
 export type T_USER_EXAM = typeof T.USER_EXAM;
@@ -87,8 +87,8 @@ export type K_TID = typeof K.TID;
 //
 
 export const mTableKeys = new Map<TableType, KeyType[]>([
-    [T.TEST, [K.ID]],
-    [T.TEST_2K, [K.UID, K.TID]],
+    [T.DEV_TEST, [K.ID]],
+    [T.DEV_TEST_2K, [K.UID, K.TID]],
     [T.REGISTER, [K.ID]],
     [T.USER_CONFIG, [K.ID]],
     [T.USER_EXAM, [K.ID]],

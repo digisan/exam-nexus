@@ -1,23 +1,23 @@
 import { toIdKey, toIdMultiKey, toIdObjKey } from "@define/id.ts";
 import type { IdKey, IdMultiKey, IdObjKey } from "@define/id.ts";
-import type { K_TID, K_UID, T_REGISTER, T_TEST, T_TEST_2K } from "@define/system.ts";
+import type { K_TID, K_UID, T_DEV_TEST, T_DEV_TEST_2K, T_REGISTER } from "@define/system.ts";
 import { K, T } from "@define/system.ts";
 
-const p = (u: IdKey<T_TEST>) => {
+const p = (u: IdKey<T_DEV_TEST>) => {
     console.log(u);
 };
 
-const pp = (u: IdObjKey<T_TEST_2K, [K_UID, K_TID]>) => {
+const pp = (u: IdObjKey<T_DEV_TEST_2K, [K_UID, K_TID]>) => {
     console.log(u);
 };
 
-const ppp = (u: IdMultiKey<[T_TEST, T_REGISTER]>) => {
+const ppp = (u: IdMultiKey<[T_DEV_TEST, T_REGISTER]>) => {
     console.log(u);
 };
 
 Deno.test("Define Test", async () => {
     const s = "abcde";
-    const r_k_test = await toIdKey(s, T.TEST);
+    const r_k_test = await toIdKey(s, T.DEV_TEST);
     if (r_k_test.isErr()) {
         console.debug(r_k_test.error);
         return;
@@ -29,7 +29,7 @@ Deno.test("Define Test", async () => {
         id2: "abcde",
         // id3: "test"
     };
-    const r_k_test2k = await toIdObjKey(so, T.TEST_2K, [K.UID, K.TID]);
+    const r_k_test2k = await toIdObjKey(so, T.DEV_TEST_2K, [K.UID, K.TID]);
     if (r_k_test2k.isErr()) {
         console.debug(r_k_test2k.error);
         return;
@@ -37,8 +37,8 @@ Deno.test("Define Test", async () => {
     pp(r_k_test2k.value);
 
     const sm = "cdutwhu@yeah.net";
-    const r_k_reg_test = await toIdMultiKey(sm, [T.REGISTER, T.TEST]);
-    // const r_eka = await toEmailKeyOnAll(s, undefined, T_TEST, T_REGISTER) // 最好忽略顺序时候，也不报错
+    const r_k_reg_test = await toIdMultiKey(sm, [T.REGISTER, T.DEV_TEST]);
+    // const r_eka = await toEmailKeyOnAll(s, undefined, T_DEV_TEST, T_REGISTER) // 最好忽略顺序时候，也不报错
     if (r_k_reg_test.isErr()) {
         console.debug(r_k_reg_test.error);
         return;

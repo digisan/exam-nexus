@@ -21,4 +21,4 @@ class TestPrepPlanController {
     // }
 }
 
-export const uec = new TestPrepPlanController();
+export const tpplc = new TestPrepPlanController();
