@@ -1,21 +1,25 @@
-// deno-fmt-ignore
-const EXAM_SELECTIVE: Record<string, readonly string[]> = {};
+import type { ExamType } from "@define/exam/type.ts";
 
 // deno-fmt-ignore
-const EXAM_PROFICIENCY: Record<string, readonly string[]> = {
+const EXAM_SELECTIVE: Partial<Record<ExamType, readonly string[]>> = {};
+
+// deno-fmt-ignore
+const EXAM_PROFICIENCY: Partial<Record<ExamType, readonly string[]>> = {
     cet: ["4", "6"] as const,
 };
 
 // deno-fmt-ignore
-const EXAM_CERTIFICATION: Record<string, readonly string[]> = {};
+const EXAM_CERTIFICATION: Partial<Record<ExamType, readonly string[]>> = {};
 
 // deno-fmt-ignore
-const EXAM_FINAL: Record<string, readonly string[]> = {};
+const EXAM_FINAL: Partial<Record<ExamType, readonly string[]>> = {};
 
-const addKeyAsPrefix = (input: Record<string, readonly string[]>): Record<string, string[]> => {
-    const result: Record<string, string[]> = {};
+////////////////////////////////////////////////////////////////////////
+
+const addKeyAsPrefix = (input: Partial<Record<ExamType, readonly string[]>>): Partial<Record<ExamType, string[]>> => {
+    const result: Partial<Record<ExamType, string[]>> = {};
     for (const [key, values] of Object.entries(input)) {
-        result[key] = values.map((v) => `${key}.${v}`);
+        result[key as ExamType] = values.map((v) => `${key}.${v}`);
     }
     return result;
 };

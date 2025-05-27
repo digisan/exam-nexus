@@ -3,6 +3,8 @@ import { toIdKey, toIdMultiKey } from "@define/id.ts";
 import { T } from "@define/system.ts";
 import { isEmail } from "@define/type.ts";
 import { printResult } from "@util/log.ts";
+import { isValidExamSelection } from "@define/exam/type.ts";
+import { err } from "neverthrow";
 
 Deno.test("setUserExam", async () => {
     const s = "cdutwhu@yeah.net";
@@ -11,7 +13,13 @@ Deno.test("setUserExam", async () => {
         printResult(r_ek, true, `${s} is NOT valid email or NOT registered`);
         return;
     }
-    const r = await uec.setUserExam(r_ek.value, { "vce": ["vce.1", "vce.2"], "naplan": ["naplan.1"] });
+
+    const exam = { "vce": ["vce.1", "vce.2"], "naplan": ["naplan.1"] };
+    if (!isValidExamSelection(exam)) {
+        printResult(err(`${JSON.stringify(exam, null, 4)} is invalid exam selection`), true);
+        return
+    }
+    const r = await uec.setUserExam(r_ek.value, exam);
     if (r.isErr()) {
         printResult(r, true, `setUserExam error ` + r.error);
         return;

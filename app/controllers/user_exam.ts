@@ -1,7 +1,8 @@
 import { Result } from "neverthrow";
 import { dbAgent as agent } from "@db/dbService.ts";
 import { T, type T_REGISTER, type T_USER_EXAM } from "@define/system.ts";
-import type { Email, ExamSelection } from "@define/type.ts";
+import type { Email } from "@define/type.ts";
+import type { ExamSelection } from "@define/exam/type.ts";
 import type { IdKey, IdMultiKey } from "@define/id.ts";
 import type { Data } from "@db/dbService.ts";
 

@@ -5,7 +5,7 @@ import { T } from "@define/system.ts";
 
 class TestAnalysisController {
     // insert or update into T.TEST_ANALYSIS
-    // async setTestAnalysis(analysis: Analysis, ct?: TransFnType): Promise<Result<Data, string>> {
+    // async setTestAnalysis(analysis: TestAnalysis, ct?: TransFnType): Promise<Result<Data, string>> {
     //     return err("");
     // }
 }

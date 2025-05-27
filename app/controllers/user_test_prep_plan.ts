@@ -3,7 +3,8 @@ import { dbAgent as agent } from "@db/dbService.ts";
 import { T, type T_REGISTER, type T_TEST_PREP_PLAN } from "@define/system.ts";
 import type { IdKey, IdMultiKey } from "@define/id.ts";
 import type { Data } from "@db/dbService.ts";
-import type { Email, TestPrepPlan } from "@define/type.ts";
+import type { Email } from "@define/type.ts";
+import type { TestPrepPlan } from "@define/exam/type.ts";
 
 class TestPrepPlanController {
     async setTestPrepPlan(email: IdKey<T_REGISTER> & Email, plan: TestPrepPlan): Promise<Result<Data, string>> {

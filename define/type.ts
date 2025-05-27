@@ -4,7 +4,7 @@ import { LANGUAGES, REGIONS } from "@define/config.ts";
 import type { LanguageType, RegionType } from "@define/config.ts";
 import { T } from "@define/system.ts";
 import { hasCertainProperty, RE_EMAIL, RE_PWD, some } from "@util/util.ts";
-import { toIdKey, type Id } from "@define/id.ts";
+import { toIdKey } from "@define/id.ts";
 
 type Brand<T, B> = T & { readonly __brand: B; readonly __exact: T; readonly __types: T };
 
@@ -53,9 +53,3 @@ export const toValidConfig = async (c: object, ct?: TransFnType): Promise<Result
     if (r.isErr()) return err(r.error);
     return ok(c as unknown as Config);
 };
-
-//                                       exam    tests
-export type ExamSelection = Brand<Record<string, string[]>, `ExamSelection`>;
-
-// DOING...
-export type TestPrepPlan = Brand<{ test: Id }, `TestPrepPlan`>
