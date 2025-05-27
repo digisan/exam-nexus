@@ -1,14 +1,14 @@
 import { Result } from "neverthrow";
 import { dbAgent as agent } from "@db/dbService.ts";
 import { T, type T_REGISTER, type T_USER_EXAM } from "@define/system.ts";
-import type { Email } from "@define/type.ts";
+import type { Email, ExamSelection } from "@define/type.ts";
 import type { IdKey, IdMultiKey } from "@define/id.ts";
 import type { Data } from "@db/dbService.ts";
 
 class UserExamController {
     // insert or update into T.USER_EXAM
     //
-    async setUserExam(email: IdKey<T_REGISTER> & Email, exam: Record<string, string[]>): Promise<Result<Data, string>> {
+    async setUserExam(email: IdKey<T_REGISTER> & Email, exam: ExamSelection): Promise<Result<Data, string>> {
         return await agent.SetSingleRowData(T.USER_EXAM, email, exam);
     }
 
