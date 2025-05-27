@@ -10,6 +10,7 @@ import { isValidId, toIdKey } from "@define/id.ts";
 import { blacklistToken } from "@app/app.ts";
 import { log2db } from "@util/log.ts";
 import { env_get } from "@define/env.ts";
+import { sleep } from "@util/util.ts";
 
 const SIGNATURE_KEY = env_get("SIGNATURE_KEY");
 
@@ -47,8 +48,10 @@ class AuthController {
         if (!SIGNATURE_KEY) return err(`fatal: SIGNATURE_KEY must be provided!`);
         try {
             const token = await sign(payload, SIGNATURE_KEY);
-            setTimeout(() => {
+            const timer = setTimeout(async () => {
                 blacklistToken.delete(token);
+                await sleep(50);
+                clearTimeout(timer);
             }, (expiresInSeconds + 60) * 1000); // remove unnecessary blacklisted token if real
             return ok(token);
         } catch (e) {
