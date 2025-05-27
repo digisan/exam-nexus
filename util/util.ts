@@ -10,7 +10,7 @@ export type Typable = typeof TYPES[number];
 export const RE_PWD = /^\S*(?=\S{6,})(?=\S*\d)(?=\S*[A-Z])(?=\S*[a-z])(?=\S*[_!@#$%^&*? ])\S*$/;
 export const RE_EMAIL = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 
-export const sleep = (ms: number): Promise<void> => new Promise(resolve => setTimeout(resolve, ms));
+export const sleep = (ms: number): Promise<void> => new Promise((resolve) => setTimeout(resolve, ms));
 
 export const len = <T>(arr: T[] | null | undefined): number => arr?.length ?? 0;
 

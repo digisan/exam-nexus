@@ -12,13 +12,20 @@ export const log2db = async (msg: string, logId?: string, ct?: TransFnType) => {
     await agent.SetSingleRowData(T.TEST, id, { msg });
 };
 
-export const printResult = (r: Result<unknown, string>, abort: boolean = false) => {
-    if (r.isOk() && `${r.value}`.startsWith(`⚠️`)) { // refer to supabase some functions return
+export const printResult = (r: Result<unknown, string>, abort: boolean = false, extra_err_msg: string = "") => {
+    let extra = false;
+    if (some(extra_err_msg)) {
+        extra_err_msg = `(${extra_err_msg})`;
+        extra = true;
+    }
+    if (r.isOk() && `${r.value}`.startsWith(`⚠️`)) { // refer to some supabase functions return
         console.debug(`${r.value}`);
-        if (abort) throw Error(`${r.value}`);
+        if (extra) console.debug(extra_err_msg);
+        if (abort) throw Error(`${r.value}\n${extra_err_msg}`);
     } else {
         const msg = r.isOk() ? `✔️ ${JSON.stringify(r.value, null, 4)}` : `❌ ${r.error}`;
         console.debug(msg);
-        if (abort && r.isErr()) throw Error(msg);
+        if (r.isErr() && extra) console.debug(extra_err_msg);
+        if (abort && r.isErr()) throw Error(`${msg}\n${extra_err_msg}`);
     }
 };

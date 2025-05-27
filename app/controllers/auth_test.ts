@@ -20,7 +20,7 @@ Deno.test("AuthCtrlReg", async () => {
 Deno.test("AuthCtrlLogin", async () => {
     const r_cred = await toValidCredential({
         email: "cdutwhu@yeah.net",
-        password: "pa55w0rd@EXAM"
+        password: "pa55w0rd@EXAM",
     });
     if (r_cred.isErr()) {
         console.log(r_cred.error);
@@ -29,12 +29,12 @@ Deno.test("AuthCtrlLogin", async () => {
     const result = await auth.login(r_cred.value);
     console.log(result);
 
-    await sleep(4000)
+    await sleep(4000);
 });
 
 Deno.test("AuthCtrlLogout", () => {
     auth.logout("abc");
     auth.logout("def");
     auth.logout("def");
-    console.log(`logout`)
+    console.log(`logout`);
 });

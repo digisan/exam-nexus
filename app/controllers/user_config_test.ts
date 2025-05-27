@@ -9,15 +9,15 @@ Deno.test("setUserCfg", async () => {
         email: "cdutwhu@yeah.net",
         region: "au",
         lang: "en-AU",
-    }
-    const r = await toValidConfig(cfg)
+    };
+    const r = await toValidConfig(cfg);
     if (r.isErr()) {
-        printResult(r, true)
-        return
+        printResult(r, true);
+        return;
     }
-    const r1 = await ucc.setUserCfg(r.value)
-    printResult(r1, true)
-})
+    const r1 = await ucc.setUserCfg(r.value);
+    printResult(r1, true);
+});
 
 Deno.test("getUserCfg", async () => {
     const s = "cdutwhu@yeah.net";
@@ -28,20 +28,20 @@ Deno.test("getUserCfg", async () => {
     }
     const r_eka = await toIdMultiKey(s, [T.REGISTER, T.USER_CONFIG]);
     if (r_eka.isErr() || !isEmail(r_eka.value)) {
-        console.debug(`${s} is NOT both valid key for '${T.REGISTER}' & '${T.USER_CONFIG}'`);
+        printResult(r_eka, true, `${s} is NOT both valid key for '${T.REGISTER}' & '${T.USER_CONFIG}'`);
         return;
     }
     const r = await ucc.getUserCfg(r_eka.value);
-    printResult(r, true)
+    printResult(r, true);
 });
 
 Deno.test("deleteUserCfg", async () => {
     const s = "cdutwhu@yeah.net";
     const r = await toIdKey(s, T.REGISTER);
     if (r.isErr() || !isEmail(r.value)) {
-        printResult(r, true)
-        return
+        printResult(r, true);
+        return;
     }
     const r1 = await ucc.deleteUserCfg(r.value);
     printResult(r1, true);
-})
+});
