@@ -17,7 +17,7 @@ Deno.test("setUserExam", async () => {
     const exam = { "vce": ["vce.1", "vce.2"], "naplan": ["naplan.1"] };
     if (!isValidExamSelection(exam)) {
         printResult(err(`${JSON.stringify(exam, null, 4)} is invalid exam selection`), true);
-        return
+        return;
     }
     const r = await uec.setUserExam(r_ek.value, exam);
     if (r.isErr()) {

@@ -8,6 +8,7 @@ import { createStrictT } from "@i18n/lang_t.ts";
 import { uec } from "@app/controllers/user_exam.ts";
 import { T } from "@define/system.ts";
 import { isEmail } from "@define/type.ts";
+import { isValidExamSelection } from "@define/exam/type.ts";
 
 const route_app = new OpenAPIHono({ defaultHook: zodErrorHandler });
 
@@ -69,6 +70,7 @@ const route_app = new OpenAPIHono({ defaultHook: zodErrorHandler });
             if (r_ek.isErr() || !isEmail(r_ek.value)) return t400(c, "email.invalid", { email });
 
             const tests = c.req.valid("json");
+            if (!isValidExamSelection(tests)) return t400(c, "req.invalid", { req: tests });
 
             const result = await uec.setUserExam(r_ek.value, tests);
             if (result.isErr()) return t500(c, "set.user_exam.err");
