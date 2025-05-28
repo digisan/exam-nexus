@@ -1,7 +1,15 @@
-import type { ExamType } from "@define/exam/type.ts";
+import { safeProp } from "@util/util.ts";
+
+export const EXAMS_AU = [
+    "vce",
+    "naplan",
+    "icas",
+    // ...
+] as const;
+export type ExamTypeAu = typeof EXAMS_AU[number];
 
 // deno-fmt-ignore
-const EXAM_SELECTIVE: Partial<Record<ExamType, readonly string[]>> = {
+const EXAM_SELECTIVE: Partial<Record<ExamTypeAu, readonly string[]>> = {
     vce: [
         "ma.1", "ma.2", "ma.3",
         "en.1", "en.2", "en.3", "en.4"
@@ -9,7 +17,7 @@ const EXAM_SELECTIVE: Partial<Record<ExamType, readonly string[]>> = {
 };
 
 // deno-fmt-ignore
-const EXAM_PROFICIENCY: Partial<Record<ExamType, readonly string[]>> = {
+const EXAM_PROFICIENCY: Partial<Record<ExamTypeAu, readonly string[]>> = {
     naplan: [
         "r.y3", "r.y5", "r.y7", "r.y9",
         "w.y3", "w.y5", "w.y7", "w.y9",
@@ -29,17 +37,17 @@ const EXAM_PROFICIENCY: Partial<Record<ExamType, readonly string[]>> = {
 };
 
 // deno-fmt-ignore
-const EXAM_CERTIFICATION: Partial<Record<ExamType, readonly string[]>> = {};
+const EXAM_CERTIFICATION: Partial<Record<ExamTypeAu, readonly string[]>> = {};
 
 // deno-fmt-ignore
-const EXAM_FINAL: Partial<Record<ExamType, readonly string[]>> = {};
+const EXAM_FINAL: Partial<Record<ExamTypeAu, readonly string[]>> = {};
 
 ////////////////////////////////////////////////////////////////////////
 
-const addKeyAsPrefix = (input: Partial<Record<ExamType, readonly string[]>>): Partial<Record<ExamType, string[]>> => {
-    const result: Partial<Record<ExamType, string[]>> = {};
+const addKeyAsPrefix = (input: Partial<Record<ExamTypeAu, readonly string[]>>): Partial<Record<ExamTypeAu, string[]>> => {
+    const result: Partial<Record<ExamTypeAu, string[]>> = {};
     for (const [key, values] of Object.entries(input)) {
-        result[key as ExamType] = values.map((v) => `${key}.${v}`);
+        result[key as ExamTypeAu] = values.map((v) => `${key}.${v}`);
     }
     return result;
 };
@@ -50,6 +58,23 @@ export const ExamCatMap = {
     certification: addKeyAsPrefix(EXAM_CERTIFICATION),
     final: addKeyAsPrefix(EXAM_FINAL),
 } as const;
+
+const collectAllTest = (): string[] => {
+    const r: string[][] = [];
+    for (const e of EXAMS_AU) {
+        for (const cat in ExamCatMap) {
+            const c = safeProp(ExamCatMap, cat)!;
+            if (e in c) r.push(c[e]!);
+        }
+    }
+    return r.flat();
+};
+
+export const TESTS_AU = collectAllTest();
+
+if (import.meta.main) {
+    console.log(TESTS_AU);
+}
 
 // export const EXAM_CATEGORIES = Object.keys(ExamCatMap) as (keyof typeof ExamCatMap)[];
 // type ExamCatType = typeof EXAM_CATEGORIES[number];
