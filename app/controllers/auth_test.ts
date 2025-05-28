@@ -19,7 +19,7 @@ Deno.test("AuthCtrlReg", async () => {
 
 Deno.test("AuthCtrlLogin", async () => {
     const r_cred = await toValidCredential({
-        email: "cdutwhu@yeah.net",
+        id: "cdutwhu@yeah.net",
         password: "pa55w0rd@EXAM",
     });
     if (r_cred.isErr()) {

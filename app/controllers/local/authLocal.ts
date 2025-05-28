@@ -6,12 +6,13 @@ import { type TransFnType, wrapOptT } from "@i18n/lang_t.ts";
 import type { Email, Password } from "@define/type.ts";
 import { blacklistToken } from "@app/app.ts";
 import { env_get } from "@define/env.ts";
+import type { Id } from "@define/id.ts";
 
 const SIGNATURE_KEY = env_get("SIGNATURE_KEY");
 const localFilePath = "./data/users.json";
 
 class AuthLocalController {
-    async register(credential: { email: Email; password: Password }, ct?: TransFnType) {
+    async register(info: { email: Email; password: Password }, ct?: TransFnType) {
         const t = wrapOptT(ct);
 
         try {
@@ -25,19 +26,19 @@ class AuthLocalController {
                 }
 
                 // check user existing status
-                if (data.some((u) => u.email === credential.email)) {
+                if (data.some((u) => u.email === info.email)) {
                     return err(t("register.fail.existing"));
                 }
 
                 // insert with hashed password
-                data.push({ email: credential.email, password: await hash(credential.password, 10) });
+                data.push({ email: info.email, password: await hash(info.password, 10) });
                 await Deno.writeTextFile(localFilePath, JSON.stringify(data, null, 4));
                 return ok(t("register.ok.__"));
             } else {
                 await Deno.writeTextFile(
                     localFilePath,
                     JSON.stringify(
-                        [{ email: credential.email, password: await hash(credential.password, 10) }],
+                        [{ email: info.email, password: await hash(info.password, 10) }],
                         null,
                         4,
                     ),
@@ -50,11 +51,11 @@ class AuthLocalController {
         }
     }
 
-    private async genToken(email: Email): Promise<Result<string, string>> {
+    private async genToken(id: Id): Promise<Result<string, string>> {
         const expiresInSeconds = 60 * 100; // 100 minutes
         const exp = Math.floor(Date.now() / 1000) + expiresInSeconds;
         const payload = {
-            sub: email,
+            sub: id,
             role: "user",
             exp,
         };
@@ -70,7 +71,7 @@ class AuthLocalController {
         }
     }
 
-    async login(credential: { email: Email; password: Password }, ct?: TransFnType) {
+    async login(credential: { id: Id; password: Password }, ct?: TransFnType) {
         const t = wrapOptT(ct);
 
         try {
@@ -88,10 +89,10 @@ class AuthLocalController {
             //     return err(t('login.fail.not_existing'))
             // }
 
-            const userData = data.find((u) => u.email == credential.email);
+            const userData = data.find((u) => u.email == credential.id);
             if (!userData) return err(t("login.fail.not_existing"));
             if (!await compare(credential.password, userData.password)) return err(t("login.fail.verification"));
-            return this.genToken(credential.email);
+            return this.genToken(credential.id);
         } catch (e) {
             // log here ...
             return err(`fatal: ${e}`);

@@ -1,8 +1,7 @@
-import { toIdKey } from "@define/id.ts";
+import { toIdMKey, toIdSKey, toIdSKeyObj, toIdSKeyPart, toIdSKeyWithSKeyPart } from "@define/id.ts";
 import { uplc } from "./user_prep_plan.ts";
-import { T } from "@define/system.ts";
+import { K, T } from "@define/system.ts";
 import { printResult } from "@util/log.ts";
-import { isEmail } from "@define/type.ts";
 import { isValidTestPrepPlan } from "@define/exam/type.ts";
 import { err } from "neverthrow";
 
@@ -14,8 +13,8 @@ Deno.test("setTestPrepPlan", async () => {
             test_start: new Date("2025-05-31T14:00:00+08:00"),
         };
 
-        const r_uid = await toIdKey(uid, T.REGISTER);
-        if (r_uid.isErr() || !isEmail(r_uid.value)) {
+        const r_uid = await toIdSKey(uid, T.REGISTER);
+        if (r_uid.isErr()) {
             printResult(r_uid, true);
             return;
         }
@@ -34,8 +33,8 @@ Deno.test("setTestPrepPlan", async () => {
             test_start: new Date("2025-05-30T14:00:00+08:00"),
         };
 
-        const r_uid = await toIdKey(uid, T.REGISTER);
-        if (r_uid.isErr() || !isEmail(r_uid.value)) {
+        const r_uid = await toIdSKey(uid, T.REGISTER);
+        if (r_uid.isErr()) {
             printResult(r_uid, true);
             return;
         }
@@ -50,6 +49,17 @@ Deno.test("setTestPrepPlan", async () => {
 });
 
 Deno.test("getTestPrepPlan", async () => {
+    {
+        const uid = "cdutwhu@yeah.net";
+        const r = await toIdSKeyWithSKeyPart(uid, T.REGISTER, T.TEST_PREP_PLAN, K.UID);
+        if (r.isErr()) {
+            printResult(err(`${uid} is invalid`));
+            return;
+        }
+        const tid = "vce.en.1";
+        const r2 = await uplc.getTestPrepPlan(r.value, tid);
+        printResult(r2, true);
+    }
 });
 
 Deno.test("deleteTestPrepPlan", async () => {

@@ -5,8 +5,9 @@ import { type TransFnType, wrapOptT } from "@i18n/lang_t.ts";
 import { dbAgent as agent } from "@db/dbService.ts";
 import { T } from "@define/system.ts";
 import type { Credential, Email, Password } from "@define/type.ts";
+import type { Id } from "@define/id.ts";
 import { toValidCredential } from "@define/type.ts";
-import { isValidId, toIdKey } from "@define/id.ts";
+import { isValidId, toIdSKey } from "@define/id.ts";
 import { blacklistToken } from "@app/app.ts";
 import { log2db } from "@util/log.ts";
 import { env_get } from "@define/env.ts";
@@ -18,7 +19,7 @@ class AuthController {
     async register(info: { email: Email; password: Password }, ct?: TransFnType): Promise<Result<string, string>> {
         const t = wrapOptT(ct);
         try {
-            const r_ek = await toIdKey(info.email, T.REGISTER);
+            const r_ek = await toIdSKey(info.email, T.REGISTER);
             if (r_ek.isOk()) return err(t("register.fail.existing"));
 
             const id = info.email;
@@ -37,11 +38,11 @@ class AuthController {
         }
     }
 
-    private async genToken(email: Email): Promise<Result<string, string>> {
+    private async genToken(id: Id): Promise<Result<string, string>> {
         const expiresInSeconds = 60 * 100; // 100 minutes
         const exp = Math.floor(Date.now() / 1000) + expiresInSeconds;
         const payload = {
-            sub: email,
+            sub: id,
             role: "user",
             exp,
         };
@@ -65,15 +66,15 @@ class AuthController {
             const r_cred = await toValidCredential(credential);
             if (r_cred.isErr()) return err(t(`login.fail.invalid_credential`, { message: r_cred.error }));
 
-            const id = r_cred.value.email;
-            const r_id = await toIdKey(id, T.REGISTER);
+            const id = r_cred.value.id;
+            const r_id = await toIdSKey(id, T.REGISTER);
             if (r_id.isErr()) return err(t("login.fail.not_existing"));
 
             const r = await agent.GetSingleRowData(T.REGISTER, r_id.value);
             if (r.isErr()) return err(r.error);
 
             if (!await compare(credential.password, r.value!.password as string)) return err(t("login.fail.verification"));
-            return this.genToken(credential.email);
+            return this.genToken(credential.id);
         } catch (e) {
             log2db(`${e}`, "", t);
             return err(t(`catch`, { err: e }));

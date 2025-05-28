@@ -16,18 +16,6 @@ export const isValidIds = (ss: string[]): ss is Ids => {
     return true;
 };
 
-export type IdKey<T extends TableType> = Brand<string, `IdKey<${T}>`>;
-export const toIdKey = async <T extends TableType>(
-    s: string,
-    table: T,
-    ct?: TransFnType,
-): Promise<Result<IdKey<T>, string>> => {
-    const t = wrapOptT(ct);
-    if (!isValidId(s)) return err(t("id.invalid"));
-    if (!some(await agent.GetDataRow(table, s))) return err(t("get.db.fail_by_id", { id: s }));
-    return ok(s as unknown as IdKey<T>);
-};
-
 export type IdObj<Ks extends readonly KeyType[]> = Brand<Partial<Record<Ks[number], Id>>, `IdObj<${Ks[number] & string}>`>;
 export const isValidIdObj = <const Ks extends readonly KeyType[]>(
     so: object,
@@ -40,32 +28,74 @@ export const isValidIdObj = <const Ks extends readonly KeyType[]>(
     return isValidIds(actualKeys.map((k) => (so as Partial<Record<KeyType, Id>>)[k as KeyType]!));
 };
 
-export type IdObjKey<T extends TableType, Ks extends readonly KeyType[]> = Brand<Partial<Record<Ks[number], Id>>, `IdObjKey<${T}&${Ks[number]}>`>;
-export const toIdObjKey = async <T extends TableType, const Ks extends readonly KeyType[]>(
+////////////////////////////////////////////////////////////////////////
+
+export type IdSKey<T extends TableType> = Brand<string, `IdSKey<${T}>`>;
+export const toIdSKey = async <T extends TableType>(
+    s: string,
+    table: T,
+    ct?: TransFnType,
+): Promise<Result<IdSKey<T>, string>> => {
+    const t = wrapOptT(ct);
+    if (!isValidId(s)) return err(t("id.invalid"));
+    if (!some(await agent.GetDataRow(table, s))) return err(t("get.db.fail_by_id", { id: s }));
+    return ok(s as unknown as IdSKey<T>);
+};
+
+export type IdSKeyPart<T extends TableType, K extends KeyType> = Brand<string, `IdSKeyPart<${T}&${K}>`>;
+export const toIdSKeyPart = async <T extends TableType, K extends KeyType>(
+    s: string,
+    table: T,
+    key: K,
+    ct?: TransFnType,
+): Promise<Result<IdSKeyPart<T, K>, string>> => {
+    const t = wrapOptT(ct);
+    if (!isValidId(s)) return err(t("id.invalid"));
+    if (!some(await agent.GetDataRow(table, s, key))) return err(t("get.db.fail_by_id", { id: s }));
+    return ok(s as unknown as IdSKeyPart<T, K>);
+};
+
+export type IdSKeyWithSKeyPart<T1 extends TableType, T2 extends TableType, K extends KeyType> = Brand<string, `IdSKeyWithSKeyPart<${T1}&${T2}&${K}>`>;
+export const toIdSKeyWithSKeyPart = async <T1 extends TableType, T2 extends TableType, K extends KeyType>(
+    s: string,
+    kTable: T1,
+    pTable: T2,
+    key: K,
+    ct?: TransFnType,
+): Promise<Result<IdSKeyWithSKeyPart<T1, T2, K>, string>> => {
+    const t = wrapOptT(ct);
+    if (!isValidId(s)) return err(t("id.invalid"));
+    if (!some(await agent.GetDataRow(kTable, s))) return err(t("get.db.fail_by_id", { id: s }));
+    if (!some(await agent.GetDataRow(pTable, s, key))) return err(t("get.db.fail_by_id", { id: s }));
+    return ok(s as unknown as IdSKeyWithSKeyPart<T1, T2, K>);
+};
+
+export type IdSKeyObj<T extends TableType, Ks extends readonly KeyType[]> = Brand<Partial<Record<Ks[number], Id>>, `IdSKeyObj<${T}&${Ks[number]}>`>;
+export const toIdSKeyObj = async <T extends TableType, const Ks extends readonly KeyType[]>(
     so: object,
     table: T,
     keys: Ks,
     ct?: TransFnType,
-): Promise<Result<IdObjKey<T, Ks>, string>> => {
+): Promise<Result<IdSKeyObj<T, Ks>, string>> => {
     const t = wrapOptT(ct);
     if (!isValidIdObj(so, keys)) return err(t("id.invalid_as_obj"));
     if (!some(await agent.GetDataRow(table, so))) return err(t("get.db.fail_by_id_obj", { id: so }));
-    return ok(so as unknown as IdObjKey<T, Ks>);
+    return ok(so as unknown as IdSKeyObj<T, Ks>);
 };
 
-export type IdMultiKey<Ts extends readonly TableType[]> = Brand<string, `IdMultiKey<${Ts[number] & string}>`>;
-export const toIdMultiKey = async <const Ts extends readonly TableType[]>(
+export type IdMKey<Ts extends readonly TableType[]> = Brand<string, `IdMKey<${Ts[number] & string}>`>;
+export const toIdMKey = async <const Ts extends readonly TableType[]>(
     s: string,
     tables: Ts,
     ct?: TransFnType,
-): Promise<Result<IdMultiKey<Ts>, string>> => {
+): Promise<Result<IdMKey<Ts>, string>> => {
     const t = wrapOptT(ct);
     if (!some(tables)) return err(t("param.missing", { param: "tables" }));
     for (const table of tables) {
-        const r = await toIdKey(s, table);
+        const r = await toIdSKey(s, table);
         if (r.isErr()) return err(r.error);
     }
-    return ok(s as unknown as IdMultiKey<Ts>);
+    return ok(s as unknown as IdMKey<Ts>);
 };
 
 export type IdRef<T_DATA extends TableType, DF extends string, T_REF extends TableType> = Brand<string, `IdRef<${T_DATA}&${DF}&${T_REF}>`>;
@@ -77,7 +107,7 @@ export const toIdRef = async <T_DATA extends TableType, DF extends string, T_REF
     ct?: TransFnType,
 ): Promise<Result<IdRef<T_DATA, DF, T_REF>, string>> => {
     const t = wrapOptT(ct);
-    const r_k = await toIdKey(val, ref_table);
+    const r_k = await toIdSKey(val, ref_table);
     if (r_k.isErr()) return err(r_k.error);
     const r = await agent.FirstDataRow(table, field, val);
     if (r.isErr()) return err(r.error);

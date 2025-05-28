@@ -1,12 +1,12 @@
-import { isEmail, toValidConfig } from "@define/type.ts";
-import { toIdKey, toIdMultiKey } from "@define/id.ts";
+import { toValidConfig } from "@define/type.ts";
+import { toIdMKey, toIdSKey } from "@define/id.ts";
 import { T } from "@define/system.ts";
 import { ucc } from "@app/controllers/user_config.ts";
 import { printResult } from "@util/log.ts";
 
 Deno.test("setUserCfg", async () => {
     const cfg = {
-        email: "cdutwhu@yeah.net",
+        id: "cdutwhu@yeah.net",
         region: "au",
         lang: "en-AU",
     };
@@ -21,14 +21,14 @@ Deno.test("setUserCfg", async () => {
 
 Deno.test("getUserCfg", async () => {
     const s = "cdutwhu@yeah.net";
-    const r_ek = await toIdKey(s, T.REGISTER);
+    const r_ek = await toIdSKey(s, T.REGISTER);
     if (r_ek.isErr()) {
         printResult(r_ek, true);
         return;
     }
-    const r_eka = await toIdMultiKey(s, [T.REGISTER, T.USER_CONFIG]);
-    if (r_eka.isErr() || !isEmail(r_eka.value)) {
-        printResult(r_eka, true, `${s} is NOT both valid key for '${T.REGISTER}' & '${T.USER_CONFIG}'`);
+    const r_eka = await toIdMKey(s, [T.REGISTER, T.USER_CONFIG]);
+    if (r_eka.isErr()) {
+        printResult(r_eka, true, `'${s}' is NOT both valid key for '${T.REGISTER}' & '${T.USER_CONFIG}'`);
         return;
     }
     const r = await ucc.getUserCfg(r_eka.value);
@@ -37,8 +37,8 @@ Deno.test("getUserCfg", async () => {
 
 Deno.test("deleteUserCfg", async () => {
     const s = "cdutwhu@yeah.net";
-    const r = await toIdKey(s, T.REGISTER);
-    if (r.isErr() || !isEmail(r.value)) {
+    const r = await toIdSKey(s, T.REGISTER);
+    if (r.isErr()) {
         printResult(r, true);
         return;
     }

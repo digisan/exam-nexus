@@ -1,15 +1,14 @@
 import { uec } from "@app/controllers/user_exam.ts";
-import { toIdKey, toIdMultiKey } from "@define/id.ts";
+import { toIdMKey, toIdSKey } from "@define/id.ts";
 import { T } from "@define/system.ts";
-import { isEmail } from "@define/type.ts";
 import { printResult } from "@util/log.ts";
 import { isValidExamSelection } from "@define/exam/type.ts";
 import { err } from "neverthrow";
 
 Deno.test("setUserExam", async () => {
     const s = "cdutwhu@yeah.net";
-    const r_ek = await toIdKey(s, T.REGISTER);
-    if (r_ek.isErr() || !isEmail(r_ek.value)) {
+    const r_ek = await toIdSKey(s, T.REGISTER);
+    if (r_ek.isErr()) {
         printResult(r_ek, true, `${s} is NOT valid email or NOT registered`);
         return;
     }
@@ -29,9 +28,9 @@ Deno.test("setUserExam", async () => {
 
 Deno.test("getUserExam", async () => {
     const s = "cdutwhu@yeah.net";
-    const r = await toIdMultiKey(s, [T.REGISTER, T.USER_EXAM]);
-    if (r.isErr() || !isEmail(r.value)) {
-        printResult(r, true, `${s} is NOT both valid key for '${T.REGISTER}' & '${T.USER_EXAM}'`);
+    const r = await toIdMKey(s, [T.REGISTER, T.USER_EXAM]);
+    if (r.isErr()) {
+        printResult(r, true, `'${s}' is NOT both valid key for '${T.REGISTER}' & '${T.USER_EXAM}'`);
         return;
     }
     const r1 = await uec.getUserExam(r.value);
@@ -40,8 +39,8 @@ Deno.test("getUserExam", async () => {
 
 Deno.test("deleteUserExam", async () => {
     const s = "cdutwhu@yeah.net";
-    const r = await toIdKey(s, T.REGISTER);
-    if (r.isErr() || !isEmail(r.value)) {
+    const r = await toIdSKey(s, T.REGISTER);
+    if (r.isErr()) {
         printResult(r, true);
         return;
     }

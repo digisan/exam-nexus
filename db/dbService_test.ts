@@ -1,5 +1,5 @@
 import { dbAgent as agent } from "@db/dbService.ts";
-import { type Id, isValidId, isValidIdObj, toIdKey, toIdObjKey } from "@define/id.ts";
+import { type Id, isValidId, isValidIdObj, toIdSKey, toIdSKeyObj } from "@define/id.ts";
 // import type { JSONObject } from "@db/dbService.ts";
 import type { IdObj } from "@define/id.ts";
 import { K, type K_TID, type K_UID, mTableKeys, T } from "@define/system.ts";
@@ -137,19 +137,19 @@ Deno.test("FirstDataRow", async () => {
 Deno.test("GetDataRow", async () => {
     // single key
     //
-    const id = "my_id";
+    const id = "cdutwhu@yeah.net";
     if (!isValidId(id)) {
         console.debug(`❌ Not valid ID (${id})`);
         return;
     }
-    const r = await agent.GetDataRow(T.DEV_TEST, id as Id);
-    printResult(r, true);
+    const r1 = await agent.GetDataRow(T.DEV_TEST, id as Id);
+    printResult(r1, true);
 
     // composited key
     //
     const idobj = {
-        uid: "12345" as Id,
-        tid: "abcde" as Id,
+        uid: "M9t2Ha21" as Id,
+        tid: "FFFrC" as Id,
     };
     if (isValidIdObj(idobj, [K.UID, K.TID])) {
         const r = await agent.GetDataRow(T.DEV_TEST_2K, idobj as IdObj<[K_UID, K_TID]>);
@@ -157,11 +157,21 @@ Deno.test("GetDataRow", async () => {
     } else {
         console.debug(`❌ ${JSON.stringify(idobj)} is invalid`);
     }
+
+    // park key
+    // ...
+    const uid = "M9t2Ha21";
+    if (!isValidId(uid)) {
+        console.debug(`❌ Not valid ID (${uid})`);
+        return;
+    }
+    const r2 = await agent.GetDataRow(T.DEV_TEST_2K, uid as Id, K.UID);
+    printResult(r2, true);
 });
 
 Deno.test("UpdateDataRow", async () => {
     const id = "my_id";
-    const r_k = await toIdKey(id, T.DEV_TEST);
+    const r_k = await toIdSKey(id, T.DEV_TEST);
     printResult(r_k, true);
     if (r_k.isErr()) return;
 
@@ -194,7 +204,7 @@ Deno.test("DeleteDataRows", async () => {
 
 Deno.test("GetSingleRowData", async () => {
     const id = "n7jpQ";
-    const r_k = await toIdKey(id, T.DEV_TEST);
+    const r_k = await toIdSKey(id, T.DEV_TEST);
     if (r_k.isErr()) {
         console.debug(`❌ ${r_k.error}`);
         return;
@@ -209,7 +219,7 @@ Deno.test("GetSingleRowData", async () => {
         uid: "12345" as Id,
         tid: "abcde" as Id,
     };
-    const r_k1 = await toIdObjKey(id_obj, T.DEV_TEST_2K, [K.UID, K.TID]);
+    const r_k1 = await toIdSKeyObj(id_obj, T.DEV_TEST_2K, [K.UID, K.TID]);
     if (r_k1.isErr()) {
         console.debug(`❌ ${r_k1.error}`);
         return;

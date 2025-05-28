@@ -1,7 +1,7 @@
 import { err, ok, Result } from "neverthrow";
 import { firstWord, some } from "@util/util.ts";
 import { createClient } from "@supabase/supabase-js";
-import type { Id, IdKey, IdObj, IdObjKey } from "@define/id.ts";
+import type { Id, IdObj, IdSKey, IdSKeyObj } from "@define/id.ts";
 import { isValidId, isValidIdObj } from "@define/id.ts";
 import { F_CREATE_DATA_TABLE, F_CREATE_DATA_TABLE_KEYS, F_PG_EXECUTE, TABLES_SB, V_UDF } from "@define/system.ts";
 import type { KeyType, TableType } from "@define/system.ts";
@@ -144,10 +144,10 @@ class SupabaseAgent {
         return ok(r.value as Id[][]);
     }
 
-    async GetDataRow<T extends TableType, Ks extends readonly KeyType[]>(table: T, id: Id | IdObj<Ks>): Promise<Result<Data, string>> {
+    async GetDataRow<T extends TableType, Ks extends readonly KeyType[]>(table: T, id: Id | IdObj<Ks>, key?: string): Promise<Result<Data, string>> {
         const isStrId = typeof id === "string";
         const t = supabase.from(table).select("*");
-        const query = isStrId ? t.eq("id", id) : t.match(id);
+        const query = isStrId ? t.eq(key ?? "id", id) : t.match(id);
         const { data, error } = await query;
         if (error) return err(error.message);
         if (!some(data)) return ok(null);
@@ -173,13 +173,13 @@ class SupabaseAgent {
         return ok(data);
     }
 
-    async UpdateDataRow<T extends TableType, Ks extends readonly KeyType[]>(table: T, id: IdKey<T> | IdObjKey<T, Ks>, value: Data): Promise<Result<JSONObject, string>> {
+    async UpdateDataRow<T extends TableType, Ks extends readonly KeyType[]>(table: T, id: IdSKey<T> | IdSKeyObj<T, Ks>, value: Data, key?: string): Promise<Result<JSONObject, string>> {
         const rn_before = await this.CountRow(table);
         if (rn_before.isErr()) return err(rn_before.error);
 
         const isStrId = typeof id === "string";
         const t = supabase.from(table).update({ data: value });
-        const query = isStrId ? t.eq("id", id).select().single() : t.match(id).select().single();
+        const query = isStrId ? t.eq(key ?? "id", id).select().single() : t.match(id).select().single();
         const { data, error } = await query;
         if (error) return err(error.message);
         if (!data) return err("Update succeeded but no data returned");
@@ -260,7 +260,8 @@ class SupabaseAgent {
 
     ////////////////////////////////////////////////////////////////////////////////////////
 
-    async GetSingleRowData<T extends TableType, Ks extends readonly KeyType[]>(table: T, id: IdKey<T> | IdObjKey<T, Ks>, keys?: Ks): Promise<Result<JSONObject | null, string>> {
+    // can only fetch 'id' matched value
+    async GetSingleRowData<T extends TableType, Ks extends readonly KeyType[]>(table: T, id: IdSKey<T> | IdSKeyObj<T, Ks>, keys?: Ks): Promise<Result<JSONObject | null, string>> {
         const isStrId = typeof id === "string";
         if (isStrId && !isValidId(id)) return err("invalid id");
         if (!isStrId && (keys === undefined || !isValidIdObj(id, keys))) return err("invalid id");
