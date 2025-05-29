@@ -54,9 +54,7 @@ const route_app = new OpenAPIHono({ defaultHook: zodErrorHandler });
 }
 
 {
-    const ReqSchema = z.object({
-        id: z.string(),
-    });
+    const ReqSchema = z.object({ id: z.string() });
 
     const RespSchema = z.object({
         id: z.string().openapi({ example: "张三@gmail.COM" }),
@@ -94,7 +92,7 @@ const route_app = new OpenAPIHono({ defaultHook: zodErrorHandler });
             } as const,
         ),
         async (c) => {
-            const id = c.req.param("id");
+            const id = c.req.param("id") ?? "";
             if (!isValidId(id)) return t400(c, "id.invalid");
             const r = await uc.getUserReg("./data/users.json", id);
             if (r.isErr()) return t500(c, "fatal", { message: r.error });

@@ -122,7 +122,7 @@ const route_app = new OpenAPIHono({ defaultHook: zodErrorHandler });
         ),
         async (c) => {
             const t = createStrictT(c);
-            const id = c.req.param("id");
+            const id = c.req.param("id") ?? "";
             const r = await toIdMKey(id, [T.REGISTER, T.USER_CONFIG], t);
             if (r.isErr()) return t400(c, "param.invalid", { param: id });
 

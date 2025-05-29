@@ -11,7 +11,7 @@ type ExamType = ExamTypeAu | ExamTypeCn;
 const EXAMS = new Set([...EXAMS_AU, ...EXAMS_CN]);
 const TESTS = new Set([...TESTS_AU, ...TESTS_CN]);
 
-//                                               exam                     tests
+//                                               exam      tests
 export type ExamSelection = Brand<Partial<Record<ExamType, string[]>>, `ExamSelection`>;
 export const isValidExamSelection = (s: Record<string, unknown>): s is ExamSelection => {
     return Object.entries(s).every(([key, val]) => EXAMS.has(key as ExamType) && Array.isArray(val) && val.every((v) => typeof v === "string"));

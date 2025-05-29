@@ -12,7 +12,7 @@ import { uplc } from "../controllers/user_prep_plan.ts";
 const route_app = new OpenAPIHono({ defaultHook: zodErrorHandler });
 
 {
-    const ReqSchemaQ = z.object({ uid: z.string() });
+    const ReqSchemaP = z.object({ uid: z.string() });
     const ReqSchemaB = z.record(z.string());
 
     const RespSchema = z.object({
@@ -25,14 +25,14 @@ const route_app = new OpenAPIHono({ defaultHook: zodErrorHandler });
             {
                 operationId: "USER_TEST_PREP_PLAN_SET",
                 method: "post",
-                path: "/update",
+                path: "/update/{uid}",
                 tags: ["UserTestPrepPlan"],
                 // security: [{ BearerAuth: [] }],
                 security: [], // for testing
                 summary: "USER_TEST_PREP_PLAN_SET",
                 description: "Set user's selected test's preparation plan",
                 request: {
-                    query: ReqSchemaQ,
+                    params: ReqSchemaP,
                     body: {
                         description: "Update Selected Test's Preparation Plan Request Body",
                         content: {
@@ -65,7 +65,7 @@ const route_app = new OpenAPIHono({ defaultHook: zodErrorHandler });
         async (c) => {
             const t = createStrictT(c);
 
-            const uid = c.req.query("uid") ?? "";
+            const uid = c.req.param("uid") ?? "";
             const r_uid = await toIdSKey(uid, T.REGISTER, t);
             if (r_uid.isErr()) return t400(c, "id.invalid", { id: uid });
 
@@ -78,9 +78,6 @@ const route_app = new OpenAPIHono({ defaultHook: zodErrorHandler });
             // if (r_tid.isErr()) return t400(c, "id.invalid", { id: tid });
 
             const plan = c.req.valid("json");
-
-            console.log(`${JSON.stringify(plan, null, 4)}`);
-
             if (!isValidTestPrepPlan(plan)) return t400(c, "req.invalid", { req: plan });
 
             const r = await uplc.setTestPrepPlan(r_uid.value, plan);

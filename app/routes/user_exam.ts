@@ -13,7 +13,7 @@ const route_app = new OpenAPIHono({ defaultHook: zodErrorHandler });
 
 // Update User Exam Tests Selection
 {
-    const ReqSchemaQ = z.object({ id: z.string() });
+    const ReqSchemaP = z.object({ id: z.string() });
     const ReqSchemaB = z.record(z.array(z.string()));
 
     const RespSchema = z.object({
@@ -26,13 +26,13 @@ const route_app = new OpenAPIHono({ defaultHook: zodErrorHandler });
             {
                 operationId: "USER_EXAM_SET",
                 method: "post",
-                path: "/update",
+                path: "/update/{id}",
                 tags: ["UserExam"],
                 security: [{ BearerAuth: [] }],
                 summary: "USER_EXAM_SET",
                 description: "Set user's selected exam",
                 request: {
-                    query: ReqSchemaQ,
+                    params: ReqSchemaP,
                     body: {
                         description: "Update Selection Exam Request Body",
                         content: {
@@ -64,7 +64,7 @@ const route_app = new OpenAPIHono({ defaultHook: zodErrorHandler });
         async (c) => {
             const t = createStrictT(c);
 
-            const id = c.req.query("id") ?? "";
+            const id = c.req.param("id") ?? "";
             const r_ek = await toIdSKey(id, T.REGISTER, t);
             if (r_ek.isErr()) return t400(c, "id.invalid", { id });
 
@@ -81,9 +81,7 @@ const route_app = new OpenAPIHono({ defaultHook: zodErrorHandler });
 }
 
 {
-    const ReqSchema = z.object({
-        id: z.string(),
-    });
+    const ReqSchema = z.object({ id: z.string() });
 
     const RespSchema = z.record(z.array(z.string()));
 
@@ -118,7 +116,7 @@ const route_app = new OpenAPIHono({ defaultHook: zodErrorHandler });
         ),
         async (c) => {
             const t = createStrictT(c);
-            const id = c.req.param("id");
+            const id = c.req.param("id") ?? "";
             const r = await toIdMKey(id, [T.REGISTER, T.USER_EXAM], t);
             if (r.isErr()) return t400(c, "param.invalid", { param: id });
 
