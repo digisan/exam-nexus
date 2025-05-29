@@ -154,3 +154,14 @@ export const randId = (): string => {
 export const safeProp = <T extends object>(obj: T, key: string): T[keyof T] | undefined => {
     return key in obj ? obj[key as keyof T] : undefined;
 };
+
+/**
+ * 提取数组中每个对象的指定字段值，支持嵌套字段（如 'data.tid'）
+ * @param arr - 源数组
+ * @param fieldPath - 要提取的字段路径，例如 'tid' 或 'data.tid'
+ * @returns 提取出的字段值数组
+ */
+export const extractField = <T extends Record<string, any>>(arr: T[], fieldPath: string): any[] => {
+    const keys = fieldPath.split(".");
+    return arr.map((item) => keys.reduce((val, key) => val?.[key], item));
+};

@@ -261,11 +261,11 @@ class SupabaseAgent {
     ////////////////////////////////////////////////////////////////////////////////////////
 
     // can only fetch 'id' matched value
-    async GetSingleRowData<T extends TableType, Ks extends readonly KeyType[]>(table: T, id: IdSKey<T> | IdSKeyObj<T, Ks>, keys?: Ks): Promise<Result<JSONObject | null, string>> {
+    async GetSingleRowData<T extends TableType, K extends KeyType, Ks extends readonly KeyType[]>(table: T, id: IdSKey<T> | IdSKeyObj<T, Ks>, key?: K, keys?: Ks): Promise<Result<JSONObject | null, string>> {
         const isStrId = typeof id === "string";
         if (isStrId && !isValidId(id)) return err("invalid id");
         if (!isStrId && (keys === undefined || !isValidIdObj(id, keys))) return err("invalid id");
-        const r = await this.GetDataRow(table, id);
+        const r = await this.GetDataRow(table, id, key);
         if (r.isErr()) return err(r.error);
         if (some(r) && "data" in r.value!) return ok(r.value.data as JSONObject);
         return ok(null);

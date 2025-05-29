@@ -203,8 +203,7 @@ Deno.test("DeleteDataRows", async () => {
 // });
 
 Deno.test("GetSingleRowData", async () => {
-    const id = "n7jpQ";
-    const r_k = await toIdSKey(id, T.DEV_TEST);
+    const r_k = await toIdSKey("n7jpQ", T.DEV_TEST);
     if (r_k.isErr()) {
         console.debug(`❌ ${r_k.error}`);
         return;
@@ -224,7 +223,7 @@ Deno.test("GetSingleRowData", async () => {
         console.debug(`❌ ${r_k1.error}`);
         return;
     }
-    const r1 = await agent.GetSingleRowData(T.DEV_TEST_2K, r_k1.value, [K.UID, K.TID]);
+    const r1 = await agent.GetSingleRowData(T.DEV_TEST_2K, r_k1.value, K.ID, [K.UID, K.TID]);
     if (r1.isErr()) {
         console.debug(`❌ ${r1.error}`);
         return;
