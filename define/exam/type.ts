@@ -1,8 +1,9 @@
 import { type Id, isValidId } from "@define/id.ts";
 import { type TransFnType, wrapOptT } from "@i18n/lang_t.ts";
 import { hasCertainProperty, some } from "@util/util.ts";
-import { EXAMS_AU, type ExamTypeAu, TESTS_AU } from "./au.ts";
-import { EXAMS_CN, type ExamTypeCn, TESTS_CN } from "./cn.ts";
+import { EXAMS_AU, type ExamTypeAu, TESTS_AU } from "@define/exam/au.ts";
+import { EXAMS_CN, type ExamTypeCn, TESTS_CN } from "@define/exam/cn.ts";
+import { isValidFuture } from "@define/type.ts";
 
 type Brand<T, B> = T & { readonly __brand: B; readonly __exact: T; readonly __types: T };
 
@@ -33,6 +34,7 @@ export type TestProfile = Brand<{
 export type TestPrepPlan = Brand<{
     tid: Id;
     test_start: Date;
+    test_venue: string;
     // ...
 }, `TestPrepPlan`>;
 export const isValidTestPrepPlan = (p: object, ct?: TransFnType): p is TestPrepPlan => {
@@ -40,14 +42,14 @@ export const isValidTestPrepPlan = (p: object, ct?: TransFnType): p is TestPrepP
     if (!some(p)) return false;
 
     if (!hasCertainProperty(p, "tid", "string")) return false;
-    if (!hasCertainProperty(p, "test_start", "object")) return false;
+    if (!hasCertainProperty(p, "test_start", "string")) return false;
+    if (!hasCertainProperty(p, "test_venue", "string")) return false;
 
     const tid = p.tid as string;
     if (!isValidId(tid)) return false;
     if (!TESTS.has(tid)) return false;
 
-    const start = p.test_start;
-    if (!(start instanceof Date)) return false;
+    if (!isValidFuture(p.test_start as string)) return false;
 
     return true;
 };

@@ -113,6 +113,11 @@ export const lang = {
                 fail: "set user exam failed",
                 ok: "set user exam successfully",
             },
+            user_test_prep_plan: {
+                err: "an error occur when setting user test preparation plan",
+                fail: "set user test preparation plan failed",
+                ok: "set user test preparation plan successfully",
+            },
         },
         get: {
             config: {
@@ -124,6 +129,11 @@ export const lang = {
                 err: "an error occur when getting user exam",
                 fail: "get user exam failed",
                 ok: "get user exam successfully",
+            },
+            user_test_prep_plan: {
+                err: "an error occur when getting user test preparation plan",
+                fail: "get user test preparation plan failed",
+                ok: "get user test preparation plan successfully",
             },
             db: {
                 fail_by_id: "missing item keyed by {id}",
@@ -254,6 +264,11 @@ export const lang = {
                 fail: "设置用户选择考试测试失败",
                 ok: "设置用户选择考试测试成功",
             },
+            user_test_prep_plan: {
+                err: "设置用户考试测试计划时发生错误",
+                fail: "设置用户考试测试计划失败",
+                ok: "设置用户考试测试计划成功",
+            },
         },
         get: {
             config: {
@@ -265,6 +280,11 @@ export const lang = {
                 err: "获取用户选择考试测试时发生错误",
                 fail: "获取用户选择考试测试失败",
                 ok: "获取用户选择考试测试成功",
+            },
+            user_test_prep_plan: {
+                err: "获取用户考试测试计划时发生错误",
+                fail: "获取用户考试测试计划失败",
+                ok: "获取用户考试测试计划成功",
             },
             db: {
                 fail_by_id: "缺失主键为{id}的元素",
@@ -342,12 +362,18 @@ const keys = [
     "set.user_exam.err",
     "set.user_exam.fail",
     "set.user_exam.ok",
+    "set.user_test_prep_plan.err",
+    "set.user_test_prep_plan.fail",
+    "set.user_test_prep_plan.ok",
     "get.config.err",
     "get.config.fail",
     "get.config.ok",
     "get.user_exam.err",
     "get.user_exam.fail",
     "get.user_exam.ok",
+    "get.user_test_prep_plan.err",
+    "get.user_test_prep_plan.fail",
+    "get.user_test_prep_plan.ok",
     "get.db.fail_by_id",
     "get.db.fail_by_id_obj",
     "get.db.fail_by_email",

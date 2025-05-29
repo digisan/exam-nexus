@@ -53,3 +53,9 @@ export const toValidConfig = async (c: object, ct?: TransFnType): Promise<Result
     if (r.isErr()) return err(r.error);
     return ok(c as unknown as Config);
 };
+
+export const isValidFuture = (dateInput: string | Date): boolean => {
+    const date = typeof dateInput === "string" ? new Date(dateInput) : dateInput;
+    if (isNaN(date.getTime())) return false;
+    return date.getTime() > Date.now();
+};

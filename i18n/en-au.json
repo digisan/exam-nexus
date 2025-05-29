@@ -109,6 +109,11 @@
             "err": "an error occur when setting user exam",
             "fail": "set user exam failed",
             "ok": "set user exam successfully"
+        },
+        "user_test_prep_plan": {
+            "err": "an error occur when setting user test preparation plan",
+            "fail": "set user test preparation plan failed",
+            "ok": "set user test preparation plan successfully"
         }
     },
     "get": {
@@ -121,6 +126,11 @@
             "err": "an error occur when getting user exam",
             "fail": "get user exam failed",
             "ok": "get user exam successfully"
+        },
+        "user_test_prep_plan": {
+            "err": "an error occur when getting user test preparation plan",
+            "fail": "get user test preparation plan failed",
+            "ok": "get user test preparation plan successfully"
         },
         "db": {
             "fail_by_id": "missing item keyed by {id}",
