@@ -7,14 +7,13 @@ import { toIdMKey, toIdSKey } from "@define/id.ts";
 import { createStrictT } from "@i18n/lang_t.ts";
 import { uec } from "@app/controllers/user_exam.ts";
 import { T } from "@define/system.ts";
-import { isEmail } from "@define/type.ts";
 import { isValidExamSelection } from "@define/exam/type.ts";
 
 const route_app = new OpenAPIHono({ defaultHook: zodErrorHandler });
 
 // Update User Exam Tests Selection
 {
-    const ReqSchemaQ = z.object({ email: z.string() });
+    const ReqSchemaQ = z.object({ id: z.string() });
     const ReqSchemaB = z.record(z.array(z.string()));
 
     const RespSchema = z.object({
@@ -65,9 +64,9 @@ const route_app = new OpenAPIHono({ defaultHook: zodErrorHandler });
         async (c) => {
             const t = createStrictT(c);
 
-            const email = c.req.query("email") ?? "";
-            const r_ek = await toIdSKey(email, "register", t);
-            if (r_ek.isErr() || !isEmail(r_ek.value)) return t400(c, "email.invalid", { email });
+            const id = c.req.query("id") ?? "";
+            const r_ek = await toIdSKey(id, T.REGISTER, t);
+            if (r_ek.isErr()) return t400(c, "id.invalid", { id });
 
             const tests = c.req.valid("json");
             if (!isValidExamSelection(tests)) return t400(c, "req.invalid", { req: tests });
@@ -83,7 +82,7 @@ const route_app = new OpenAPIHono({ defaultHook: zodErrorHandler });
 
 {
     const ReqSchema = z.object({
-        email: z.string().email(),
+        id: z.string(),
     });
 
     const RespSchema = z.record(z.array(z.string()));
@@ -93,7 +92,7 @@ const route_app = new OpenAPIHono({ defaultHook: zodErrorHandler });
             {
                 operationId: "USER_EXAM_GET",
                 method: "get",
-                path: "/{email}",
+                path: "/{id}",
                 tags: ["UserExam"],
                 security: [{ BearerAuth: [] }],
                 summary: "USER_EXAM_GET",
@@ -110,7 +109,7 @@ const route_app = new OpenAPIHono({ defaultHook: zodErrorHandler });
                             },
                         },
                     },
-                    400: { description: "invalid email param" },
+                    400: { description: "invalid id param" },
                     401: { description: "Unauthorized" },
                     404: { description: "Cannot find selected exam by its ID" },
                     500: { description: "Internal Server Error" },
@@ -119,9 +118,9 @@ const route_app = new OpenAPIHono({ defaultHook: zodErrorHandler });
         ),
         async (c) => {
             const t = createStrictT(c);
-            const email = c.req.param("email");
-            const r = await toIdMKey(email, [T.REGISTER, T.USER_EXAM], t);
-            if (r.isErr() || !isEmail(r.value)) return t400(c, "param.invalid", { param: email });
+            const id = c.req.param("id");
+            const r = await toIdMKey(id, [T.REGISTER, T.USER_EXAM], t);
+            if (r.isErr()) return t400(c, "param.invalid", { param: id });
 
             const r_exam = await uec.getUserExam(r.value);
             if (r_exam.isErr()) return t404(c, "get.user_exam.fail");

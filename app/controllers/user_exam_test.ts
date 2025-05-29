@@ -9,7 +9,7 @@ Deno.test("setUserExam", async () => {
     const s = "cdutwhu@yeah.net";
     const r_ek = await toIdSKey(s, T.REGISTER);
     if (r_ek.isErr()) {
-        printResult(r_ek, true, `${s} is NOT valid email or NOT registered`);
+        printResult(r_ek, true, `${s} is NOT valid ID or NOT registered`);
         return;
     }
 

@@ -1,5 +1,5 @@
 import { err, ok, Result } from "neverthrow";
-import type { Email } from "@define/type.ts";
+import type { Id } from "@define/id.ts";
 import { fileExists } from "@util/util.ts";
 import type { Data } from "@db/dbService.ts";
 
@@ -11,19 +11,19 @@ class UserController {
             if (!Array.isArray(data)) {
                 return ok(null);
             }
-            return ok(data.map((u) => u.email));
+            return ok(data.map((u) => u.id));
         }
         return err(`invalid filePath: ${filePath}`);
     }
 
-    async getUserReg(filePath: string, email: Email): Promise<Result<Data, string>> {
+    async getUserReg(filePath: string, id: Id): Promise<Result<Data, string>> {
         if (await fileExists(filePath)) {
             const content = await Deno.readTextFile(filePath);
             const data = JSON.parse(content);
             if (!Array.isArray(data)) {
                 return ok(null);
             }
-            return ok(data.find((u) => u.email == email));
+            return ok(data.find((u) => u.id === id));
         }
         return err(`invalid filePath: ${filePath}`);
     }

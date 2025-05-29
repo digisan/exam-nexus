@@ -12,7 +12,7 @@ const route_app = new OpenAPIHono({ defaultHook: zodErrorHandler });
 
 {
     const ReqSchema = z.object({
-        email: z.string().email("Invalid email address"),
+        email: z.string().email("Invalid email format"),
         password: z.string().min(8, "Password must be at least 8 characters"),
         captchaToken: z.string().min(1, "Captcha token is required"),
     });
@@ -40,7 +40,7 @@ const route_app = new OpenAPIHono({ defaultHook: zodErrorHandler });
                             "application/json": {
                                 schema: ReqSchema,
                                 example: { // 添加测试参数输入
-                                    email: "john.doe@example.com",
+                                    email: "john.doe@gmail.com",
                                     password: "secure-password-123",
                                     captchaToken: "valid_captcha_token",
                                 },
@@ -84,7 +84,7 @@ const route_app = new OpenAPIHono({ defaultHook: zodErrorHandler });
 
 {
     const ReqSchema = z.object({
-        email: z.string().email("Invalid email address"),
+        id: z.string(),
         password: z.string().min(8, "Password must be at least 8 characters"),
         captchaToken: z.string().min(1, "Captcha token is required"),
     });
@@ -112,7 +112,7 @@ const route_app = new OpenAPIHono({ defaultHook: zodErrorHandler });
                             "application/json": {
                                 schema: ReqSchema,
                                 example: { // 添加测试参数输入
-                                    email: "john.doe@example.com",
+                                    id: "john.doe@gmail.com",
                                     password: "password123",
                                     captchaToken: "valid_captcha_token",
                                 },
@@ -137,9 +137,9 @@ const route_app = new OpenAPIHono({ defaultHook: zodErrorHandler });
         ),
         async (c) => {
             const t = createStrictT(c);
-            const { email, password, captchaToken } = c.req.valid("json");
+            const { id, password, captchaToken } = c.req.valid("json");
 
-            const r_cred = await toValidCredential({ email, password });
+            const r_cred = await toValidCredential({ id, password });
             if (r_cred.isErr()) return t400(c, "login.fail.invalid_credential");
 
             const rCaptcha = await verifyHCaptcha(captchaToken);

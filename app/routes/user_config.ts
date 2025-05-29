@@ -3,7 +3,7 @@ import { currentFilename } from "@util/util.ts";
 import { createStrictT } from "@i18n/lang_t.ts";
 import { app } from "@app/app.ts";
 import { ucc } from "@app/controllers/user_config.ts";
-import { isEmail, toValidConfig } from "@define/type.ts";
+import { toValidConfig } from "@define/type.ts";
 import { toIdMKey } from "@define/id.ts";
 import { T } from "@define/system.ts";
 import { zodErrorHandler } from "@app/routes/handler/zod_err.ts";
@@ -14,7 +14,7 @@ const route_app = new OpenAPIHono({ defaultHook: zodErrorHandler });
 // Update User Config
 {
     const ReqSchema = z.object({
-        email: z.string().email("Invalid email address"),
+        id: z.string(),
         region: z.string(),
         lang: z.string(),
     });
@@ -41,7 +41,7 @@ const route_app = new OpenAPIHono({ defaultHook: zodErrorHandler });
                             "application/json": {
                                 schema: ReqSchema,
                                 example: { // 添加测试参数输入
-                                    email: "email as id",
+                                    id: "user id",
                                     region: "au",
                                     lang: "en-AU",
                                 },
@@ -82,11 +82,11 @@ const route_app = new OpenAPIHono({ defaultHook: zodErrorHandler });
 // Get User Config
 {
     const ReqSchema = z.object({
-        email: z.string().email(),
+        id: z.string(),
     });
 
     const RespSchema = z.object({
-        email: z.string().email().openapi({ example: "user@email.com" }),
+        id: z.string().openapi({ example: "user@gmail.com" }),
         region: z.string().openapi({ example: "au" }),
         lang: z.string().openapi({ example: "en-AU" }),
     });
@@ -96,7 +96,7 @@ const route_app = new OpenAPIHono({ defaultHook: zodErrorHandler });
             {
                 operationId: "CFG_GET",
                 method: "get",
-                path: "/{email}",
+                path: "/{id}",
                 tags: ["Config"],
                 security: [{ BearerAuth: [] }],
                 summary: "CFG_GET",
@@ -113,7 +113,7 @@ const route_app = new OpenAPIHono({ defaultHook: zodErrorHandler });
                             },
                         },
                     },
-                    400: { description: "invalid email param" },
+                    400: { description: "invalid id param" },
                     401: { description: "Unauthorized" },
                     404: { description: "Cannot find config by its ID" },
                     500: { description: "Internal Server Error" },
@@ -122,9 +122,9 @@ const route_app = new OpenAPIHono({ defaultHook: zodErrorHandler });
         ),
         async (c) => {
             const t = createStrictT(c);
-            const email = c.req.param("email");
-            const r = await toIdMKey(email, [T.REGISTER, T.USER_CONFIG], t);
-            if (r.isErr() || !isEmail(r.value)) return t400(c, "param.invalid", { param: email });
+            const id = c.req.param("id");
+            const r = await toIdMKey(id, [T.REGISTER, T.USER_CONFIG], t);
+            if (r.isErr()) return t400(c, "param.invalid", { param: id });
 
             const r_cfg = await ucc.getUserCfg(r.value);
             if (r_cfg.isErr()) return t404(c, "get.config.fail");

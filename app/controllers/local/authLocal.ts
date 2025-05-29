@@ -14,6 +14,7 @@ const localFilePath = "./data/users.json";
 class AuthLocalController {
     async register(info: { email: Email; password: Password }, ct?: TransFnType) {
         const t = wrapOptT(ct);
+        const email = info.email;
 
         try {
             if (await fileExists(localFilePath)) {
@@ -26,19 +27,19 @@ class AuthLocalController {
                 }
 
                 // check user existing status
-                if (data.some((u) => u.email === info.email)) {
+                if (data.some((u) => u.id === email)) {
                     return err(t("register.fail.existing"));
                 }
 
                 // insert with hashed password
-                data.push({ email: info.email, password: await hash(info.password, 10) });
+                data.push({ id: email, email, password: await hash(info.password, 10) });
                 await Deno.writeTextFile(localFilePath, JSON.stringify(data, null, 4));
                 return ok(t("register.ok.__"));
             } else {
                 await Deno.writeTextFile(
                     localFilePath,
                     JSON.stringify(
-                        [{ email: info.email, password: await hash(info.password, 10) }],
+                        [{ id: email, email, password: await hash(info.password, 10) }],
                         null,
                         4,
                     ),
@@ -83,13 +84,7 @@ class AuthLocalController {
             // check file format
             if (!Array.isArray(data)) return err(t("login.err.fmt_json"));
 
-            // check user existing status
-            // const exists = data.some((u) => u.email === email);
-            // if (!exists) {
-            //     return err(t('login.fail.not_existing'))
-            // }
-
-            const userData = data.find((u) => u.email == credential.id);
+            const userData = data.find((u) => u.id == credential.id);
             if (!userData) return err(t("login.fail.not_existing"));
             if (!await compare(credential.password, userData.password)) return err(t("login.fail.verification"));
             return this.genToken(credential.id);

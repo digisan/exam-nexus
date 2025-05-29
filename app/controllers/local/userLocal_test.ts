@@ -1,4 +1,4 @@
-import { isEmail } from "@define/type.ts";
+import { isValidId } from "@define/id.ts";
 import { uc } from "@app/controllers/local/userLocal.ts";
 
 Deno.test("UserCtrlList", async () => {
@@ -6,9 +6,9 @@ Deno.test("UserCtrlList", async () => {
 });
 
 Deno.test("UserCtrlInfo", async () => {
-    const email = "user32@email.com";
-    if (!isEmail(email)) {
+    const id = "user32@gmail.com";
+    if (!isValidId(id)) {
         return;
     }
-    console.log(await uc.getUserReg("./data/users.json", email));
+    console.log(await uc.getUserReg("./data/users.json", id));
 });
