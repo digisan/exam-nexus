@@ -6,14 +6,14 @@ import { isValidExamSelection } from "@define/exam/type.ts";
 import { err } from "neverthrow";
 
 Deno.test("setUserExam", async () => {
-    const s = "cdutwhu@yeah.net";
+    const s = "cdutwhu@outlook.com";
     const r_ek = await toIdSKey(s, T.REGISTER);
     if (r_ek.isErr()) {
         printResult(r_ek, true, `${s} is NOT valid ID or NOT registered`);
         return;
     }
 
-    const exam = { "vce": ["vce.1", "vce.2"], "naplan": ["naplan.1"] };
+    const exam = { "vce": ["vce.ma.1", "vce.ma.2", "vce.en.2"], "naplan": ["naplan.r.y3", "naplan.w.y3"] };
     if (!isValidExamSelection(exam)) {
         printResult(err(`${JSON.stringify(exam, null, 4)} is invalid exam selection`), true);
         return;
