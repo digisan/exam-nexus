@@ -67,8 +67,8 @@ Deno.test("getTestPrepPlan", async () => {
             printResult(err(`${uid} is invalid`));
             return;
         }
-        // const tid = "vce.ma.1";
-        const r2 = await uplc.getTestPrepPlan(r.value);
+        const tid = "vce.ma.1";
+        const r2 = await uplc.getTestPrepPlan(r.value, tid);
         printResult(r2, true);
     }
 });

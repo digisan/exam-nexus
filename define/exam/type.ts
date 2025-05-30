@@ -3,7 +3,7 @@ import { type TransFnType, wrapOptT } from "@i18n/lang_t.ts";
 import { hasCertainProperty, some } from "@util/util.ts";
 import { EXAMS_AU, type ExamTypeAu, TESTS_AU } from "@define/exam/au.ts";
 import { EXAMS_CN, type ExamTypeCn, TESTS_CN } from "@define/exam/cn.ts";
-import { isValidFuture } from "@define/type.ts";
+import { type DateRange, isValidFuture } from "@define/type.ts";
 
 type Brand<T, B> = T & { readonly __brand: B; readonly __exact: T; readonly __types: T };
 
@@ -35,6 +35,7 @@ export type TestPrepPlan = Brand<{
     tid: Id;
     test_start: Date;
     test_venue: string;
+    prep_range: DateRange;
     // ...
 }, `TestPrepPlan`>;
 export const isValidTestPrepPlan = (p: object, ct?: TransFnType): p is TestPrepPlan => {

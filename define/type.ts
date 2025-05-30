@@ -54,8 +54,11 @@ export const toValidConfig = async (c: object, ct?: TransFnType): Promise<Result
     return ok(c as unknown as Config);
 };
 
-export const isValidFuture = (dateInput: string | Date): boolean => {
-    const date = typeof dateInput === "string" ? new Date(dateInput) : dateInput;
+export type Future = Brand<Date, "Future">;
+export const isValidFuture = (s: string | Date): s is Future => {
+    const date = typeof s === "string" ? new Date(s) : s;
     if (isNaN(date.getTime())) return false;
     return date.getTime() > Date.now();
 };
+
+export type DateRange = Brand<{ start: Date; end: Date }, "DateRange">;
