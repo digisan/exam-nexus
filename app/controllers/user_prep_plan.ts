@@ -1,7 +1,7 @@
 import { err, ok, Result } from "neverthrow";
 import { dbAgent as agent } from "@db/dbService.ts";
 import { K, type K_UID, T, type T_REGISTER, type T_TEST_PREP_PLAN } from "@define/system.ts";
-import { type Id, type IdSKey, type IdSKeyWithSKeyPart, isValidIdObj, toIdSKeyObj, toIdSKeyWithSKeyPart } from "@define/id.ts";
+import { type Id, type IdSKey, type IdSKeyWithSKeyPart, isValidIdObj, toIdSKey, toIdSKeyObj } from "@define/id.ts";
 import type { Data } from "@db/dbService.ts";
 import type { TestPrepPlan } from "@define/exam/type.ts";
 import { extractField, some } from "@util/util.ts";
@@ -15,16 +15,20 @@ class UserPrepPlanController {
         return await agent.SetSingleRowData(T.TEST_PREP_PLAN, idobj, plan);
     }
 
-    async getTestPrepPlanList(uid: IdSKeyWithSKeyPart<T_REGISTER, T_TEST_PREP_PLAN, K_UID>): Promise<Result<Data, string>> {
+    async getTestPrepPlanList(uid: IdSKey<T_REGISTER>): Promise<Result<Data, string>> {
         const r = await agent.GetDataRow(T.TEST_PREP_PLAN, uid as unknown as Id, K.UID);
         if (r.isErr()) return r;
-        const tids = extractField(r.value as Record<string, any>[], "tid");
-        return ok(tids);
+        if (Array.isArray(r.value)) {
+            return ok(extractField(r.value as Record<string, any>[], "tid"));
+        } else {
+            if (some(r.value)) return ok([(r.value as Record<string, any>)["tid"]]);
+            return ok([]);
+        }
     }
 
     async getTestPrepPlan(uid: IdSKeyWithSKeyPart<T_REGISTER, T_TEST_PREP_PLAN, K_UID>, ...tids: string[]): Promise<Result<Data, string>> {
         if (!some(tids)) {
-            const r = await this.getTestPrepPlanList(uid);
+            const r = await this.getTestPrepPlanList(uid as unknown as IdSKey<T_REGISTER>);
             if (r.isErr()) return r;
             tids = r.value as unknown as string[];
         }
@@ -42,7 +46,7 @@ class UserPrepPlanController {
 
     async deleteTestPrepPlan(uid: IdSKey<T_REGISTER>, ...tids: string[]): Promise<Result<Data, string>> {
         if (!some(tids)) {
-            const r_uid = await toIdSKeyWithSKeyPart(uid, T.REGISTER, T.TEST_PREP_PLAN, K.UID);
+            const r_uid = await toIdSKey(uid, T.REGISTER);
             if (r_uid.isErr()) return ok([]);
             const r_pl = await this.getTestPrepPlanList(r_uid.value);
             if (r_pl.isErr()) return r_pl;

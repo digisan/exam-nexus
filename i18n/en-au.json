@@ -116,6 +116,13 @@
             "ok": "set user test preparation plan successfully"
         }
     },
+    "delete": {
+        "user_test_prep_plan": {
+            "err": "an error occur when deleting user test preparation plan",
+            "fail": "delete user test preparation plan failed",
+            "ok": "delete user test preparation plan successfully"
+        }
+    },
     "get": {
         "config": {
             "err": "an error occur when getting config",
@@ -131,6 +138,11 @@
             "err": "an error occur when getting user test preparation plan",
             "fail": "get user test preparation plan failed",
             "ok": "get user test preparation plan successfully"
+        },
+        "user_test_prep_plan_list": {
+            "err": "an error occur when getting user test preparation plan list",
+            "fail": "get user test preparation plan list failed",
+            "ok": "get user test preparation plan list successfully"
         },
         "db": {
             "fail_by_id": "missing item keyed by {id}",

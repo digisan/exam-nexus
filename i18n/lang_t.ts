@@ -119,6 +119,13 @@ export const lang = {
                 ok: "set user test preparation plan successfully",
             },
         },
+        delete: {
+            user_test_prep_plan: {
+                err: "an error occur when deleting user test preparation plan",
+                fail: "delete user test preparation plan failed",
+                ok: "delete user test preparation plan successfully",
+            },
+        },
         get: {
             config: {
                 err: "an error occur when getting config",
@@ -134,6 +141,11 @@ export const lang = {
                 err: "an error occur when getting user test preparation plan",
                 fail: "get user test preparation plan failed",
                 ok: "get user test preparation plan successfully",
+            },
+            user_test_prep_plan_list: {
+                err: "an error occur when getting user test preparation plan list",
+                fail: "get user test preparation plan list failed",
+                ok: "get user test preparation plan list successfully",
             },
             db: {
                 fail_by_id: "missing item keyed by {id}",
@@ -270,6 +282,13 @@ export const lang = {
                 ok: "设置用户考试测试计划成功",
             },
         },
+        delete: {
+            user_test_prep_plan: {
+                err: "删除用户考试测试计划时发生错误",
+                fail: "删除用户考试测试计划失败",
+                ok: "删除考试测试计划成功",
+            },
+        },
         get: {
             config: {
                 err: "获取配置时错误发生",
@@ -285,6 +304,11 @@ export const lang = {
                 err: "获取用户考试测试计划时发生错误",
                 fail: "获取用户考试测试计划失败",
                 ok: "获取用户考试测试计划成功",
+            },
+            user_test_prep_plan_list: {
+                err: "获取用户考试测试计划列表时发生错误",
+                fail: "获取用户考试测试计划列表失败",
+                ok: "获取用户考试测试计划列表成功",
             },
             db: {
                 fail_by_id: "缺失主键为{id}的元素",
@@ -365,6 +389,9 @@ const keys = [
     "set.user_test_prep_plan.err",
     "set.user_test_prep_plan.fail",
     "set.user_test_prep_plan.ok",
+    "delete.user_test_prep_plan.err",
+    "delete.user_test_prep_plan.fail",
+    "delete.user_test_prep_plan.ok",
     "get.config.err",
     "get.config.fail",
     "get.config.ok",
@@ -374,6 +401,9 @@ const keys = [
     "get.user_test_prep_plan.err",
     "get.user_test_prep_plan.fail",
     "get.user_test_prep_plan.ok",
+    "get.user_test_prep_plan_list.err",
+    "get.user_test_prep_plan_list.fail",
+    "get.user_test_prep_plan_list.ok",
     "get.db.fail_by_id",
     "get.db.fail_by_id_obj",
     "get.db.fail_by_email",

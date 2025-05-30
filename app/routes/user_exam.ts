@@ -48,7 +48,7 @@ const route_app = new OpenAPIHono({ defaultHook: zodErrorHandler });
                 },
                 responses: {
                     200: {
-                        description: "Update User's Selection Exam Successful",
+                        description: "Update User Selection Exam Successful",
                         content: {
                             "application/json": {
                                 schema: RespSchema,
@@ -127,6 +127,10 @@ const route_app = new OpenAPIHono({ defaultHook: zodErrorHandler });
             return RespSchema.safeParse(data).success ? c.json(data) : t500(c, "resp.invalid", { resp: data });
         },
     );
+}
+
+{
+    // delete user exam ...
 }
 
 app.route(`/api/${currentFilename(import.meta.url, false)}`, route_app);

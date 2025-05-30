@@ -32,11 +32,11 @@ const route_app = new OpenAPIHono({ defaultHook: zodErrorHandler });
                 // security: [{ BearerAuth: [] }],
                 security: [], // for testing
                 summary: "USER_TEST_PREP_PLAN_SET",
-                description: "Set user's selected test's preparation plan",
+                description: "Set User Selected Test Preparation Plan",
                 request: {
                     params: ReqSchemaP,
                     body: {
-                        description: "Update Selected Test's Preparation Plan Request Body",
+                        description: "Update Selected Test Preparation Plan Request Body",
                         content: {
                             "application/json": {
                                 schema: ReqSchemaB,
@@ -51,7 +51,7 @@ const route_app = new OpenAPIHono({ defaultHook: zodErrorHandler });
                 },
                 responses: {
                     200: {
-                        description: "Update Selected Test's Preparation Plan Successful",
+                        description: "Update Selected Test Preparation Plan Successful",
                         content: {
                             "application/json": {
                                 schema: RespSchema,
@@ -101,22 +101,22 @@ const route_app = new OpenAPIHono({ defaultHook: zodErrorHandler });
                 // security: [{ BearerAuth: [] }],
                 security: [], // for testing
                 summary: "USER_TEST_PREP_PLAN_GET",
-                description: "Get user's selected test's preparation plan",
+                description: "Get User Selected Test Preparation Plan",
                 request: {
                     query: ReqSchema,
                 },
                 responses: {
                     200: {
-                        description: "return user's selected test's preparation plan",
+                        description: "Return User Selected Test Preparation Plan",
                         content: {
                             "application/json": {
                                 schema: RespSchema,
                             },
                         },
                     },
-                    400: { description: "invalid id param" },
+                    400: { description: "Invalid id Param" },
                     401: { description: "Unauthorized" },
-                    404: { description: "Cannot find selected exam by its ID" },
+                    404: { description: "Cannot Find Selected Test By Its ID" },
                     500: { description: "Internal Server Error" },
                 },
             } as const,
@@ -136,6 +136,118 @@ const route_app = new OpenAPIHono({ defaultHook: zodErrorHandler });
             if (r.isErr()) return t500(c, "get.user_test_prep_plan.err");
 
             const data = r.value;
+            return RespSchema.safeParse(data).success ? c.json(data) : t500(c, "resp.invalid", { resp: data });
+        },
+    );
+}
+
+{
+    const ReqSchema = z.object({ uid: z.string() });
+
+    const RespSchema = z.array(z.string());
+
+    route_app.openapi(
+        createRoute(
+            {
+                operationId: "USER_TEST_PREP_PLAN_LIST",
+                method: "get",
+                path: "/list",
+                tags: ["UserTestPrepPlan"],
+                // security: [{ BearerAuth: [] }],
+                security: [], // for testing
+                summary: "USER_TEST_PREP_PLAN_LIST",
+                description: "Get User Selected Test Preparation Plan List",
+                request: {
+                    query: ReqSchema,
+                },
+                responses: {
+                    200: {
+                        description: "Return User Selected Test Preparation Plan List",
+                        content: {
+                            "application/json": {
+                                schema: RespSchema,
+                            },
+                        },
+                    },
+                    400: { description: "Invalid id Param" },
+                    401: { description: "Unauthorized" },
+                    404: { description: "Cannot Find Selected Test By its ID" },
+                    500: { description: "Internal Server Error" },
+                },
+            } as const,
+        ),
+        async (c) => {
+            const t = createStrictT(c);
+
+            const uid = c.req.query("uid") ?? "";
+            const r_uid = await toIdSKey(uid, T.REGISTER, t);
+            if (r_uid.isErr()) return t400(c, "param.invalid", { param: uid });
+
+            const r = await uplc.getTestPrepPlanList(r_uid.value);
+            if (r.isErr()) return t500(c, "get.user_test_prep_plan_list.err");
+
+            const data = r.value;
+            return RespSchema.safeParse(data).success ? c.json(data) : t500(c, "resp.invalid", { resp: data });
+        },
+    );
+}
+
+{
+    const ReqSchema = z.object({
+        uid: z.string(),
+        tid: z.union([z.string(), z.array(z.string())]).optional(),
+    });
+
+    const RespSchema = z.object({
+        success: z.boolean().openapi({ example: true }),
+        message: z.string().openapi({ example: "[vce.ma.1, vce.ma.2]" }),
+    });
+
+    route_app.openapi(
+        createRoute(
+            {
+                operationId: "USER_TEST_PREP_PLAN_DELETE",
+                method: "delete",
+                path: "/delete",
+                tags: ["UserTestPrepPlan"],
+                // security: [{ BearerAuth: [] }],
+                security: [], // for testing
+                summary: "USER_TEST_PREP_PLAN_DELETE",
+                description: "Delete User Selected Test Preparation Plan",
+                request: {
+                    query: ReqSchema,
+                },
+                responses: {
+                    200: {
+                        description: "Delete User Selected Test Preparation Plan Successful",
+                        content: {
+                            "application/json": {
+                                schema: RespSchema,
+                            },
+                        },
+                    },
+                    400: { description: "Invalid id param" },
+                    401: { description: "Unauthorized" },
+                    404: { description: "Cannot Find Selected Test By its ID" },
+                    500: { description: "Internal Server Error" },
+                },
+            } as const,
+        ),
+        async (c) => {
+            const t = createStrictT(c);
+
+            const uid = c.req.query("uid") ?? "";
+            const r_uid = await toIdSKey(uid, T.REGISTER, t);
+            if (r_uid.isErr()) return t400(c, "param.invalid", { param: uid });
+
+            let tids = c.req.query("tid")?.split(",");
+            if (!some(tids)) tids = (new URL(c.req.url)).searchParams.getAll("tid");
+            if (!some(tids)) tids = [];
+
+            const r = await uplc.deleteTestPrepPlan(r_uid.value, ...tids!);
+            if (r.isErr()) return t500(c, "delete.user_test_prep_plan.err");
+
+            const data = { success: true, message: `${r.value}` };
             return RespSchema.safeParse(data).success ? c.json(data) : t500(c, "resp.invalid", { resp: data });
         },
     );
