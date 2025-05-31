@@ -36,7 +36,7 @@ export const TABLES_SB = [
     "user_exam",
     "test_analysis",
     "test_prep_plan", // 2
-    "test_prep_process", // 2
+    "test_prep_progress", // 2
 ] as const;
 export type TableType = typeof TABLES_SB[number];
 
@@ -49,7 +49,7 @@ export const T = {
     USER_EXAM: defineTable("user_exam"),
     TEST_ANALYSIS: defineTable("test_analysis"),
     TEST_PREP_PLAN: defineTable("test_prep_plan"),
-    TEST_PREP_PROCESS: defineTable("test_prep_process"),
+    TEST_PREP_PROGRESS: defineTable("test_prep_progress"),
 } as const;
 
 export type T_DEV_TEST = typeof T.DEV_TEST;
@@ -59,7 +59,7 @@ export type T_USER_CONFIG = typeof T.USER_CONFIG;
 export type T_USER_EXAM = typeof T.USER_EXAM;
 export type T_TEST_ANALYSIS = typeof T.TEST_ANALYSIS;
 export type T_TEST_PREP_PLAN = typeof T.TEST_PREP_PLAN;
-export type T_TEST_PREP_PROCESS = typeof T.TEST_PREP_PROCESS;
+export type T_TEST_PREP_PROGRESS = typeof T.TEST_PREP_PROGRESS;
 
 //
 // table key(s) name range
@@ -94,7 +94,7 @@ export const mTableKeys = new Map<TableType, KeyType[]>([
     [T.USER_EXAM, [K.ID]],
     [T.TEST_ANALYSIS, [K.TID]],
     [T.TEST_PREP_PLAN, [K.UID, K.TID]],
-    [T.TEST_PREP_PROCESS, [K.UID, K.TID]],
+    [T.TEST_PREP_PROGRESS, [K.UID, K.TID]],
 ]);
 
 //

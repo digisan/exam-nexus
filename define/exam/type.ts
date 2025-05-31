@@ -60,10 +60,10 @@ export const isValidTestPrepPlan = (p: object, ct?: TransFnType): p is TestPrepP
     return true;
 };
 
-export type TestPrepProcess = Brand<{
+export type TestPrepProgress = Brand<{
     tid: Id;
     // ...
-}, `TestPrepProcess`>;
+}, `TestPrepProgress`>;
 
 // *** TODO *** //
 export type TestAnalysis = Brand<{
