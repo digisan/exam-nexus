@@ -68,6 +68,7 @@ export const KEY_SB = [
     "id",
     "uid",
     "tid",
+    "rid",
 ] as const;
 export type KeyType = typeof KEY_SB[number];
 
@@ -76,14 +77,16 @@ export const K = {
     ID: defineKey("id"),
     UID: defineKey("uid"),
     TID: defineKey("tid"),
+    RID: defineKey("rid"),
 } as const;
 
 export type K_ID = typeof K.ID;
 export type K_UID = typeof K.UID;
 export type K_TID = typeof K.TID;
+export type K_RID = typeof K.RID;
 
 //
-// ****************** Create All SupaBaseDB Tables ****************** //
+// ******* Create All SupaBaseDB Tables (dbService_test.ts -- Deno.test("CreateDataTable") ******* //
 //
 
 export const mTableKeys = new Map<TableType, KeyType[]>([
@@ -91,7 +94,7 @@ export const mTableKeys = new Map<TableType, KeyType[]>([
     [T.DEV_TEST_2K, [K.UID, K.TID]],
     [T.REGISTER, [K.ID]],
     [T.USER_CONFIG, [K.ID]],
-    [T.USER_EXAM, [K.ID]],
+    [T.USER_EXAM, [K.UID, K.RID]],
     [T.TEST_ANALYSIS, [K.TID]],
     [T.TEST_PREP_PLAN, [K.UID, K.TID]],
     [T.TEST_PREP_PROGRESS, [K.UID, K.TID]],

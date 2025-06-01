@@ -1,6 +1,6 @@
 {
     "imports": {
-        "@hono/hono": "jsr:@hono/hono@4.7.10",
+        "@hono/hono": "jsr:@hono/hono@4.7.11",
         "@hono/swagger-ui": "npm:@hono/swagger-ui@0.5.1",
         "@hono/zod-openapi": "npm:@hono/zod-openapi@0.19.8",
         "@std/assert": "jsr:@std/assert@1.0.13",
@@ -10,11 +10,11 @@
         "async-mutex": "npm:async-mutex@0.5.0",
         "bcrypt-ts": "npm:bcrypt-ts@7.0.0",
         "flat": "npm:flat@6.0.1",
-        "hono": "npm:hono@4.7.10",
+        "hono": "npm:hono@4.7.11",
         "hono-i18n": "npm:hono-i18n@1.1.1",
         "http-status-code": "npm:http-status-code@2.1.0",
         "neverthrow": "npm:neverthrow@8.2.0",
-        "zod": "npm:zod@3.25.42",
+        "zod": "npm:zod@3.25.43",
         "zod-openapi": "npm:zod-openapi@4.2.4",
         "@util/": "./util/",
         "@routes/": "./routes/",

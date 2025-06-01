@@ -17,6 +17,8 @@ Deno.test("DbInfo", async () => {
     printResult(r, true);
 });
 
+// create all tables
+//
 Deno.test("CreateDataTable", async () => {
     for (const [table, keys] of mTableKeys) {
         const r = await agent.CreateDataTableWithKeys(table, keys);

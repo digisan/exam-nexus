@@ -7,7 +7,7 @@ import { some } from "@util/util.ts";
 type Brand<T, B> = T & { readonly __brand: B; readonly __exact: T; readonly __types: T };
 
 export type Id = Brand<string, "Id">;
-export const isValidId = (s: string): s is Id => !!s && s.length > 3;
+export const isValidId = (s: string): s is Id => !!s && s.length > 1;
 
 export type Ids = Brand<string[], "Ids">;
 export const isValidIds = (ss: string[]): ss is Ids => {

@@ -35,12 +35,14 @@ class SupabaseAgent {
         return ok(data.map((d) => d.function_name));
     }
 
+    // default primary key is 'id'
     async CreateDataTable<T extends TableType>(name: T): Promise<Result<Data, string>> {
         const { data, error } = await supabase.rpc(F_CREATE_DATA_TABLE, { name });
         if (error) return err(error.message);
         return ok(data);
     }
 
+    // user names primary key(s)
     async CreateDataTableWithKeys<T extends TableType, Ks extends readonly KeyType[]>(name: T, key_parts: Ks): Promise<Result<Data, string>> {
         if (!TABLES_SB.includes(name)) return err(`CANNOT Create Table with provided name '${name}'`);
         const { data, error } = await supabase.rpc(F_CREATE_DATA_TABLE_KEYS, { name, key_parts });
@@ -144,7 +146,8 @@ class SupabaseAgent {
         return ok(r.value as Id[][]);
     }
 
-    async GetDataRow<T extends TableType, Ks extends readonly KeyType[]>(table: T, id: Id | IdObj<Ks>, key?: string): Promise<Result<Data, string>> {
+    // if get data only from part id value, provide 'key' name for part key
+    async GetDataRow<T extends TableType, Ks extends readonly KeyType[]>(table: T, id: Id | IdObj<Ks>, key?: KeyType): Promise<Result<Data, string>> {
         const isStrId = typeof id === "string";
         const t = supabase.from(table).select("*");
         const query = isStrId ? t.eq(key ?? "id", id) : t.match(id);
@@ -155,6 +158,7 @@ class SupabaseAgent {
         return ok(data);
     }
 
+    // if id value is simple string, aim table must have primary key as 'id'
     async InsertDataRow<T extends TableType, Ks extends readonly KeyType[]>(table: T, id: Id | IdObj<Ks>, value: Data): Promise<Result<JSONObject, string>> {
         const rn_before = await this.CountRow(table);
         if (rn_before.isErr()) return err(rn_before.error);
@@ -173,7 +177,7 @@ class SupabaseAgent {
         return ok(data);
     }
 
-    async UpdateDataRow<T extends TableType, Ks extends readonly KeyType[]>(table: T, id: IdSKey<T> | IdSKeyObj<T, Ks>, value: Data, key?: string): Promise<Result<JSONObject, string>> {
+    async UpdateDataRow<T extends TableType, Ks extends readonly KeyType[]>(table: T, id: IdSKey<T> | IdSKeyObj<T, Ks>, value: Data, key?: KeyType): Promise<Result<JSONObject, string>> {
         const rn_before = await this.CountRow(table);
         if (rn_before.isErr()) return err(rn_before.error);
 
@@ -261,10 +265,10 @@ class SupabaseAgent {
     ////////////////////////////////////////////////////////////////////////////////////////
 
     // can only fetch 'id' matched value
-    async GetSingleRowData<T extends TableType, K extends KeyType, Ks extends readonly KeyType[]>(table: T, id: IdSKey<T> | IdSKeyObj<T, Ks>, key?: K, keys?: Ks): Promise<Result<JSONObject | null, string>> {
+    async GetSingleRowData<T extends TableType, Ks extends readonly KeyType[]>(table: T, id: IdSKey<T> | IdSKeyObj<T, Ks>, key?: KeyType, keys?: Ks): Promise<Result<JSONObject | null, string>> {
         const isStrId = typeof id === "string";
-        if (isStrId && !isValidId(id)) return err("invalid id");
-        if (!isStrId && (keys === undefined || !isValidIdObj(id, keys))) return err("invalid id");
+        if (isStrId && !isValidId(id)) return err("invalid single id");
+        if (!isStrId && (keys === undefined || !isValidIdObj(id, keys))) return err("invalid composite id, [keys] are missing");
         const r = await this.GetDataRow(table, id, key);
         if (r.isErr()) return err(r.error);
         if (some(r) && "data" in r.value!) return ok(r.value.data as JSONObject);
