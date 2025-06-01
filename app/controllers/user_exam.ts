@@ -1,7 +1,7 @@
 import { err, Result } from "neverthrow";
 import { dbAgent as agent } from "@db/dbService.ts";
 import { type K_UID, T, type T_REGISTER, type T_USER_EXAM } from "@define/system.ts";
-import type { ExamSelection } from "@define/exam/type.ts";
+import { EXAMS_REGION, type ExamSelection, type ExamType } from "@define/exam/type.ts";
 import { type Id, isValidIdObj, toIdSKeyObj } from "@define/id.ts";
 import type { IdSKey, IdSKeyWithSKeyPart } from "@define/id.ts";
 import type { Data } from "@db/dbService.ts";
@@ -12,11 +12,15 @@ import { type TransFnType, wrapOptT } from "@i18n/lang_t.ts";
 class UserExamController {
     // insert or update into T.USER_EXAM
     //
-    async setUserExam(uid: IdSKey<T_REGISTER>, region: RegionType, exam: ExamSelection, ct?: TransFnType): Promise<Result<Data, string>> {
+    async setUserExam(uid: IdSKey<T_REGISTER>, region: RegionType, selection: ExamSelection, ct?: TransFnType): Promise<Result<Data, string>> {
         const t = wrapOptT(ct);
         const id = { uid: uid as unknown as Id, rid: region };
         if (!isValidIdObj(id, [K.UID, K.RID])) return err(t("param.invalid", { param: id }));
-        return await agent.SetSingleRowData(T.USER_EXAM, id, exam);
+        const exams = Object.keys(selection);
+        if (!(exams.every((e) => EXAMS_REGION.get(region)!.includes(e as ExamType)))) {
+            return err(t("param.invalid", { param: selection }));
+        }
+        return await agent.SetSingleRowData(T.USER_EXAM, id, selection);
     }
 
     // get from T.USER_EXAM

@@ -3,17 +3,18 @@ import { currentFilename } from "@util/util.ts";
 import { app } from "@app/app.ts";
 import { zodErrorHandler } from "@app/routes/handler/zod_err.ts";
 import { t400, t404, t500 } from "@app/routes/handler/resp.ts";
-import { toIdMKey, toIdSKey } from "@define/id.ts";
+import { toIdSKey, toIdSKeyWithSKeyPart } from "@define/id.ts";
 import { createStrictT } from "@i18n/lang_t.ts";
 import { uec } from "@app/controllers/user_exam.ts";
-import { T } from "@define/system.ts";
+import { K, T } from "@define/system.ts";
 import { isValidExamSelection } from "@define/exam/type.ts";
+import { isValidRegion } from "@define/type.ts";
 
 const route_app = new OpenAPIHono({ defaultHook: zodErrorHandler });
 
 // Update User Exam Tests Selection
 {
-    const ReqSchemaP = z.object({ id: z.string() });
+    const ReqSchemaP = z.object({ uid: z.string(), region: z.string() });
     const ReqSchemaB = z.record(z.array(z.string()));
 
     const RespSchema = z.object({
@@ -26,9 +27,9 @@ const route_app = new OpenAPIHono({ defaultHook: zodErrorHandler });
             {
                 operationId: "USER_EXAM_SET",
                 method: "post",
-                path: "/update/{id}",
+                path: "/update/{uid}/{region}",
                 tags: ["UserExam"],
-                security: [{ BearerAuth: [] }],
+                security: [], // [{ BearerAuth: [] }],
                 summary: "USER_EXAM_SET",
                 description: "Set user's selected exam",
                 request: {
@@ -64,14 +65,17 @@ const route_app = new OpenAPIHono({ defaultHook: zodErrorHandler });
         async (c) => {
             const t = createStrictT(c);
 
-            const id = c.req.param("id") ?? "";
-            const r_ek = await toIdSKey(id, T.REGISTER, t);
-            if (r_ek.isErr()) return t400(c, "id.invalid", { id });
+            const uid = c.req.param("uid") ?? "";
+            const r_uid = await toIdSKey(uid, T.REGISTER, t);
+            if (r_uid.isErr()) return t400(c, "id.invalid", { id: uid });
+
+            const region = c.req.param("region") ?? "";
+            if (!isValidRegion(region)) return t400(c, "id.invalid", { id: region });
 
             const tests = c.req.valid("json");
             if (!isValidExamSelection(tests)) return t400(c, "req.invalid", { req: tests });
 
-            const result = await uec.setUserExam(r_ek.value, tests);
+            const result = await uec.setUserExam(r_uid.value, region, tests, t);
             if (result.isErr()) return t500(c, "set.user_exam.err");
 
             const data = { success: true, message: t("set.user_exam.ok") };
@@ -81,7 +85,7 @@ const route_app = new OpenAPIHono({ defaultHook: zodErrorHandler });
 }
 
 {
-    const ReqSchema = z.object({ id: z.string() });
+    const ReqSchema = z.object({ uid: z.string(), region: z.string() });
 
     const RespSchema = z.record(z.array(z.string()));
 
@@ -90,13 +94,13 @@ const route_app = new OpenAPIHono({ defaultHook: zodErrorHandler });
             {
                 operationId: "USER_EXAM_GET",
                 method: "get",
-                path: "/{id}",
+                path: "/selection",
                 tags: ["UserExam"],
-                security: [{ BearerAuth: [] }],
+                security: [], // [{ BearerAuth: [] }],
                 summary: "USER_EXAM_GET",
                 description: "Get user's selected exam",
                 request: {
-                    params: ReqSchema,
+                    query: ReqSchema,
                 },
                 responses: {
                     200: {
@@ -116,14 +120,18 @@ const route_app = new OpenAPIHono({ defaultHook: zodErrorHandler });
         ),
         async (c) => {
             const t = createStrictT(c);
-            const id = c.req.param("id") ?? "";
-            const r = await toIdMKey(id, [T.REGISTER, T.USER_EXAM], t);
-            if (r.isErr()) return t400(c, "param.invalid", { param: id });
+            const uid = c.req.query("uid") ?? "";
+            const region = c.req.query("region") ?? "";
 
-            const r_exam = await uec.getUserExam(r.value);
-            if (r_exam.isErr()) return t404(c, "get.user_exam.fail");
+            const r_uid = await toIdSKeyWithSKeyPart(uid, T.REGISTER, T.USER_EXAM, K.UID);
+            if (r_uid.isErr()) return t400(c, "param.invalid", { param: uid });
 
-            const data = r_exam.value;
+            if (!isValidRegion(region)) return t400(c, "param.invalid", { param: region });
+
+            const result = await uec.getUserExam(r_uid.value, region, t);
+            if (result.isErr()) return t404(c, "get.user_exam.fail");
+
+            const data = result.value;
             return RespSchema.safeParse(data).success ? c.json(data) : t500(c, "resp.invalid", { resp: data });
         },
     );

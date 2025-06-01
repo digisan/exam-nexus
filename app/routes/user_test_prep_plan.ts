@@ -29,8 +29,7 @@ const route_app = new OpenAPIHono({ defaultHook: zodErrorHandler });
                 method: "post",
                 path: "/update/{uid}",
                 tags: ["UserTestPrepPlan"],
-                // security: [{ BearerAuth: [] }],
-                security: [], // for testing
+                security: [], // [{ BearerAuth: [] }],
                 summary: "USER_TEST_PREP_PLAN_SET",
                 description: "Set User Selected Test Preparation Plan",
                 request: {
@@ -98,8 +97,7 @@ const route_app = new OpenAPIHono({ defaultHook: zodErrorHandler });
                 method: "get",
                 path: "/get",
                 tags: ["UserTestPrepPlan"],
-                // security: [{ BearerAuth: [] }],
-                security: [], // for testing
+                security: [], // [{ BearerAuth: [] }],
                 summary: "USER_TEST_PREP_PLAN_GET",
                 description: "Get User Selected Test Preparation Plan",
                 request: {
@@ -153,8 +151,7 @@ const route_app = new OpenAPIHono({ defaultHook: zodErrorHandler });
                 method: "get",
                 path: "/list",
                 tags: ["UserTestPrepPlan"],
-                // security: [{ BearerAuth: [] }],
-                security: [], // for testing
+                security: [], // [{ BearerAuth: [] }],
                 summary: "USER_TEST_PREP_PLAN_LIST",
                 description: "Get User Selected Test Preparation Plan List",
                 request: {
@@ -210,8 +207,7 @@ const route_app = new OpenAPIHono({ defaultHook: zodErrorHandler });
                 method: "delete",
                 path: "/delete",
                 tags: ["UserTestPrepPlan"],
-                // security: [{ BearerAuth: [] }],
-                security: [], // for testing
+                security: [], // [{ BearerAuth: [] }],
                 summary: "USER_TEST_PREP_PLAN_DELETE",
                 description: "Delete User Selected Test Preparation Plan",
                 request: {

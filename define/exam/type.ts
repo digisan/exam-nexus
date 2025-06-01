@@ -4,20 +4,26 @@ import { hasCertainProperty, some } from "@util/util.ts";
 import { EXAMS_AU, type ExamTypeAu, TESTS_AU } from "@define/exam/au.ts";
 import { EXAMS_CN, type ExamTypeCn, TESTS_CN } from "@define/exam/cn.ts";
 import { type DateRange, isValidFuture } from "@define/type.ts";
+import type { RegionType } from "@define/config.ts";
 
 type Brand<T, B> = T & { readonly __brand: B; readonly __exact: T; readonly __types: T };
 
-type ExamType = ExamTypeAu | ExamTypeCn;
-const EXAMS = new Set([...EXAMS_AU, ...EXAMS_CN]);
-const TESTS = new Set([...TESTS_AU, ...TESTS_CN]);
+export type ExamType = ExamTypeAu | ExamTypeCn;
+const EXAMS_ALL = new Set([...EXAMS_AU, ...EXAMS_CN]);
+const TESTS_ALL = new Set([...TESTS_AU, ...TESTS_CN]);
+
+export const EXAMS_REGION = new Map<RegionType, ExamType[]>([
+    ["au", EXAMS_AU as unknown as ExamType[]],
+    ["cn", EXAMS_CN as unknown as ExamType[]],
+]);
 
 //                                               exam      tests
 export type ExamSelection = Brand<Partial<Record<ExamType, string[]>>, `ExamSelection`>;
 export const isValidExamSelection = (s: Record<string, unknown>): s is ExamSelection => {
     return Object.entries(s).every(
         ([key, val]) =>
-            EXAMS.has(key as ExamType) && Array.isArray(val) && val.every(
-                (v) => typeof v === "string" && TESTS.has(v),
+            EXAMS_ALL.has(key as ExamType) && Array.isArray(val) && val.every(
+                (v) => typeof v === "string" && TESTS_ALL.has(v),
             ),
     );
 };
@@ -53,7 +59,7 @@ export const isValidTestPrepPlan = (p: object, ct?: TransFnType): p is TestPrepP
 
     const tid = p.tid as string;
     if (!isValidId(tid)) return false;
-    if (!TESTS.has(tid)) return false;
+    if (!TESTS_ALL.has(tid)) return false;
 
     if (!isValidFuture(p.test_start as string)) return false;
 

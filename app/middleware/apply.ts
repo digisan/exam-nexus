@@ -27,9 +27,9 @@ const mw_jwt = jwt({ secret: env_get("SIGNATURE_KEY") ?? "" });
 const authPaths = [
     // "/",
     // "/api/user/*", // for testing
-    "/api/auth/validate-token",
+    // "/api/auth/validate-token",
     "/api/config/*",
-    "/api/user_exam/*",
+    // "/api/user_exam/*",
 ];
 
 const getToken = (c: Context): string | null => {

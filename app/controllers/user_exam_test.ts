@@ -12,17 +12,32 @@ Deno.test("setUserExam", async () => {
         printResult(r_ek, true, `${s} is NOT valid ID or NOT registered`);
         return;
     }
-    const exam = { "vce": ["vce.ma.1", "vce.ma.2", "vce.en.2"], "naplan": ["naplan.r.y3", "naplan.w.y3"] };
-    if (!isValidExamSelection(exam)) {
-        printResult(err(`${JSON.stringify(exam, null, 4)} is invalid exam selection`), true);
-        return;
+    {
+        const exam = { "vce": ["vce.ma.1", "vce.ma.2", "vce.en.2"], "naplan": ["naplan.r.y3", "naplan.w.y3"] };
+        if (!isValidExamSelection(exam)) {
+            printResult(err(`${JSON.stringify(exam, null, 4)} is invalid exam selection`), true);
+            return;
+        }
+        const r = await uec.setUserExam(r_ek.value, "au", exam);
+        if (r.isErr()) {
+            printResult(r, true, `setUserExam error ` + r.error);
+            return;
+        }
+        console.log(r.value);
     }
-    const r = await uec.setUserExam(r_ek.value, "au", exam);
-    if (r.isErr()) {
-        printResult(r, true, `setUserExam error ` + r.error);
-        return;
+    {
+        const exam = { "cet": ["cet.6"] };
+        if (!isValidExamSelection(exam)) {
+            printResult(err(`${JSON.stringify(exam, null, 4)} is invalid exam selection`), true);
+            return;
+        }
+        const r = await uec.setUserExam(r_ek.value, "cn", exam);
+        if (r.isErr()) {
+            printResult(r, true, `setUserExam error ` + r.error);
+            return;
+        }
+        console.log(r.value);
     }
-    console.log(r.value);
 });
 
 Deno.test("getUserExam", async () => {
