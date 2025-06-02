@@ -148,7 +148,8 @@
             "fail_by_id": "missing item keyed by {id}",
             "fail_by_id_obj": "missing item keyed as object by {id}",
             "fail_by_email": "missing item keyed by {email}",
-            "fail_by_field_value": "missing item by {field} and value {value}"
+            "fail_by_field_value": "missing item by {field} and value {value}",
+            "fail_data_missing": "missing 'data' field"
         },
         "user": {
             "not_found": "missing user keyed by {user}"

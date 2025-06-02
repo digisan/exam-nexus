@@ -148,7 +148,8 @@
             "fail_by_id": "缺失主键为{id}的元素",
             "fail_by_id_obj": "缺失主键对象为{id}的元素",
             "fail_by_email": "缺失Email主键为{email}的元素",
-            "fail_by_field_value": "缺失匹配字段{field}和其值为{value}的元素"
+            "fail_by_field_value": "缺失匹配字段{field}和其值为{value}的元素",
+            "fail_data_missing": "缺失'data'字段"
         },
         "user": {
             "not_found": "缺失主键为{user}的用户信息"

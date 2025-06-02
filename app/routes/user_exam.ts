@@ -3,10 +3,10 @@ import { currentFilename } from "@util/util.ts";
 import { app } from "@app/app.ts";
 import { zodErrorHandler } from "@app/routes/handler/zod_err.ts";
 import { t400, t404, t500 } from "@app/routes/handler/resp.ts";
-import { toIdSKey, toIdSKeyWithSKeyPart } from "@define/id.ts";
+import { toIdSKey } from "@define/id.ts";
 import { createStrictT } from "@i18n/lang_t.ts";
 import { uec } from "@app/controllers/user_exam.ts";
-import { K, T } from "@define/system.ts";
+import { T } from "@define/system.ts";
 import { isValidExamSelection } from "@define/exam/type.ts";
 import { isValidRegion } from "@define/type.ts";
 

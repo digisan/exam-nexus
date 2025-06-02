@@ -152,6 +152,7 @@ export const lang = {
                 fail_by_id_obj: "missing item keyed as object by {id}",
                 fail_by_email: "missing item keyed by {email}",
                 fail_by_field_value: "missing item by {field} and value {value}",
+                fail_data_missing: "missing 'data' field",
             },
             user: {
                 not_found: "missing user keyed by {user}",
@@ -315,6 +316,7 @@ export const lang = {
                 fail_by_id_obj: "缺失主键对象为{id}的元素",
                 fail_by_email: "缺失Email主键为{email}的元素",
                 fail_by_field_value: "缺失匹配字段{field}和其值为{value}的元素",
+                fail_data_missing: "缺失'data'字段",
             },
             user: {
                 not_found: "缺失主键为{user}的用户信息",
@@ -408,6 +410,7 @@ const keys = [
     "get.db.fail_by_id_obj",
     "get.db.fail_by_email",
     "get.db.fail_by_field_value",
+    "get.db.fail_data_missing",
     "get.user.not_found",
     "exams.selective",
     "exams.proficiency",

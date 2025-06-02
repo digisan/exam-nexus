@@ -1,6 +1,6 @@
 import { uec } from "@app/controllers/user_exam.ts";
-import { toIdSKey, toIdSKeyWithSKeyPart } from "@define/id.ts";
-import { K, T } from "@define/system.ts";
+import { toIdSKey } from "@define/id.ts";
+import { T } from "@define/system.ts";
 import { printResult } from "@util/log.ts";
 import { isValidExamSelection } from "@define/exam/type.ts";
 import { err } from "neverthrow";
