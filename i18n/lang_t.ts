@@ -419,10 +419,20 @@ import { createI18n } from "hono-i18n";
 import { getCookie } from "hono/cookie";
 import { type Context } from "hono";
 
+const w = (lang?: string): string | undefined => {
+    switch (lang) {
+        case "en":
+            return "en-AU";
+        case "zh":
+            return "zh-CN";
+    }
+    return lang;
+};
+
 export const { i18nMiddleware, getI18n } = createI18n({
     messages: lang,
     defaultLocale: "en-AU",
-    getLocale: (c) => c.req.query("lang") ?? c.req.header("x-lang") ?? getCookie(c, "locale") ?? "en-AU",
+    getLocale: (c) => w(c.req.query("lang")) ?? w(c.req.header("x-lang")) ?? w(getCookie(c, "locale")) ?? "en-AU",
 });
 
 export type TransKeyType = typeof keys[number];

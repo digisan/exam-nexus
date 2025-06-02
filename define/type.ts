@@ -18,7 +18,7 @@ export type Region = Brand<RegionType, "Region">;
 export const isValidRegion = (s: string): s is Region => REGIONS.includes(s as RegionType);
 
 export type Language = Brand<LanguageType, "Language">;
-export const isValidLanguage = (s: string): s is Language => LANGUAGES.includes(s as LanguageType);
+export const isValidLanguage = (s: string): s is Language => LANGUAGES.includes(s as LanguageType) || s === "en" || s === "zh";
 
 export type Credential = Brand<{ id: Id; password: Password }, `Credential`>;
 export const toValidCredential = async (c: object, ct?: TransFnType): Promise<Result<Credential, string>> => {
