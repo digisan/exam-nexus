@@ -1,10 +1,12 @@
 import { createRoute, OpenAPIHono, z } from "@hono/zod-openapi";
 import { currentFilename, some } from "@util/util.ts";
-import { isValidId } from "@define/id.ts";
+import { toIdSKey } from "@define/id.ts";
 import { app } from "@app/app.ts";
-import { uc } from "@app/controllers/local/userLocal.ts";
+import { uc } from "@app/controllers/users.ts";
 import { zodErrorHandler } from "@app/routes/handler/zod_err.ts";
 import { n204, t400, t404, t500 } from "@app/routes/handler/resp.ts";
+import { T } from "@define/system.ts";
+import { createStrictT } from "@i18n/lang_t.ts";
 
 const route_app = new OpenAPIHono({ defaultHook: zodErrorHandler });
 
@@ -43,7 +45,8 @@ const route_app = new OpenAPIHono({ defaultHook: zodErrorHandler });
             } as const,
         ),
         async (c) => {
-            const r = await uc.getUserList("./data/users.json");
+            const t = createStrictT(c);
+            const r = await uc.getUserList(t);
             if (r.isErr()) return t500(c, "fatal", { message: r.error });
 
             const data = r.value;
@@ -57,9 +60,9 @@ const route_app = new OpenAPIHono({ defaultHook: zodErrorHandler });
     const ReqSchema = z.object({ id: z.string() });
 
     const RespSchema = z.object({
-        id: z.string().openapi({ example: "张三@gmail.COM" }),
-        email: z.string().email().openapi({ example: "张三@gmail.COM" }),
-        password: z.string().openapi({ example: "bcrypted...password..." }),
+        email: z.string().email().openapi({ example: "user@gmail.com" }),
+        // password: z.string().openapi({ example: "bcrypted...password..." }),
+        registered_at: z.string().datetime().openapi({ example: "2025-05-27T00:15:30.833Z" }),
     });
 
     route_app.openapi(
@@ -92,14 +95,22 @@ const route_app = new OpenAPIHono({ defaultHook: zodErrorHandler });
             } as const,
         ),
         async (c) => {
+            const t = createStrictT(c);
             const id = c.req.param("id") ?? "";
-            if (!isValidId(id)) return t400(c, "id.invalid");
-            const r = await uc.getUserReg("./data/users.json", id);
+
+            const r_id = await toIdSKey(id, T.REGISTER, t);
+            if (r_id.isErr()) return t400(c, "id.invalid", { id });
+
+            const r = await uc.getUserReg(r_id.value, t);
             if (r.isErr()) return t500(c, "fatal", { message: r.error });
 
             const data = r.value;
             if (!some(data)) return t404(c, "get.user.not_found", { user: id });
-            return RespSchema.safeParse(data).success ? c.json(data) : t500(c, "resp.invalid", { resp: data });
+
+            // remove 'password' field for return
+            const { password: _, ...rest } = data as { password: string } & Record<string, unknown>;
+
+            return RespSchema.safeParse(rest).success ? c.json(rest) : t500(c, "resp.invalid", { resp: rest });
         },
     );
 }

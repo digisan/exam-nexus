@@ -5,7 +5,7 @@ await import("@app/middleware/apply.ts");
 await import("@app/routes/_routes_test.ts");
 await import("@app/routes/home.ts"); // import 'routes' MUST AFTER middleware
 await import("@app/routes/auth.ts");
-await import("@app/routes/user.ts");
+await import("@app/routes/users.ts");
 await import("@app/routes/system.ts");
 await import("@app/routes/exam.ts");
 await import("@app/routes/user_config.ts");

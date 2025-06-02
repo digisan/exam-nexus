@@ -11,7 +11,7 @@ const EXAM_SELECTIVE: Partial<Record<ExamTypeCn, readonly string[]>> = {};
 
 // deno-fmt-ignore
 const EXAM_PROFICIENCY: Partial<Record<ExamTypeCn, readonly string[]>> = {
-    cet: ["4", "6"] as const,
+    cet: ["b4", "b6"] as const, // DO NOT use pure number as sub test name!
 };
 
 // deno-fmt-ignore

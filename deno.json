@@ -14,7 +14,7 @@
         "hono-i18n": "npm:hono-i18n@1.1.1",
         "http-status-code": "npm:http-status-code@2.1.0",
         "neverthrow": "npm:neverthrow@8.2.0",
-        "zod": "npm:zod@3.25.43",
+        "zod": "npm:zod@3.25.46",
         "zod-openapi": "npm:zod-openapi@4.2.4",
         "@util/": "./util/",
         "@routes/": "./routes/",
