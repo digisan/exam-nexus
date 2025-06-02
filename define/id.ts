@@ -1,5 +1,5 @@
 import { err, ok, Result } from "neverthrow";
-import { type TransFnType, wrapOptT } from "@i18n/lang_t.ts";
+import { Err } from "@i18n/lang_t.ts";
 import { dbAgent as agent } from "@db/dbService.ts";
 import type { KeyType, TableType } from "@define/system.ts";
 import { some } from "@util/util.ts";
@@ -34,11 +34,9 @@ export type IdSKey<T extends TableType> = Brand<string, `IdSKey<${T}>`>;
 export const toIdSKey = async <T extends TableType>(
     s: string,
     table: T,
-    ct?: TransFnType,
 ): Promise<Result<IdSKey<T>, string>> => {
-    const t = wrapOptT(ct);
-    if (!isValidId(s)) return err(t("id.invalid"));
-    if (!some(await agent.GetDataRow(table, s))) return err(t("get.db.fail_by_id", { id: s }));
+    if (!isValidId(s)) return Err("id.invalid");
+    if (!some(await agent.GetDataRow(table, s))) return Err("get.db.fail_by_id");
     return ok(s as unknown as IdSKey<T>);
 };
 
@@ -47,11 +45,9 @@ export const toIdSKeyPart = async <T extends TableType, K extends KeyType>(
     s: string,
     table: T,
     key: K,
-    ct?: TransFnType,
 ): Promise<Result<IdSKeyPart<T, K>, string>> => {
-    const t = wrapOptT(ct);
-    if (!isValidId(s)) return err(t("id.invalid"));
-    if (!some(await agent.GetDataRow(table, s, key))) return err(t("get.db.fail_by_id", { id: s }));
+    if (!isValidId(s)) return Err("id.invalid");
+    if (!some(await agent.GetDataRow(table, s, key))) return Err("get.db.fail_by_id");
     return ok(s as unknown as IdSKeyPart<T, K>);
 };
 
@@ -61,12 +57,10 @@ export const toIdSKeyWithSKeyPart = async <T1 extends TableType, T2 extends Tabl
     kTable: T1,
     pTable: T2,
     key: K,
-    ct?: TransFnType,
 ): Promise<Result<IdSKeyWithSKeyPart<T1, T2, K>, string>> => {
-    const t = wrapOptT(ct);
-    if (!isValidId(s)) return err(t("id.invalid"));
-    if (!some(await agent.GetDataRow(kTable, s))) return err(t("get.db.fail_by_id", { id: s }));
-    if (!some(await agent.GetDataRow(pTable, s, key))) return err(t("get.db.fail_by_id", { id: s }));
+    if (!isValidId(s)) return Err("id.invalid");
+    if (!some(await agent.GetDataRow(kTable, s))) return Err("get.db.fail_by_id");
+    if (!some(await agent.GetDataRow(pTable, s, key))) return Err("get.db.fail_by_id");
     return ok(s as unknown as IdSKeyWithSKeyPart<T1, T2, K>);
 };
 
@@ -75,11 +69,9 @@ export const toIdSKeyObj = async <T extends TableType, const Ks extends readonly
     so: object,
     table: T,
     keys: Ks,
-    ct?: TransFnType,
 ): Promise<Result<IdSKeyObj<T, Ks>, string>> => {
-    const t = wrapOptT(ct);
-    if (!isValidIdObj(so, keys)) return err(t("id.invalid_as_obj"));
-    if (!some(await agent.GetDataRow(table, so))) return err(t("get.db.fail_by_id_obj", { id: so }));
+    if (!isValidIdObj(so, keys)) return Err("id.invalid_as_obj");
+    if (!some(await agent.GetDataRow(table, so))) return Err("get.db.fail_by_id_obj");
     return ok(so as unknown as IdSKeyObj<T, Ks>);
 };
 
@@ -87,10 +79,8 @@ export type IdMKey<Ts extends readonly TableType[]> = Brand<string, `IdMKey<${Ts
 export const toIdMKey = async <const Ts extends readonly TableType[]>(
     s: string,
     tables: Ts,
-    ct?: TransFnType,
 ): Promise<Result<IdMKey<Ts>, string>> => {
-    const t = wrapOptT(ct);
-    if (!some(tables)) return err(t("param.missing", { param: "tables" }));
+    if (!some(tables)) return Err("param.missing");
     for (const table of tables) {
         const r = await toIdSKey(s, table);
         if (r.isErr()) return err(r.error);
@@ -104,13 +94,11 @@ export const toIdRef = async <T_DATA extends TableType, DF extends string, T_REF
     table: T_DATA,
     field: DF,
     ref_table: T_REF,
-    ct?: TransFnType,
 ): Promise<Result<IdRef<T_DATA, DF, T_REF>, string>> => {
-    const t = wrapOptT(ct);
     const r_k = await toIdSKey(val, ref_table);
     if (r_k.isErr()) return err(r_k.error);
     const r = await agent.FirstDataRow(table, field, val);
     if (r.isErr()) return err(r.error);
-    if (!some(r.value)) return err(t("get.db.fail_by_field_value"));
+    if (!some(r.value)) return Err("get.db.fail_by_field_value");
     return ok(val as unknown as IdRef<T_DATA, DF, T_REF>);
 };

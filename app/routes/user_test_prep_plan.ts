@@ -67,7 +67,7 @@ const route_app = new OpenAPIHono({ defaultHook: zodErrorHandler });
             const t = createStrictT(c);
 
             const uid = c.req.param("uid") ?? "";
-            const r_uid = await toIdSKey(uid, T.REGISTER, t);
+            const r_uid = await toIdSKey(uid, T.REGISTER);
             if (r_uid.isErr()) return t400(c, "id.invalid", { id: uid });
 
             const plan = c.req.valid("json");
@@ -120,10 +120,8 @@ const route_app = new OpenAPIHono({ defaultHook: zodErrorHandler });
             } as const,
         ),
         async (c) => {
-            const t = createStrictT(c);
-
             const uid = c.req.query("uid") ?? "";
-            const r_uid = await toIdSKeyWithSKeyPart(uid, T.REGISTER, T.TEST_PREP_PLAN, K.UID, t);
+            const r_uid = await toIdSKeyWithSKeyPart(uid, T.REGISTER, T.TEST_PREP_PLAN, K.UID);
             if (r_uid.isErr()) return t400(c, "param.invalid", { param: uid });
 
             let tids = c.req.query("tid")?.split(",");
@@ -174,10 +172,8 @@ const route_app = new OpenAPIHono({ defaultHook: zodErrorHandler });
             } as const,
         ),
         async (c) => {
-            const t = createStrictT(c);
-
             const uid = c.req.query("uid") ?? "";
-            const r_uid = await toIdSKey(uid, T.REGISTER, t);
+            const r_uid = await toIdSKey(uid, T.REGISTER);
             if (r_uid.isErr()) return t400(c, "param.invalid", { param: uid });
 
             const r = await uplc.getTestPrepPlanList(r_uid.value);
@@ -230,10 +226,8 @@ const route_app = new OpenAPIHono({ defaultHook: zodErrorHandler });
             } as const,
         ),
         async (c) => {
-            const t = createStrictT(c);
-
             const uid = c.req.query("uid") ?? "";
-            const r_uid = await toIdSKey(uid, T.REGISTER, t);
+            const r_uid = await toIdSKey(uid, T.REGISTER);
             if (r_uid.isErr()) return t400(c, "param.invalid", { param: uid });
 
             let tids = c.req.query("tid")?.split(",");

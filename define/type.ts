@@ -1,5 +1,5 @@
 import { err, ok, Result } from "neverthrow";
-import { type TransFnType, wrapOptT } from "@i18n/lang_t.ts";
+import { Err } from "@i18n/lang_t.ts";
 import { LANGUAGES, REGIONS } from "@define/config.ts";
 import type { LanguageType, RegionType } from "@define/config.ts";
 import { T } from "@define/system.ts";
@@ -21,15 +21,14 @@ export type Language = Brand<LanguageType, "Language">;
 export const isValidLanguage = (s: string): s is Language => LANGUAGES.includes(s as LanguageType) || s === "en" || s === "zh";
 
 export type Credential = Brand<{ id: Id; password: Password }, `Credential`>;
-export const toValidCredential = async (c: object, ct?: TransFnType): Promise<Result<Credential, string>> => {
-    const t = wrapOptT(ct);
-    if (!some(c)) return err(t("credential.empty"));
+export const toValidCredential = async (c: object): Promise<Result<Credential, string>> => {
+    if (!some(c)) return Err("credential.empty");
 
-    if (!hasCertainProperty(c!, "id", "string")) return err(t("credential.invalid", { message: "id" }));
-    if (!hasCertainProperty(c!, "password", "string")) return err(t("credential.invalid", { message: "password" }));
+    if (!hasCertainProperty(c!, "id", "string")) return Err("credential.invalid");
+    if (!hasCertainProperty(c!, "password", "string")) return Err("credential.invalid");
 
-    if (!isValidId(c.id as string)) return err(t("id.invalid", { id: c.id }));
-    if (!isAllowedPassword(c.password as string)) return err(t("password.invalid", { password: c.password }));
+    if (!isValidId(c.id as string)) return Err("id.invalid");
+    if (!isAllowedPassword(c.password as string)) return Err("password.invalid");
 
     const r = await toIdSKey(c.id as string, T.REGISTER);
     if (r.isErr()) return err(r.error);
@@ -37,17 +36,16 @@ export const toValidCredential = async (c: object, ct?: TransFnType): Promise<Re
 };
 
 export type Config = Brand<{ id: Id; region: Region; lang: Language }, `Config`>;
-export const toValidConfig = async (c: object, ct?: TransFnType): Promise<Result<Config, string>> => {
-    const t = wrapOptT(ct);
-    if (!some(c)) return err(t("config.empty"));
+export const toValidConfig = async (c: object): Promise<Result<Config, string>> => {
+    if (!some(c)) return Err("config.empty");
 
-    if (!hasCertainProperty(c!, "id", "string")) return err(t("config.invalid", { message: "id" }));
-    if (!hasCertainProperty(c!, "region", "string")) return err(t("config.invalid", { message: "region" }));
-    if (!hasCertainProperty(c!, "lang", "string")) return err(t("config.invalid", { message: "lang" }));
+    if (!hasCertainProperty(c!, "id", "string")) return Err("config.invalid");
+    if (!hasCertainProperty(c!, "region", "string")) return Err("config.invalid");
+    if (!hasCertainProperty(c!, "lang", "string")) return Err("config.invalid");
 
-    if (!isValidId(c.id as string)) return err(t("id.invalid", { id: c.id }));
-    if (!isValidRegion(c.region as string)) return err(t("region.invalid", { region: c.region }));
-    if (!isValidLanguage(c.lang as string)) return err(t("language.invalid", { language: c.lang }));
+    if (!isValidId(c.id as string)) return Err("id.invalid");
+    if (!isValidRegion(c.region as string)) return Err("region.invalid");
+    if (!isValidLanguage(c.lang as string)) return Err("language.invalid");
 
     const r = await toIdSKey(c.id as string, T.REGISTER);
     if (r.isErr()) return err(r.error);

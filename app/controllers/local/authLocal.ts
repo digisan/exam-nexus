@@ -2,7 +2,7 @@ import { err, ok, Result } from "neverthrow";
 import { sign } from "hono/jwt";
 import { compare, hash } from "npm:bcrypt-ts";
 import { fileExists } from "@util/util.ts";
-import { type TransFnType, wrapOptT } from "@i18n/lang_t.ts";
+import { Err, Ok } from "@i18n/lang_t.ts";
 import type { Email, Password } from "@define/type.ts";
 import { blacklistToken } from "@app/app.ts";
 import { env_get } from "@define/env.ts";
@@ -12,8 +12,7 @@ const SIGNATURE_KEY = env_get("SIGNATURE_KEY");
 const localFilePath = "./data/users.json";
 
 class AuthLocalController {
-    async register(info: { email: Email; password: Password }, ct?: TransFnType) {
-        const t = wrapOptT(ct);
+    async register(info: { email: Email; password: Password }) {
         const email = info.email;
 
         try {
@@ -23,18 +22,18 @@ class AuthLocalController {
 
                 // check file format
                 if (!Array.isArray(data)) {
-                    return err(t("register.err.fmt_json"));
+                    return Err("register.err.fmt_json");
                 }
 
                 // check user existing status
                 if (data.some((u) => u.id === email)) {
-                    return err(t("register.fail.existing"));
+                    return Err("register.fail.existing");
                 }
 
                 // insert with hashed password
                 data.push({ id: email, email, password: await hash(info.password, 10) });
                 await Deno.writeTextFile(localFilePath, JSON.stringify(data, null, 4));
-                return ok(t("register.ok.__"));
+                return Ok("register.ok.__");
             } else {
                 await Deno.writeTextFile(
                     localFilePath,
@@ -44,7 +43,7 @@ class AuthLocalController {
                         4,
                     ),
                 );
-                return ok(t("register.ok.__"));
+                return Ok("register.ok.__");
             }
         } catch (e) {
             // log here ...
@@ -72,21 +71,19 @@ class AuthLocalController {
         }
     }
 
-    async login(credential: { id: Id; password: Password }, ct?: TransFnType) {
-        const t = wrapOptT(ct);
-
+    async login(credential: { id: Id; password: Password }) {
         try {
-            if (!await fileExists(localFilePath)) return err(t("login.fail.not_existing"));
+            if (!await fileExists(localFilePath)) return Err("login.fail.not_existing");
 
             const content = await Deno.readTextFile(localFilePath);
             const data = JSON.parse(content);
 
             // check file format
-            if (!Array.isArray(data)) return err(t("login.err.fmt_json"));
+            if (!Array.isArray(data)) return Err("login.err.fmt_json");
 
             const userData = data.find((u) => u.id == credential.id);
-            if (!userData) return err(t("login.fail.not_existing"));
-            if (!await compare(credential.password, userData.password)) return err(t("login.fail.verification"));
+            if (!userData) return Err("login.fail.not_existing");
+            if (!await compare(credential.password, userData.password)) return Err("login.fail.verification");
             return this.genToken(credential.id);
         } catch (e) {
             // log here ...

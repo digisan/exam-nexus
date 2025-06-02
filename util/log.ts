@@ -1,14 +1,13 @@
-import { err, Result } from "neverthrow";
+import { Result } from "neverthrow";
 import { isValidId } from "@define/id.ts";
 import { dbAgent as agent } from "@db/dbService.ts";
 import { T } from "@define/system.ts";
-import { type TransFnType, wrapOptT } from "@i18n/lang_t.ts";
+import { Err } from "@i18n/lang_t.ts";
 import { some } from "@util/util.ts";
 
-export const log2db = async (msg: string, logId?: string, ct?: TransFnType) => {
+export const log2db = async (msg: string, logId?: string) => {
     const id = some(logId) ? logId : new Date().toISOString();
-    const t = wrapOptT(ct);
-    if (!isValidId(id!)) return err(t(`id.invalid`));
+    if (!isValidId(id!)) return Err(`id.invalid`);
     await agent.SetSingleRowData(T.DEV_TEST, id, { msg });
 };
 

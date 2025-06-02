@@ -26,7 +26,7 @@ Deno.test("setUserExam", async () => {
         console.log(r.value);
     }
     {
-        const exam = { "cet": ["cet.6"] };
+        const exam = { "cet": ["cet.b6"] };
         if (!isValidExamSelection(exam)) {
             printResult(err(`${JSON.stringify(exam, null, 4)} is invalid exam selection`), true);
             return;
@@ -41,14 +41,16 @@ Deno.test("setUserExam", async () => {
 });
 
 Deno.test("getUserExam", async () => {
-    const s = "cdutwhu@outlook.com";
-    const r = await toIdSKeyWithSKeyPart(s, T.REGISTER, T.USER_EXAM, K.UID);
+    const s = "cdutwhu@yeah.net";
+    const r = await toIdSKey(s, T.REGISTER);
     if (r.isErr()) {
-        printResult(r, true, `'${s}' is NOT both valid key for '${T.REGISTER}' & '${T.USER_EXAM}'`);
+        printResult(r, true, `'${s}' is NOT valid key for '${T.REGISTER}'`);
         return;
     }
     const r1 = await uec.getUserExam(r.value, "au");
     printResult(r1, true);
+    const r2 = await uec.getUserExam(r.value, "cn");
+    printResult(r2, true);
 });
 
 Deno.test("deleteUserExam", async () => {

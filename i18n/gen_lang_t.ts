@@ -65,6 +65,7 @@ if (import.meta.main) {
     import { createI18n } from "hono-i18n";
     import { getCookie } from "hono/cookie";
     import { type Context } from "hono";
+    import { err, ok } from "neverthrow";
 
     const w = (lang?: string): string | undefined => {
         switch (lang) {
@@ -82,10 +83,12 @@ if (import.meta.main) {
         getLocale: (c) => w(c.req.query("lang")) ?? w(c.req.header("x-lang")) ?? w(getCookie(c, "locale")) ?? "en-AU",
     })
 
-    export type TransKeyType = typeof keys[number]
-    export type TransFnType = (key: TransKeyType, params?: Record<string, unknown>) => string
+    export type TransKeyType = typeof keys[number];
+    export type TransFnType = (key: TransKeyType, params?: Record<string, unknown>) => string;
+    export const Ok = (k: TransKeyType) => ok(k);
+    export const Err = (k: TransKeyType) => err(k);
 
-    export const createStrictT = (c: Context): TransFnType => getI18n(c) as TransFnType
+    export const createStrictT = (c: Context): TransFnType => getI18n(c) as TransFnType;
     export const wrapOptT = (t?: TransFnType): (s: TransKeyType, params?: Record<string, unknown>) => string => t ?? ((s: TransKeyType) => s + "*");
     
     export const isTransKey = (s?: string): boolean => keys.includes(s as TransKeyType);

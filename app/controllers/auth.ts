@@ -1,7 +1,7 @@
 import { err, ok, Result } from "neverthrow";
 import { sign } from "hono/jwt";
 import { compare, hash } from "npm:bcrypt-ts";
-import { type TransFnType, wrapOptT } from "@i18n/lang_t.ts";
+import { Err, Ok } from "@i18n/lang_t.ts";
 import { dbAgent as agent } from "@db/dbService.ts";
 import { T } from "@define/system.ts";
 import type { Credential, Email, Password } from "@define/type.ts";
@@ -16,14 +16,13 @@ import { sleep } from "@util/util.ts";
 const SIGNATURE_KEY = env_get("SIGNATURE_KEY");
 
 class AuthController {
-    async register(info: { email: Email; password: Password }, ct?: TransFnType): Promise<Result<string, string>> {
-        const t = wrapOptT(ct);
+    async register(info: { email: Email; password: Password }): Promise<Result<string, string>> {
         try {
             const r_ek = await toIdSKey(info.email, T.REGISTER);
-            if (r_ek.isOk()) return err(t("register.fail.existing"));
+            if (r_ek.isOk()) return Err("register.fail.existing");
 
             const id = info.email;
-            if (!isValidId(id)) return err(t("register.fail.invalid_id"));
+            if (!isValidId(id)) return Err("register.fail.invalid_id");
 
             const r = await agent.SetSingleRowData(T.REGISTER, id, {
                 email: info.email,
@@ -31,10 +30,10 @@ class AuthController {
                 registered_at: new Date().toISOString(),
             });
             if (r.isErr()) return err(r.error);
-            return ok(t("register.ok.__"));
+            return Ok("register.ok.__");
         } catch (e) {
-            log2db(`${e}`, "", t);
-            return err(t(`catch`, { err: e }));
+            log2db(`${e}`, "");
+            return Err(`catch`);
         }
     }
 
@@ -60,24 +59,23 @@ class AuthController {
         }
     }
 
-    async login(credential: Credential, ct?: TransFnType): Promise<Result<string, string>> {
-        const t = wrapOptT(ct);
+    async login(credential: Credential): Promise<Result<string, string>> {
         try {
             const r_cred = await toValidCredential(credential);
-            if (r_cred.isErr()) return err(t(`login.fail.invalid_credential`, { message: r_cred.error }));
+            if (r_cred.isErr()) return Err(`login.fail.invalid_credential`);
 
             const id = r_cred.value.id;
             const r_id = await toIdSKey(id, T.REGISTER);
-            if (r_id.isErr()) return err(t("login.fail.not_existing"));
+            if (r_id.isErr()) return Err("login.fail.not_existing");
 
             const r = await agent.GetSingleRowData(T.REGISTER, r_id.value);
             if (r.isErr()) return err(r.error);
 
-            if (!await compare(credential.password, r.value!.password as string)) return err(t("login.fail.verification"));
+            if (!await compare(credential.password, r.value!.password as string)) return Err("login.fail.verification");
             return this.genToken(credential.id);
         } catch (e) {
-            log2db(`${e}`, "", t);
-            return err(t(`catch`, { err: e }));
+            log2db(`${e}`, "");
+            return Err(`catch`);
         }
     }
 

@@ -1,5 +1,4 @@
 import { type Id, isValidId } from "@define/id.ts";
-import { type TransFnType, wrapOptT } from "@i18n/lang_t.ts";
 import { hasCertainProperty, some } from "@util/util.ts";
 import { EXAMS_AU, type ExamTypeAu, TESTS_AU } from "@define/exam/au.ts";
 import { EXAMS_CN, type ExamTypeCn, TESTS_CN } from "@define/exam/cn.ts";
@@ -49,8 +48,7 @@ export type TestPrepPlan = Brand<{
     prep_range: DateRange;
     // ...
 }, `TestPrepPlan`>;
-export const isValidTestPrepPlan = (p: object, ct?: TransFnType): p is TestPrepPlan => {
-    const t = wrapOptT(ct);
+export const isValidTestPrepPlan = (p: object): p is TestPrepPlan => {
     if (!some(p)) return false;
 
     if (!hasCertainProperty(p, "tid", "string")) return false;

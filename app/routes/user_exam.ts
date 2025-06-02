@@ -66,7 +66,7 @@ const route_app = new OpenAPIHono({ defaultHook: zodErrorHandler });
             const t = createStrictT(c);
 
             const uid = c.req.param("uid") ?? "";
-            const r_uid = await toIdSKey(uid, T.REGISTER, t);
+            const r_uid = await toIdSKey(uid, T.REGISTER);
             if (r_uid.isErr()) return t400(c, "id.invalid", { id: uid });
 
             const region = c.req.param("region") ?? "";
@@ -75,7 +75,7 @@ const route_app = new OpenAPIHono({ defaultHook: zodErrorHandler });
             const tests = c.req.valid("json");
             if (!isValidExamSelection(tests)) return t400(c, "req.invalid", { req: tests });
 
-            const result = await uec.setUserExam(r_uid.value, region, tests, t);
+            const result = await uec.setUserExam(r_uid.value, region, tests);
             if (result.isErr()) return t500(c, "set.user_exam.err");
 
             const data = { success: true, message: t("set.user_exam.ok") };
@@ -119,16 +119,15 @@ const route_app = new OpenAPIHono({ defaultHook: zodErrorHandler });
             } as const,
         ),
         async (c) => {
-            const t = createStrictT(c);
             const uid = c.req.query("uid") ?? "";
             const region = c.req.query("region") ?? "";
 
-            const r_uid = await toIdSKeyWithSKeyPart(uid, T.REGISTER, T.USER_EXAM, K.UID);
+            const r_uid = await toIdSKey(uid, T.REGISTER);
             if (r_uid.isErr()) return t400(c, "param.invalid", { param: uid });
 
             if (!isValidRegion(region)) return t400(c, "param.invalid", { param: region });
 
-            const result = await uec.getUserExam(r_uid.value, region, t);
+            const result = await uec.getUserExam(r_uid.value, region);
             if (result.isErr()) return t404(c, "get.user_exam.fail");
 
             const data = result.value;

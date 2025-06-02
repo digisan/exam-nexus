@@ -418,6 +418,7 @@ const keys = [
 import { createI18n } from "hono-i18n";
 import { getCookie } from "hono/cookie";
 import { type Context } from "hono";
+import { err, ok } from "neverthrow";
 
 const w = (lang?: string): string | undefined => {
     switch (lang) {
@@ -437,6 +438,8 @@ export const { i18nMiddleware, getI18n } = createI18n({
 
 export type TransKeyType = typeof keys[number];
 export type TransFnType = (key: TransKeyType, params?: Record<string, unknown>) => string;
+export const Ok = (k: TransKeyType) => ok(k);
+export const Err = (k: TransKeyType) => err(k);
 
 export const createStrictT = (c: Context): TransFnType => getI18n(c) as TransFnType;
 export const wrapOptT = (t?: TransFnType): (s: TransKeyType, params?: Record<string, unknown>) => string => t ?? ((s: TransKeyType) => s + "*");

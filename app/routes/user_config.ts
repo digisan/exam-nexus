@@ -121,9 +121,8 @@ const route_app = new OpenAPIHono({ defaultHook: zodErrorHandler });
             } as const,
         ),
         async (c) => {
-            const t = createStrictT(c);
             const id = c.req.param("id") ?? "";
-            const r = await toIdMKey(id, [T.REGISTER, T.USER_CONFIG], t);
+            const r = await toIdMKey(id, [T.REGISTER, T.USER_CONFIG]);
             if (r.isErr()) return t400(c, "param.invalid", { param: id });
 
             const r_cfg = await ucc.getUserCfg(r.value);

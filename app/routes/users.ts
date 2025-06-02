@@ -45,8 +45,7 @@ const route_app = new OpenAPIHono({ defaultHook: zodErrorHandler });
             } as const,
         ),
         async (c) => {
-            const t = createStrictT(c);
-            const r = await uc.getUserList(t);
+            const r = await uc.getUserList();
             if (r.isErr()) return t500(c, "fatal", { message: r.error });
 
             const data = r.value;
@@ -98,10 +97,10 @@ const route_app = new OpenAPIHono({ defaultHook: zodErrorHandler });
             const t = createStrictT(c);
             const id = c.req.param("id") ?? "";
 
-            const r_id = await toIdSKey(id, T.REGISTER, t);
+            const r_id = await toIdSKey(id, T.REGISTER);
             if (r_id.isErr()) return t400(c, "id.invalid", { id });
 
-            const r = await uc.getUserReg(r_id.value, t);
+            const r = await uc.getUserReg(r_id.value);
             if (r.isErr()) return t500(c, "fatal", { message: r.error });
 
             const data = r.value;

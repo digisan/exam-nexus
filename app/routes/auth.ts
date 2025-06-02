@@ -73,7 +73,7 @@ const route_app = new OpenAPIHono({ defaultHook: zodErrorHandler });
             if (rCaptcha.isErr()) return t500(c, "captcha.err");
             if (!rCaptcha.value) return t400(c, "captcha.fail");
 
-            const result = await auth.register({ email, password }, t);
+            const result = await auth.register({ email, password });
             if (result.isErr()) return t500(c, "register.fail._");
 
             const data = { success: true, message: t(`register.ok._`) };
@@ -146,7 +146,7 @@ const route_app = new OpenAPIHono({ defaultHook: zodErrorHandler });
             if (rCaptcha.isErr()) return t500(c, "captcha.err");
             if (!rCaptcha.value) return t400(c, "captcha.fail");
 
-            const result = await auth.login(r_cred.value, t);
+            const result = await auth.login(r_cred.value);
             if (result.isErr()) return t500(c, "login.fail._");
 
             const data = { success: true, message: t(`login.ok._`), token: result.value };
