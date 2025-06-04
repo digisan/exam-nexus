@@ -43,12 +43,12 @@ const route_app = new OpenAPIHono({ defaultHook: zodErrorHandler });
                                     {
                                         tid: "vce.ma.1",
                                         test_date: "2025-09-30",
-                                        test_venue: "TBA",
+                                        test_venue: "SH Primary School",
                                     },
                                     {
                                         tid: "vce.ma.3",
                                         test_date: "2025-09-30T14:00:00+08:00",
-                                        test_venue: "TBA",
+                                        test_venue: "TL Primary School",
                                     },
                                 ],
                             },

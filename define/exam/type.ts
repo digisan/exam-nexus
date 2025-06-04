@@ -58,7 +58,9 @@ export const isValidTestPrepPlan = (p: object): p is TestPrepPlan => {
     if (!isValidId(tid)) return false;
     if (!TESTS_ALL.has(tid)) return false;
 
-    if (!isValidFuture(p.test_date as string)) return false;
+    if (!['UNKNOWN', 'NULL', 'TBD', 'TBA', '待定', '未知'].includes((p.test_date as string).toUpperCase())) {
+        return isValidFuture(p.test_date as string)
+    }
 
     return true;
 };

@@ -11,7 +11,7 @@ Deno.test("setTestPrepPlan", async () => {
         const plan = {
             tid: "vce.ma.1",
             test_date: "2025-06-30",
-            test_venue: "TBA",
+            test_venue: "College A",
         };
 
         const r_uid = await toIdSKey(uid, T.REGISTER);
@@ -32,7 +32,7 @@ Deno.test("setTestPrepPlan", async () => {
         const plan = {
             tid: "vce.en.1",
             test_date: "2025-06-30T14:00:00+08:00",
-            test_venue: "TBA",
+            test_venue: "College A",
         };
 
         const r_uid = await toIdSKey(uid, T.REGISTER);
@@ -53,12 +53,12 @@ Deno.test("setTestPrepPlan", async () => {
         const plan1 = {
             tid: "vce.en.2",
             test_date: "2025-06-30T14:00:00+08:00",
-            test_venue: "TBA",
+            test_venue: "College C",
         };
         const plan2 = {
             tid: "vce.ma.3",
             test_date: "2025-06-30",
-            test_venue: "TBA",
+            test_venue: "College D",
         };
 
         const r_uid = await toIdSKey(uid, T.REGISTER);
