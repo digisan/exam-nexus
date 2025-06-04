@@ -7,12 +7,18 @@ import type { TestPrepPlan } from "@define/exam/type.ts";
 import { extractField, some } from "@util/util.ts";
 
 class UserPrepPlanController {
-    async setTestPrepPlan(uid: IdSKey<T_REGISTER>, plan: TestPrepPlan): Promise<Result<Data, string>> {
-        const id = { uid, tid: plan.tid };
-        if (!isValidIdObj(id, [K.UID, K.TID])) {
-            return err(`❌ id is invalid as ${JSON.stringify(id)}`);
+    async setTestPrepPlan(uid: IdSKey<T_REGISTER>, ...plans: TestPrepPlan[]): Promise<Result<Data, string>> {
+        const setGroup = [];
+        for (const plan of plans) {
+            const id = { uid, tid: plan.tid };
+            if (!isValidIdObj(id, [K.UID, K.TID])) {
+                return err(`❌ id is invalid as ${JSON.stringify(id)}`);
+            }
+            const r = await agent.SetSingleRowData(T.TEST_PREP_PLAN, id, plan);
+            if (r.isErr()) return err(r.error);
+            if (r.value) setGroup.push(r.value);
         }
-        return await agent.SetSingleRowData(T.TEST_PREP_PLAN, id, plan);
+        return ok(setGroup);
     }
 
     async getTestPrepPlanList(uid: IdSKey<T_REGISTER>): Promise<Result<Data, string>> {

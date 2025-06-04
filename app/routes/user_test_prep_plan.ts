@@ -6,7 +6,7 @@ import { t400, t404, t500 } from "@app/routes/handler/resp.ts";
 import { toIdSKey, toIdSKeyWithSKeyPart } from "@define/id.ts";
 import { createStrictT } from "@i18n/lang_t.ts";
 import { K, T } from "@define/system.ts";
-import { isValidTestPrepPlan } from "@define/exam/type.ts";
+import { areValidTestPrepPlans } from "@define/exam/type.ts";
 import { uplc } from "../controllers/user_prep_plan.ts";
 
 const route_app = new OpenAPIHono({ defaultHook: zodErrorHandler });
@@ -15,7 +15,7 @@ const route_app = new OpenAPIHono({ defaultHook: zodErrorHandler });
     const ReqSchemaP = z.object({
         uid: z.string(),
     });
-    const ReqSchemaB = z.record(z.string());
+    const ReqSchemaB = z.array(z.record(z.string()));
 
     const RespSchema = z.object({
         success: z.boolean().openapi({ example: true }),
@@ -39,11 +39,18 @@ const route_app = new OpenAPIHono({ defaultHook: zodErrorHandler });
                         content: {
                             "application/json": {
                                 schema: ReqSchemaB,
-                                example: { // 添加测试参数输入
-                                    tid: "vce.ma.1",
-                                    test_date: "2025-05-30T14:00:00+08:00",
-                                    test_venue: "TBA",
-                                },
+                                example: [
+                                    {
+                                        tid: "vce.ma.1",
+                                        test_date: "2025-09-30",
+                                        test_venue: "TBA",
+                                    },
+                                    {
+                                        tid: "vce.ma.3",
+                                        test_date: "2025-09-30T14:00:00+08:00",
+                                        test_venue: "TBA",
+                                    },
+                                ],
                             },
                         },
                     },
@@ -70,10 +77,10 @@ const route_app = new OpenAPIHono({ defaultHook: zodErrorHandler });
             const r_uid = await toIdSKey(uid, T.REGISTER);
             if (r_uid.isErr()) return t400(c, "id.invalid", { id: uid });
 
-            const plan = c.req.valid("json");
-            if (!isValidTestPrepPlan(plan)) return t400(c, "req.invalid", { req: plan });
+            const plans = c.req.valid("json");
+            if (!areValidTestPrepPlans(plans)) return t400(c, "req.invalid", { req: plans });
 
-            const r = await uplc.setTestPrepPlan(r_uid.value, plan);
+            const r = await uplc.setTestPrepPlan(r_uid.value, ...plans);
             if (r.isErr()) return t500(c, "set.user_test_prep_plan.err");
 
             const data = { success: true, message: t("set.user_test_prep_plan.ok") };

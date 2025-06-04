@@ -45,7 +45,6 @@ export type TestPrepPlan = Brand<{
     tid: Id;
     test_date: Date;
     test_venue: string;
-    // prep_range: DateRange;
     // ...
 }, `TestPrepPlan`>;
 export const isValidTestPrepPlan = (p: object): p is TestPrepPlan => {
@@ -62,6 +61,9 @@ export const isValidTestPrepPlan = (p: object): p is TestPrepPlan => {
     if (!isValidFuture(p.test_date as string)) return false;
 
     return true;
+};
+export const areValidTestPrepPlans = (ps: object[]): ps is TestPrepPlan[] => {
+    return ps.every((p) => isValidTestPrepPlan(p));
 };
 
 export type TestPrepProgress = Brand<{
