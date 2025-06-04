@@ -8,11 +8,11 @@ import { extractField, some } from "@util/util.ts";
 
 class UserPrepPlanController {
     async setTestPrepPlan(uid: IdSKey<T_REGISTER>, plan: TestPrepPlan): Promise<Result<Data, string>> {
-        const idobj = { uid, tid: plan.tid };
-        if (!isValidIdObj(idobj, [K.UID, K.TID])) {
-            return err(`❌ idobj is invalid as ${JSON.stringify(idobj)}`);
+        const id = { uid, tid: plan.tid };
+        if (!isValidIdObj(id, [K.UID, K.TID])) {
+            return err(`❌ id is invalid as ${JSON.stringify(id)}`);
         }
-        return await agent.SetSingleRowData(T.TEST_PREP_PLAN, idobj, plan);
+        return await agent.SetSingleRowData(T.TEST_PREP_PLAN, id, plan);
     }
 
     async getTestPrepPlanList(uid: IdSKey<T_REGISTER>): Promise<Result<Data, string>> {
@@ -34,8 +34,8 @@ class UserPrepPlanController {
         }
         const plans = [];
         for (const tid of tids) {
-            const idobj = { uid, tid };
-            const r = await toIdSKeyObj(idobj, T.TEST_PREP_PLAN, [K.UID, K.TID]);
+            const id = { uid, tid };
+            const r = await toIdSKeyObj(id, T.TEST_PREP_PLAN, [K.UID, K.TID]);
             if (r.isErr()) return r;
             const rp = await agent.GetSingleRowData(T.TEST_PREP_PLAN, r.value, K.ID, [K.UID, K.TID]);
             if (rp.isErr()) return rp;
@@ -54,11 +54,11 @@ class UserPrepPlanController {
         }
         const deleted = [];
         for (const tid of tids) {
-            const idobj = { uid, tid };
-            if (!isValidIdObj(idobj, [K.UID, K.TID])) {
-                return err(`❌ idobj is invalid as ${JSON.stringify(idobj)}`);
+            const id = { uid, tid };
+            if (!isValidIdObj(id, [K.UID, K.TID])) {
+                return err(`❌ id is invalid as ${JSON.stringify(id)}`);
             }
-            const r_d = await agent.DeleteRowData(T.TEST_PREP_PLAN, idobj, true);
+            const r_d = await agent.DeleteRowData(T.TEST_PREP_PLAN, id, true);
             if (r_d.isErr()) continue;
             if (some(r_d.value)) deleted.push(tid);
         }

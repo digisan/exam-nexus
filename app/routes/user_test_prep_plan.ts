@@ -41,7 +41,7 @@ const route_app = new OpenAPIHono({ defaultHook: zodErrorHandler });
                                 schema: ReqSchemaB,
                                 example: { // 添加测试参数输入
                                     tid: "vce.ma.1",
-                                    test_start: "2025-05-30T14:00:00+08:00",
+                                    test_date: "2025-05-30T14:00:00+08:00",
                                     test_venue: "TBA",
                                 },
                             },

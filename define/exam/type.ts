@@ -2,7 +2,7 @@ import { type Id, isValidId } from "@define/id.ts";
 import { hasCertainProperty, some } from "@util/util.ts";
 import { EXAMS_AU, type ExamTypeAu, TESTS_AU } from "@define/exam/au.ts";
 import { EXAMS_CN, type ExamTypeCn, TESTS_CN } from "@define/exam/cn.ts";
-import { type DateRange, isValidFuture } from "@define/type.ts";
+import { isValidFuture } from "@define/type.ts";
 import type { RegionType } from "@define/config.ts";
 
 type Brand<T, B> = T & { readonly __brand: B; readonly __exact: T; readonly __types: T };
@@ -43,23 +43,23 @@ export type TestProfile = Brand<{
 // *** DOING *** //
 export type TestPrepPlan = Brand<{
     tid: Id;
-    test_start: Date;
+    test_date: Date;
     test_venue: string;
-    prep_range: DateRange;
+    // prep_range: DateRange;
     // ...
 }, `TestPrepPlan`>;
 export const isValidTestPrepPlan = (p: object): p is TestPrepPlan => {
     if (!some(p)) return false;
 
     if (!hasCertainProperty(p, "tid", "string")) return false;
-    if (!hasCertainProperty(p, "test_start", "string")) return false;
+    if (!hasCertainProperty(p, "test_date", "string")) return false;
     if (!hasCertainProperty(p, "test_venue", "string")) return false;
 
     const tid = p.tid as string;
     if (!isValidId(tid)) return false;
     if (!TESTS_ALL.has(tid)) return false;
 
-    if (!isValidFuture(p.test_start as string)) return false;
+    if (!isValidFuture(p.test_date as string)) return false;
 
     return true;
 };

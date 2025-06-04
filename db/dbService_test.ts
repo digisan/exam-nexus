@@ -61,15 +61,15 @@ Deno.test("InsertDataRow", async () => {
 
     // composited key
     //
-    const idobj = {
+    const id_obj = {
         uid: randId() as Id,
         tid: randId() as Id,
     };
-    if (isValidIdObj(idobj, [K.UID, K.TID])) {
-        const r = await agent.InsertDataRow(T.DEV_TEST_2K, idobj as IdObj<[K_UID, K_TID]>, { user: "bar", password: "baz" });
+    if (isValidIdObj(id_obj, [K.UID, K.TID])) {
+        const r = await agent.InsertDataRow(T.DEV_TEST_2K, id_obj as IdObj<[K_UID, K_TID]>, { user: "bar", password: "baz" });
         printResult(r, true);
     } else {
-        console.debug(`❌ ${JSON.stringify(idobj)} is invalid`);
+        console.debug(`❌ ${JSON.stringify(id_obj)} is invalid`);
     }
 });
 
@@ -114,17 +114,17 @@ Deno.test("TableContent", async () => {
 
     ////////////////////////////////////////////
 
-    const idobj = {
+    const id_obj = {
         uid: "12345" as Id,
         tid: "abcde" as Id,
     };
 
-    if (!isValidIdObj(idobj, [K.UID, K.TID])) {
-        console.log(`❌ idobj is invalid as ${JSON.stringify(idobj)}`);
+    if (!isValidIdObj(id_obj, [K.UID, K.TID])) {
+        console.log(`❌ id_obj is invalid as ${JSON.stringify(id_obj)}`);
         return;
     }
 
-    const r3 = await agent.SetSingleRowData(T.DEV_TEST_2K, idobj, { name: "FOO", age: 13 });
+    const r3 = await agent.SetSingleRowData(T.DEV_TEST_2K, id_obj, { name: "FOO", age: 13 });
     printResult(r3, true);
 
     const r4 = await agent.TableContent(T.DEV_TEST_2K);
@@ -149,15 +149,15 @@ Deno.test("GetDataRow", async () => {
 
     // composited key
     //
-    const idobj = {
+    const id_obj = {
         uid: "M9t2Ha21" as Id,
         tid: "FFFrC" as Id,
     };
-    if (isValidIdObj(idobj, [K.UID, K.TID])) {
-        const r = await agent.GetDataRow(T.DEV_TEST_2K, idobj as IdObj<[K_UID, K_TID]>);
+    if (isValidIdObj(id_obj, [K.UID, K.TID])) {
+        const r = await agent.GetDataRow(T.DEV_TEST_2K, id_obj as IdObj<[K_UID, K_TID]>);
         printResult(r, true);
     } else {
-        console.debug(`❌ ${JSON.stringify(idobj)} is invalid`);
+        console.debug(`❌ ${JSON.stringify(id_obj)} is invalid`);
     }
 
     // park key
@@ -251,7 +251,7 @@ Deno.test("SetSingleRowData", async () => {
         tid: "abcde" as Id,
     };
     if (!isValidIdObj(id_obj, [K.UID, K.TID])) {
-        console.log(`❌ idobj is invalid as ${JSON.stringify(id_obj)}`);
+        console.log(`❌ id_obj is invalid as ${JSON.stringify(id_obj)}`);
         return;
     }
     const r1 = await agent.SetSingleRowData(T.DEV_TEST_2K, id_obj, { user: "MM", password: "MMM" });
@@ -275,7 +275,7 @@ Deno.test("DeleteRowData", async () => {
         tid: "abcde" as Id,
     };
     if (!isValidIdObj(id_obj, [K.UID, K.TID])) {
-        console.log(`❌ idobj is invalid as ${JSON.stringify(id_obj)}`);
+        console.log(`❌ id_obj is invalid as ${JSON.stringify(id_obj)}`);
         return;
     }
     const r1 = await agent.DeleteRowData(T.DEV_TEST_2K, id_obj, true);

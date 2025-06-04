@@ -10,7 +10,7 @@ Deno.test("setTestPrepPlan", async () => {
         const uid = "cdutwhu@yeah.net";
         const plan = {
             tid: "vce.ma.1",
-            test_start: "2025-05-31T14:00:00+08:00",
+            test_date: "2025-05-31T14:00:00+08:00",
             test_venue: "TBA",
         };
 
@@ -31,7 +31,7 @@ Deno.test("setTestPrepPlan", async () => {
         const uid = "cdutwhu@yeah.net";
         const plan = {
             tid: "vce.en.1",
-            test_start: "2025-05-30T14:00:00+08:00",
+            test_date: "2025-05-30T14:00:00+08:00",
             test_venue: "TBA",
         };
 
