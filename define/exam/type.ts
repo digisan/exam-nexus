@@ -45,23 +45,24 @@ export type TestPrepPlan = Brand<{
     tid: Id;
     test_date: Date;
     test_venue: string;
+    active: boolean;
     // ...
 }, `TestPrepPlan`>;
 export const isValidTestPrepPlan = (p: object): p is TestPrepPlan => {
     if (!some(p)) return false;
 
     if (!hasCertainProperty(p, "tid", "string")) return false;
-    if (!hasCertainProperty(p, "test_date", "string")) return false;
-    if (!hasCertainProperty(p, "test_venue", "string")) return false;
+    if (!hasCertainProperty(p, "test_date", "string")) Object.defineProperty(p, "test_date", "UNKNOWN");
+    if (!hasCertainProperty(p, "test_venue", "string")) Object.defineProperty(p, "test_venue", "UNKNOWN");
+    if (!hasCertainProperty(p, "active", "boolean")) Object.defineProperty(p, "active", true);
 
     const tid = p.tid as string;
     if (!isValidId(tid)) return false;
     if (!TESTS_ALL.has(tid)) return false;
 
-    if (!['UNKNOWN', 'NULL', 'TBD', 'TBA', '待定', '未知'].includes((p.test_date as string).toUpperCase())) {
-        return isValidFuture(p.test_date as string)
+    if (!["UNKNOWN", "NULL", "TBD", "TBA", "待定", "未知", "不详"].includes((p.test_date as string).toUpperCase())) {
+        return isValidFuture(p.test_date as string);
     }
-
     return true;
 };
 export const areValidTestPrepPlans = (ps: object[]): ps is TestPrepPlan[] => {
