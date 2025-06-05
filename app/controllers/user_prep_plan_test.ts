@@ -12,6 +12,7 @@ Deno.test("setTestPrepPlan", async () => {
             tid: "vce.ma.1",
             test_date: "2025-06-30",
             test_venue: "College A",
+            active: true,
         };
 
         const r_uid = await toIdSKey(uid, T.REGISTER);
@@ -60,6 +61,11 @@ Deno.test("setTestPrepPlan", async () => {
             test_date: "2025-06-30",
             test_venue: "College D",
         };
+        const plan3 = {
+            tid: "cet.b6",
+            test_date: "2025-06-30",
+            test_venue: "CDUT",
+        };
 
         const r_uid = await toIdSKey(uid, T.REGISTER);
         if (r_uid.isErr()) {
@@ -75,8 +81,12 @@ Deno.test("setTestPrepPlan", async () => {
             printResult(err(`${JSON.stringify(plan2)} is invalid`), true);
             return;
         }
+        if (!isValidTestPrepPlan(plan3)) {
+            printResult(err(`${JSON.stringify(plan3)} is invalid`), true);
+            return;
+        }
 
-        const r = await uplc.setTestPrepPlan(r_uid.value, plan1, plan2);
+        const r = await uplc.setTestPrepPlan(r_uid.value, plan1, plan2, plan3);
         printResult(r, true);
     }
 });
@@ -88,7 +98,7 @@ Deno.test("getTestPrepPlanList", async () => {
         printResult(err(`${uid} is invalid`));
         return;
     }
-    const r1 = await uplc.getTestPrepPlanList(r.value);
+    const r1 = await uplc.getTestPrepPlanList(r.value, "cn");
     printResult(r1, true);
 });
 

@@ -3,8 +3,9 @@ import { dbAgent as agent } from "@db/dbService.ts";
 import { K, type K_UID, T, type T_REGISTER, type T_TEST_PREP_PLAN } from "@define/system.ts";
 import { type Id, type IdSKey, type IdSKeyWithSKeyPart, isValidIdObj, toIdSKey, toIdSKeyObj } from "@define/id.ts";
 import type { Data } from "@db/dbService.ts";
-import type { TestPrepPlan } from "@define/exam/type.ts";
+import { isTestIn, type TestPrepPlan } from "@define/exam/type.ts";
 import { extractField, some } from "@util/util.ts";
+import type { RegionType } from "@define/config.ts";
 
 class UserPrepPlanController {
     async setTestPrepPlan(uid: IdSKey<T_REGISTER>, ...plans: TestPrepPlan[]): Promise<Result<Data, string>> {
@@ -21,13 +22,19 @@ class UserPrepPlanController {
         return ok(setGroup);
     }
 
-    async getTestPrepPlanList(uid: IdSKey<T_REGISTER>): Promise<Result<Data, string>> {
+    async getTestPrepPlanList(uid: IdSKey<T_REGISTER>, rid?: RegionType): Promise<Result<Data, string>> {
         const r = await agent.GetDataRow(T.TEST_PREP_PLAN, uid as unknown as Id, K.UID);
         if (r.isErr()) return r;
         if (Array.isArray(r.value)) {
-            return ok(extractField(r.value as Record<string, any>[], "tid"));
+            const list = extractField(r.value as Record<string, any>[], "tid");
+            if (rid) return ok(list.filter((t) => isTestIn(t, rid)));
+            return ok(list);
         } else {
-            if (some(r.value)) return ok([(r.value as Record<string, any>)["tid"]]);
+            if (some(r.value)) {
+                const list = [(r.value as Record<string, any>)["tid"]];
+                if (rid) return ok(list.filter((t) => isTestIn(t, rid)));
+                return ok(list);
+            }
             return ok([]);
         }
     }

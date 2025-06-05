@@ -37,6 +37,30 @@ export const arraysEqual = <T>(a: T[], b: T[]): boolean => {
     return a.every((val, i) => val === b[i]);
 };
 
+/**
+ * array 'a' minus array 'b', i.e only belongs to 'a', not belongs to 'b'
+ * @param a - a array
+ * @param b - b array
+ * @returns array only include every 'a' element and NOT include any 'b' element
+ */
+export const arraysDiff = <T>(a: T[], b: T[]): T[] => {
+    const setB = new Set(b);
+    const onlyInA = a.filter((item) => !setB.has(item));
+    return [...onlyInA];
+};
+
+/**
+ * elements are both in array 'a' and array 'b', i.e belongs to 'a', and belongs to 'b'
+ * @param a - a array
+ * @param b - b array
+ * @returns array include element both is in array 'a' and array 'b'
+ */
+export const arraysSame = <T>(a: T[], b: T[]): T[] => {
+    const setB = new Set(b);
+    const both = a.filter((item) => setB.has(item));
+    return [...both];
+};
+
 export const unorderedArraysEqual = <T>(a: T[], b: T[]): boolean => {
     if (a.length !== b.length) return false;
     const sortedA = [...a].sort();
