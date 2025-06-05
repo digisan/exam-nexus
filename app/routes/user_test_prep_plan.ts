@@ -17,7 +17,7 @@ const route_app = new OpenAPIHono({ defaultHook: zodErrorHandler });
     const ReqSchemaP = z.object({
         uid: z.string(),
     });
-    const ReqSchemaB = z.array(z.record(z.string()));
+    const ReqSchemaB = z.array(z.record(z.union([z.string(), z.boolean()])));
 
     const RespSchema = z.object({
         success: z.boolean().openapi({ example: true }),
