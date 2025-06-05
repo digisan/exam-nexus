@@ -8,6 +8,8 @@ import { createStrictT } from "@i18n/lang_t.ts";
 import { K, T } from "@define/system.ts";
 import { areValidTestPrepPlans } from "@define/exam/type.ts";
 import { uplc } from "../controllers/user_prep_plan.ts";
+import { isValidRegion } from "@define/type.ts";
+import type { RegionType } from "@define/config.ts";
 
 const route_app = new OpenAPIHono({ defaultHook: zodErrorHandler });
 
@@ -145,7 +147,7 @@ const route_app = new OpenAPIHono({ defaultHook: zodErrorHandler });
 }
 
 {
-    const ReqSchema = z.object({ uid: z.string() });
+    const ReqSchema = z.object({ uid: z.string(), rid: z.string().optional() });
 
     const RespSchema = z.array(z.string());
 
@@ -183,7 +185,10 @@ const route_app = new OpenAPIHono({ defaultHook: zodErrorHandler });
             const r_uid = await toIdSKey(uid, T.REGISTER);
             if (r_uid.isErr()) return t400(c, "param.invalid", { param: uid });
 
-            const r = await uplc.getTestPrepPlanList(r_uid.value);
+            const rid = c.req.query("rid") ?? "";
+            if (rid && !isValidRegion(rid)) return t400(c, "param.invalid", { param: rid });
+
+            const r = await uplc.getTestPrepPlanList(r_uid.value, rid as RegionType || undefined);
             if (r.isErr()) return t500(c, "get.user_test_prep_plan_list.err");
 
             const data = r.value;
