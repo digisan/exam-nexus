@@ -97,7 +97,7 @@ const route_app = new OpenAPIHono({ defaultHook: zodErrorHandler });
         tid: z.union([z.string(), z.array(z.string())]).optional(),
     });
 
-    const RespSchema = z.array(z.record(z.string()));
+    const RespSchema = z.array(z.record(z.union([z.string(), z.boolean()])));
 
     route_app.openapi(
         createRoute(
