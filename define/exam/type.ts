@@ -2,7 +2,7 @@ import { type Id, isValidId } from "@define/id.ts";
 import { hasCertainProperty, some } from "@util/util.ts";
 import { EXAMS_AU, type ExamTypeAu, TESTS_AU } from "@define/exam/au.ts";
 import { EXAMS_CN, type ExamTypeCn, TESTS_CN } from "@define/exam/cn.ts";
-import { isValidFuture } from "@define/type.ts";
+import { isValidFuture, isValidPriority } from "@define/type.ts";
 import type { RegionType } from "@define/config.ts";
 
 type Brand<T, B> = T & { readonly __brand: B; readonly __exact: T; readonly __types: T };
@@ -61,6 +61,7 @@ export type TestPrepPlan = Brand<{
     test_date: Date;
     test_venue: string;
     active: boolean;
+    priority: number;
     // ...
 }, `TestPrepPlan`>;
 export const isValidTestPrepPlan = (p: object): p is TestPrepPlan => {
@@ -91,10 +92,20 @@ export const isValidTestPrepPlan = (p: object): p is TestPrepPlan => {
             configurable: true,
         });
     }
+    if (!hasCertainProperty(p, "priority", "number")) {
+        Object.defineProperty(p, "priority", {
+            value: 1,
+            writable: true,
+            enumerable: true,
+            configurable: true,
+        });
+    }
 
     const tid = p.tid as string;
     if (!isValidId(tid)) return false;
     if (!TESTS_ALL.has(tid)) return false;
+
+    if (!isValidPriority(p.priority as number)) return false;
 
     if (!["UNKNOWN", "NULL", "TBD", "TBA", "待定", "未知", "不详"].includes((p.test_date as string).toUpperCase())) {
         return isValidFuture(p.test_date as string);

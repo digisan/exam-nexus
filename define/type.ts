@@ -1,7 +1,7 @@
 import { err, ok, Result } from "neverthrow";
 import { Err } from "@i18n/lang_t.ts";
-import { LANGUAGES, REGIONS } from "@define/config.ts";
-import type { LanguageType, RegionType } from "@define/config.ts";
+import { LANGUAGES, PRIORITIES, REGIONS } from "@define/config.ts";
+import type { LanguageType, PriorityType, RegionType } from "@define/config.ts";
 import { T } from "@define/system.ts";
 import { hasCertainProperty, RE_EMAIL, RE_PWD, some } from "@util/util.ts";
 import { type Id, isValidId, toIdSKey } from "@define/id.ts";
@@ -19,6 +19,9 @@ export const isValidRegion = (s: string): s is Region => REGIONS.includes(s as R
 
 export type Language = Brand<LanguageType, "Language">;
 export const isValidLanguage = (s: string): s is Language => LANGUAGES.includes(s as LanguageType) || s === "en" || s === "zh";
+
+export type Priority = Brand<PriorityType, "Priority">;
+export const isValidPriority = (n: number): n is Priority => PRIORITIES.includes(n as PriorityType);
 
 export type Credential = Brand<{ id: Id; password: Password }, `Credential`>;
 export const toValidCredential = async (c: object): Promise<Result<Credential, string>> => {

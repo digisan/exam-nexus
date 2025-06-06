@@ -10,7 +10,7 @@
     "jsr:@std/path@1.1.0": "1.1.0",
     "jsr:@supabase/supabase-js@2.49.10": "2.49.10",
     "npm:@hono/swagger-ui@0.5.1": "0.5.1_hono@4.7.11",
-    "npm:@hono/zod-openapi@0.19.8": "0.19.8_hono@4.7.11_zod@3.25.51",
+    "npm:@hono/zod-openapi@0.19.8": "0.19.8_hono@4.7.11_zod@3.25.53",
     "npm:@supabase/auth-js@2.69.1": "2.69.1",
     "npm:@supabase/functions-js@2.4.4": "2.4.4",
     "npm:@supabase/node-fetch@2.6.15": "2.6.15",
@@ -25,8 +25,8 @@
     "npm:hono@4.7.11": "4.7.11",
     "npm:http-status-code@2.1.0": "2.1.0",
     "npm:neverthrow@8.2.0": "8.2.0",
-    "npm:zod-openapi@4.2.4": "4.2.4_zod@3.25.51",
-    "npm:zod@3.25.51": "3.25.51"
+    "npm:zod-openapi@4.2.4": "4.2.4_zod@3.25.53",
+    "npm:zod@3.25.53": "3.25.53"
   },
   "jsr": {
     "@hono/hono@4.7.11": {
@@ -57,7 +57,7 @@
     }
   },
   "npm": {
-    "@asteasolutions/zod-to-openapi@7.3.2_zod@3.25.51": {
+    "@asteasolutions/zod-to-openapi@7.3.2_zod@3.25.53": {
       "integrity": "sha512-Wvl+jHwSgYrRc3tQLMG7Qxq6wn0WjDk8E9ZA0lAyW73FqK18XPHVIKpk0lA6L0S+zmzzNKTndeV2v/Or0LyfHQ==",
       "dependencies": [
         "openapi3-ts",
@@ -70,7 +70,7 @@
         "hono"
       ]
     },
-    "@hono/zod-openapi@0.19.8_hono@4.7.11_zod@3.25.51": {
+    "@hono/zod-openapi@0.19.8_hono@4.7.11_zod@3.25.53": {
       "integrity": "sha512-CHUSW0K+bDGUYXovxQSbVjZffzoPeTsGu6wevPoGSmBdPuUw5yZqDeomnvyAAAAvEjhLQPlAsUyASc1Zi35exQ==",
       "dependencies": [
         "@asteasolutions/zod-to-openapi",
@@ -79,7 +79,7 @@
         "zod"
       ]
     },
-    "@hono/zod-validator@0.7.0_hono@4.7.11_zod@3.25.51": {
+    "@hono/zod-validator@0.7.0_hono@4.7.11_zod@3.25.53": {
       "integrity": "sha512-qe2ZE6sHFE98dcUrbYMtS3bAV8hqcCOflykvZga2S7XhmNSZzT+dIz4OuMILsjLHkJw9JMn912/dB7dQOmuPvg==",
       "dependencies": [
         "hono",
@@ -218,14 +218,14 @@
       "integrity": "sha512-4lLa/EcQCB0cJkyts+FpIRx5G/llPxfP6VQU5KByHEhLxY3IJCH0f0Hy1MHI8sClTvsIb8qwRJ6R/ZdlDJ/leQ==",
       "bin": true
     },
-    "zod-openapi@4.2.4_zod@3.25.51": {
+    "zod-openapi@4.2.4_zod@3.25.53": {
       "integrity": "sha512-tsrQpbpqFCXqVXUzi3TPwFhuMtLN3oNZobOtYnK6/5VkXsNdnIgyNr4r8no4wmYluaxzN3F7iS+8xCW8BmMQ8g==",
       "dependencies": [
         "zod"
       ]
     },
-    "zod@3.25.51": {
-      "integrity": "sha512-TQSnBldh+XSGL+opiSIq0575wvDPqu09AqWe1F7JhUMKY+M91/aGlK4MhpVNO7MgYfHcVCB1ffwAUTJzllKJqg=="
+    "zod@3.25.53": {
+      "integrity": "sha512-BKOKoY3XcGUVkqaalCtFK15LhwR0G0i65AClFpWSXLN2gJNBGlTktukHgwexCTa/dAacPPp9ReryXPWyeZF4LQ=="
     }
   },
   "workspace": {
@@ -245,7 +245,7 @@
       "npm:http-status-code@2.1.0",
       "npm:neverthrow@8.2.0",
       "npm:zod-openapi@4.2.4",
-      "npm:zod@3.25.51"
+      "npm:zod@3.25.53"
     ]
   }
 }

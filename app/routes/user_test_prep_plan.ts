@@ -17,7 +17,7 @@ const route_app = new OpenAPIHono({ defaultHook: zodErrorHandler });
     const ReqSchemaP = z.object({
         uid: z.string(),
     });
-    const ReqSchemaB = z.array(z.record(z.union([z.string(), z.boolean()])));
+    const ReqSchemaB = z.array(z.record(z.union([z.string(), z.boolean(), z.number()])));
 
     const RespSchema = z.object({
         success: z.boolean().openapi({ example: true }),
@@ -46,11 +46,15 @@ const route_app = new OpenAPIHono({ defaultHook: zodErrorHandler });
                                         tid: "vce.ma.1",
                                         test_date: "2025-09-30",
                                         test_venue: "SH Primary School",
+                                        active: true,
+                                        priority: 5,
                                     },
                                     {
                                         tid: "vce.ma.3",
                                         test_date: "2025-09-30T14:00:00+08:00",
                                         test_venue: "TL Primary School",
+                                        active: false,
+                                        priority: 2,
                                     },
                                 ],
                             },
@@ -97,7 +101,7 @@ const route_app = new OpenAPIHono({ defaultHook: zodErrorHandler });
         tid: z.union([z.string(), z.array(z.string())]).optional(),
     });
 
-    const RespSchema = z.array(z.record(z.union([z.string(), z.boolean()])));
+    const RespSchema = z.array(z.record(z.union([z.string(), z.boolean(), z.number()])));
 
     route_app.openapi(
         createRoute(
