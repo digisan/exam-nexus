@@ -1,9 +1,10 @@
 import { type Id, isValidId } from "@define/id.ts";
-import { hasCertainProperty, some } from "@util/util.ts";
+import { getCurrentDate, hasCertainProperty, some } from "@util/util.ts";
 import { EXAMS_AU, type ExamTypeAu, TESTS_AU } from "@define/exam/au.ts";
 import { EXAMS_CN, type ExamTypeCn, TESTS_CN } from "@define/exam/cn.ts";
-import { isValidFuture, isValidPriority } from "@define/type.ts";
-import type { RegionType } from "@define/config.ts";
+import { isValidFuture, isValidPriority, isValidStatus } from "@define/type.ts";
+import type { RegionType, StatusType } from "@define/config.ts";
+import { addProperty } from "@define/exam/util.ts";
 
 type Brand<T, B> = T & { readonly __brand: B; readonly __exact: T; readonly __types: T };
 
@@ -60,53 +61,27 @@ export type TestPrepPlan = Brand<{
     tid: Id;
     test_date: Date;
     test_venue: string;
-    active: boolean;
+    status: StatusType;
     priority: number;
+    start_date: Date;
     // ...
 }, `TestPrepPlan`>;
 export const isValidTestPrepPlan = (p: object): p is TestPrepPlan => {
     if (!some(p)) return false;
 
     if (!hasCertainProperty(p, "tid", "string")) return false;
-    if (!hasCertainProperty(p, "test_date", "string")) {
-        Object.defineProperty(p, "test_date", {
-            value: "UNKNOWN", // 属性值
-            writable: true, // 是否可修改（默认为 false）
-            enumerable: true, // 是否可枚举（例如 for...in 或 Object.keys() 中可见，默认为 false）
-            configurable: true, // 是否可配置（例如能否删除或重新定义，默认为 false）
-        });
-    }
-    if (!hasCertainProperty(p, "test_venue", "string")) {
-        Object.defineProperty(p, "test_venue", {
-            value: "UNKNOWN",
-            writable: true,
-            enumerable: true,
-            configurable: true,
-        });
-    }
-    if (!hasCertainProperty(p, "active", "boolean")) {
-        Object.defineProperty(p, "active", {
-            value: true,
-            writable: true,
-            enumerable: true,
-            configurable: true,
-        });
-    }
-    if (!hasCertainProperty(p, "priority", "number")) {
-        Object.defineProperty(p, "priority", {
-            value: 1,
-            writable: true,
-            enumerable: true,
-            configurable: true,
-        });
-    }
+    if (!hasCertainProperty(p, "test_date", "string")) addProperty(p, "test_date", "UNKNOWN");
+    if (!hasCertainProperty(p, "test_venue", "string")) addProperty(p, "test_venue", "UNKNOWN");
+    if (!hasCertainProperty(p, "status", "string")) addProperty(p, "status", "disabled");
+    if (!hasCertainProperty(p, "priority", "number")) addProperty(p, "priority", 1);
+    if (!hasCertainProperty(p, "start_date", "string")) addProperty(p, "start_date", getCurrentDate());
 
     const tid = p.tid as string;
     if (!isValidId(tid)) return false;
     if (!TESTS_ALL.has(tid)) return false;
-
+    if (!isValidStatus(p.status as string)) return false;
+    if (p.status === "disabled") p.start_date = "UNKNOWN";
     if (!isValidPriority(p.priority as number)) return false;
-
     if (!["UNKNOWN", "NULL", "TBD", "TBA", "待定", "未知", "不详"].includes((p.test_date as string).toUpperCase())) {
         return isValidFuture(p.test_date as string);
     }

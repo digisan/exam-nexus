@@ -12,7 +12,7 @@ Deno.test("setTestPrepPlan", async () => {
             tid: "vce.ma.1",
             test_date: "2025-06-30",
             test_venue: "College A",
-            active: true,
+            status: "disabled",
         };
 
         const r_uid = await toIdSKey(uid, T.REGISTER);

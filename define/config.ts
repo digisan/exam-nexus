@@ -29,3 +29,10 @@ export const PRIORITIES = [
     9,
 ] as const;
 export type PriorityType = typeof PRIORITIES[number];
+
+export const STATUS = [
+    "running",
+    "suspending",
+    "disabled",
+] as const;
+export type StatusType = typeof STATUS[number];

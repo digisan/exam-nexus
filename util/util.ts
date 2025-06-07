@@ -189,3 +189,11 @@ export const extractField = <T extends Record<string, any>>(arr: T[], fieldPath:
     const keys = fieldPath.split(".");
     return arr.map((item) => keys.reduce((val, key) => val?.[key], item));
 };
+
+export const getCurrentDate = (): string => {
+    const today = new Date();
+    const year = today.getFullYear();
+    const month = String(today.getMonth() + 1).padStart(2, "0"); // 月份从 0 开始，补零
+    const day = String(today.getDate()).padStart(2, "0"); // 补零
+    return `${year}-${month}-${day}`;
+};
