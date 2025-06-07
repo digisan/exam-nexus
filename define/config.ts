@@ -37,7 +37,7 @@ export type PriorityType = keyof typeof mPRIORITY;
 
 export const mSTATUS = {
     1: "running",
-    2: "suspending",
+    2: "paused",
     3: "disabled",
 } as const;
 export type StatusType = keyof typeof mSTATUS;

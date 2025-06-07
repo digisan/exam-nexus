@@ -6,6 +6,8 @@ import { isValidFuture, isValidPriority, isValidStatus } from "@define/type.ts";
 import type { PriorityType, RegionType, StatusType } from "@define/config.ts";
 import { addProperty } from "@define/exam/util.ts";
 
+const UNKNOWN = "UNKNOWN"
+
 type Brand<T, B> = T & { readonly __brand: B; readonly __exact: T; readonly __types: T };
 
 export type ExamType = ExamTypeAu | ExamTypeCn;
@@ -70,23 +72,23 @@ export const isValidTestPrepPlan = (p: object): p is TestPrepPlan => {
     if (!some(p)) return false;
 
     if (!hasCertainProperty(p, "tid", "string")) return false;
-    if (!("test_date" in p)) addProperty(p, "test_date", "UNKNOWN");
-    if (!("test_venue" in p)) addProperty(p, "test_venue", "UNKNOWN");
+    if (!("test_date" in p)) addProperty(p, "test_date", UNKNOWN);
+    if (!("test_venue" in p)) addProperty(p, "test_venue", UNKNOWN);
     if (!("status" in p)) addProperty(p, "status", 2); // 2 -> 'disabled'
-    if (!("priority" in p)) addProperty(p, "priority", 1); //
-    if (!("start_date" in p)) addProperty(p, "start_date", "UNKNOWN");
+    if (!("priority" in p)) addProperty(p, "priority", 1); // 1 -> '⭐'
+    if (!("start_date" in p)) addProperty(p, "start_date", UNKNOWN);
 
     const tid = p.tid as string;
     if (!isValidId(tid)) return false;
     if (!TESTS_ALL.has(tid)) return false;
     if (!isValidStatus(p.status as StatusType)) return false;
 
-    // status => start_date
-    if (p.status === 0 && isNaN((new Date(p.start_date as string | Date)).getTime())) p.start_date = getCurrentDate();
-    if (p.status === 2) p.start_date = "UNKNOWN"; // 2 -> 'disabled'
+    // 'status' set 'start_date'
+    if (p.status === 1 && isNaN((new Date(p.start_date as string | Date)).getTime())) p.start_date = getCurrentDate(); // 1 -> 'running'
+    if (p.status === 3) p.start_date = UNKNOWN; // 3 -> 'disabled'
 
     if (!isValidPriority(p.priority as PriorityType)) return false;
-    if (!["UNKNOWN", "NULL", "TBD", "TBA", "待定", "未知", "不详"].includes((p.test_date as string).toUpperCase())) {
+    if (![UNKNOWN, "NULL", "TBD", "TBA", "待定", "未知", "不详"].includes((p.test_date as string).toUpperCase())) {
         return isValidFuture(p.test_date as string);
     }
     return true;
