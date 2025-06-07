@@ -114,7 +114,7 @@ export const hasAllProperties = (obj: object | null, property: string, ...proper
     return true;
 };
 
-export function hasCertainProperty<T extends object>(obj: T, path: string, typeName: Typable): obj is T & Record<string, unknown> {
+export const hasCertainProperty = <T extends object>(obj: T, path: string, typeName: Typable): obj is T & Record<string, unknown> => {
     if (obj === null || typeof obj !== "object") return false;
     const keys = path.split(".");
     let current: unknown = obj;
@@ -124,7 +124,7 @@ export function hasCertainProperty<T extends object>(obj: T, path: string, typeN
     }
     const t = typeof current;
     return t == typeName;
-}
+};
 
 export const fileExists = async (path: string): Promise<boolean> => {
     try {
