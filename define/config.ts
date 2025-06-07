@@ -17,22 +17,27 @@ export type LanguageType = typeof LANGUAGES[number];
 // ****************** Plan Configuration ****************** //
 
 export const mPRIORITY = {
-    0: "☆",
+    // 1: "☆",
+    // 2: "★",
+    // 3: "★☆",
+    // 4: "★★",
+    // 5: "★★☆",
+    // 6: "★★★",
+    // 7: "★★★☆",
+    // 8: "★★★★",
+    // 9: "★★★★☆",
+    // 10: "★★★★★",
     1: "★",
-    2: "★☆",
-    3: "★★",
-    4: "★★☆",
-    5: "★★★",
-    6: "★★★☆",
-    7: "★★★★",
-    8: "★★★★☆",
-    9: "★★★★★",
+    2: "★★",
+    3: "★★★",
+    4: "★★★★",
+    5: "★★★★★",
 } as const;
 export type PriorityType = keyof typeof mPRIORITY;
 
 export const mSTATUS = {
-    0: "running",
-    1: "suspending",
-    2: "disabled",
+    1: "running",
+    2: "suspending",
+    3: "disabled",
 } as const;
 export type StatusType = keyof typeof mSTATUS;
